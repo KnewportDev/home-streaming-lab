@@ -14,9 +14,9 @@ Ryzen 7 5800X, 8 cores / 16 logical processors; 31.9 GiB memory; Radeon RX 5700 
 
 The wireless adapter negotiated 433.3 Mbps. Ethernet was disconnected. This is an adapter link-rate observation, not measured throughput.
 
-The active network category was Public. SunshineService was absent. No Sunshine-named firewall rules were returned. A subsequent installation review found no previous Sunshine installation and confirmed that ViGEmBus is not installed.
+At the initial 18:23 UTC inventory, Sunshine and ViGEmBus were not installed. Later on October 10, 2026, both were installed and verified running. Configuration validation remains pending; installation alone does not verify streaming or controller behavior.
 
-The official MSI has an optional `CM_C_firewall` feature, labeled Scripts > Add Firewall Exclusions. The reviewed plan omits that feature, preserves the Public profile, and adds only separately approved rules for the exact program, interface, and onn client IP. This is a plan; no installation, firewall, driver, or streaming action has been approved or completed.
+The [installation review](INSTALLATION-REVIEW.md) records the pre-installation assessment. Sunshine and ViGEmBus installation is now complete. TV pairing, controller tests, and the first end-to-end stream have not been completed.
 
 ## Confirmed display
 
@@ -24,4 +24,4 @@ The TV model was confirmed by the owner as Vizio V405-H19 on October 10, 2026. I
 
 ## Still pending
 
-onn 4K Plus (2025) setup, Vizio display capabilities, DualSense input tests, approved Sunshine installation and network scope, and real Moonlight session measurements. The client purchase was confirmed later on October 10, 2026; it has not yet been tested with this setup. Start with H.264 1080p60 SDR; do not assume 4K or HEVC works because the client package advertises those formats.
+Configuration validation, onn 4K Plus (2025) setup and TV pairing, Vizio display capabilities, DualSense input tests, and real Moonlight session measurements. The client purchase was confirmed later on October 10, 2026; it has not yet been tested with this setup. Start with H.264 1080p60 SDR; do not assume 4K or HEVC works because the client package advertises those formats.
