@@ -2,17 +2,26 @@
 
 # PC-to-TV streaming lab
 
-I want to play my PC games on my Vizio TV with a PS5 controller. I'm documenting each step and the results as I go.
+A Windows troubleshooting and PowerShell lab built around streaming PC games to a TV.
+
+The goal is to play my PC games on my Vizio TV with a PS5 controller. The lab documents host inventory, network observations, controlled configuration changes, and verification of the results.
 
 Sunshine and ViGEmBus are installed and running on my Windows PC. Moonlight will run at the TV. The client is an onn 4K Plus (2025) Google TV device, now purchased. Configuration validation, TV pairing, controller checks, and the first end-to-end stream are still pending.
 
 ## Where it stands
 
-- **Tools checked:** All 20 tests passed on Windows PowerShell 5.1 on October 10, 2026. The host inventory ran, and the sample report was generated.
+- **Report checks:** All 20 automated checks passed on Windows PowerShell 5.1 on October 10, 2026. They cover report calculations and input validation; they are not streaming/controller tests or a comprehensive test suite for the host readiness checker. The host inventory ran, and the sample report was generated.
 - **Still to do:** Validate the configuration, set up and pair the TV client, test the controller, and record the first real stream.
 - **Sample data only:** The example CSV uses made-up numbers to test the report. It says nothing about this PC's streaming performance.
 
 The [validation notes](docs/VALIDATION.md) have the runtime details and host observations. The [installation review](docs/INSTALLATION-REVIEW.md) covers the MSI option for skipping its broad firewall exclusions and the separate controller-driver decision. Sunshine and ViGEmBus installation is complete; configuration validation and real streaming tests remain pending.
+
+## Start here
+
+- [Troubleshooting case: a UTF-8 BOM in a configuration file](docs/TROUBLESHOOTING-UTF8-BOM.md) - symptom, byte-level diagnosis, minimal repair, and verification from the real setup.
+- [Validation record](docs/VALIDATION.md) - what ran, what passed, and what remains untested.
+- [Host readiness checker](scripts/Test-HostReadiness.ps1), [report generator](scripts/New-StreamingReport.ps1), and [20-check test runner](tests/Run-Tests.ps1) - inspect the PowerShell work.
+- [First-stream test plan](docs/TEST-PLAN.md) - the pending TV, controller, and measured streaming checks.
 
 ## The setup
 
