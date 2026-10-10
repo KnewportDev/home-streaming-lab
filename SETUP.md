@@ -14,7 +14,7 @@ The root README references `assets/knewport-header.svg`. Keep that relative path
 
 Set the display name to **Knewport 🚬**. The display name can differ from the GitHub username.
 
-The public profile repository is [`pt2d47fmsf-cmyk`](https://github.com/pt2d47fmsf-cmyk/pt2d47fmsf-cmyk). Its live README is already published. The `profile/` folder in this lab remains a reusable starting copy with this layout:
+The public profile repository is [`pt2d47fmsf-cmyk`](https://github.com/pt2d47fmsf-cmyk/pt2d47fmsf-cmyk). Its live README is already published. The `profile/README.md` copy in this lab uses the same content and absolute links so it can be reused without breaking the header or project links. Keep both copies in sync. The supporting asset remains available in this layout:
 
 ```text
 README.md
@@ -26,7 +26,7 @@ Don't upload `profile/` as a surrounding folder. Its README needs to be at the r
 
 Suggested bio:
 
-Windows, networking, cybersecurity, and a home lab built around gaming.
+Windows, PowerShell, and network troubleshooting. Practical home-lab projects for IT support and junior network operations.
 
 The [public profile](https://github.com/pt2d47fmsf-cmyk) links to the verified lab URL and pins `home-streaming-lab`.
 
