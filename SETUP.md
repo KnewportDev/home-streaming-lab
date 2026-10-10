@@ -4,7 +4,7 @@ This package has two READMEs: one for the streaming lab and one for the account 
 
 ## Streaming lab repository
 
-The streaming lab is published as [`home-streaming-lab`](https://github.com/pt2d47fmsf-cmyk/home-streaming-lab). Its `README.md` is at the repository root, alongside the hidden `.gitignore` file and `results/.gitkeep`.
+The streaming lab is published as [`home-streaming-lab`](https://github.com/KnewportDev/home-streaming-lab). Its `README.md` is at the repository root, alongside the hidden `.gitignore` file and `results/.gitkeep`.
 
 The `profile/` folder holds a separate copy for the account profile. It can stay in the lab repository too; the next section explains where to copy it.
 
@@ -14,7 +14,7 @@ The root README references `assets/knewport-header.svg`. Keep that relative path
 
 Set the display name to **Knewport 🚬**. The display name can differ from the GitHub username.
 
-The public profile repository is [`pt2d47fmsf-cmyk`](https://github.com/pt2d47fmsf-cmyk/pt2d47fmsf-cmyk). Its live README is already published. The `profile/README.md` copy in this lab uses the same content and absolute links so it can be reused without breaking the header or project links. Keep both copies in sync. The supporting asset remains available in this layout:
+The public profile repository is [`KnewportDev`](https://github.com/KnewportDev/KnewportDev). Its live README is already published. The `profile/README.md` copy in this lab uses the same content and absolute links so it can be reused without breaking the header or project links. Keep both copies in sync. The supporting asset remains available in this layout:
 
 ```text
 README.md
@@ -28,7 +28,7 @@ Suggested bio:
 
 Windows, PowerShell, and network troubleshooting. Practical home-lab projects for IT support and junior network operations.
 
-The [public profile](https://github.com/pt2d47fmsf-cmyk) links to the verified lab URL and pins `home-streaming-lab`.
+The [public profile](https://github.com/KnewportDev) links to the verified lab URL and pins `home-streaming-lab`.
 
 ## Keep it clean
 
