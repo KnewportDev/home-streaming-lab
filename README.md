@@ -4,15 +4,15 @@
 
 I want to play my PC games on my Vizio TV with a PS5 controller. I'm documenting each step and the results as I go.
 
-Sunshine will run on my Windows PC. Moonlight will run at the TV. The client is an onn 4K Plus (2025) Google TV device, now purchased. Setup and streaming tests are still ahead.
+Sunshine and ViGEmBus are installed and running on my Windows PC. Moonlight will run at the TV. The client is an onn 4K Plus (2025) Google TV device, now purchased. Configuration validation, TV pairing, controller checks, and the first end-to-end stream are still pending.
 
 ## Where it stands
 
 - **Tools checked:** All 20 tests passed on Windows PowerShell 5.1 on October 10, 2026. The host inventory ran, and the sample report was generated.
-- **Still to do:** Install Sunshine, set up the TV client, test the controller, and record the first real stream.
+- **Still to do:** Validate the configuration, set up and pair the TV client, test the controller, and record the first real stream.
 - **Sample data only:** The example CSV uses made-up numbers to test the report. It says nothing about this PC's streaming performance.
 
-The [validation notes](docs/VALIDATION.md) have the runtime details and host observations. The [installation review](docs/INSTALLATION-REVIEW.md) covers the MSI option for skipping its broad firewall exclusions and the separate controller-driver decision. Installation, network changes, and real streaming tests still need approval.
+The [validation notes](docs/VALIDATION.md) have the runtime details and host observations. The [installation review](docs/INSTALLATION-REVIEW.md) covers the MSI option for skipping its broad firewall exclusions and the separate controller-driver decision. Sunshine and ViGEmBus installation is complete; configuration validation and real streaming tests remain pending.
 
 ## The setup
 
@@ -59,6 +59,33 @@ Use Windows PowerShell 5.1 with its built-in CIM and network cmdlets. No extra P
 ```
 
 The report generator rejects mixed sample and measured data, duplicate run IDs, invalid values, and extra columns. Blank metrics stay blank. Its medians summarize the recorded runs, not individual frames or packets.
+
+## Log a real session
+
+Follow the [first-stream checklist](docs/TEST-PLAN.md). Copy the header from `examples/blank-session.csv` into a CSV under `results/`, which is excluded from Git.
+
+Use `data_kind=measured` only for a real session. Keep the sample rows labeled `sample`.
+
+Required fields:
+
+- `data_kind`, `test_id`, and `codec` (`H264`, `HEVC`, or `AV1`)
+- `width`, `height`, `target_fps`, and `bitrate_mbps`
+- `duration_seconds` and `controller_check` (`pass`, `fail`, or `pending`)
+
+The four metric fields can be blank: `average_fps`, `network_latency_ms`, `decode_latency_ms`, and `dropped_frames_percent`. Keep those columns in the CSV even when you don't have a value. Use a decimal point for numbers and a simple run ID such as `baseline_01`.
+
+Record only what the overlay actually provides. Network latency and decode latency are separate measurements; neither is full controller-to-display latency. Review any results or screenshots for private information before publishing them.
+
+## Credits
+
+The helper scripts and documentation are included here. Sunshine and Moonlight are separate projects with their own licenses; their code isn't bundled in this repo.
+
+- [Sunshine](https://github.com/LizardByte/Sunshine) by LizardByte and contributors
+- [Sunshine setup docs](https://docs.lizardbyte.dev/projects/sunshine/latest/md_docs_2getting__started.html)
+- [Moonlight setup guide](https://github.com/moonlight-stream/moonlight-docs/wiki/Setup-Guide)
+
+The helper code is [MIT licensed](LICENSE).
+
 
 ## Log a real session
 
