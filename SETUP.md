@@ -4,7 +4,7 @@ This package has two READMEs: one for the streaming lab and one for the account 
 
 ## Streaming lab repository
 
-Use `pc-to-tv-streaming-lab` as the repository name. Upload the package contents with `README.md` at the repository root. Include the hidden `.gitignore` file and `results/.gitkeep`.
+The streaming lab is published as [`home-streaming-lab`](https://github.com/pt2d47fmsf-cmyk/home-streaming-lab). Its `README.md` is at the repository root, alongside the hidden `.gitignore` file and `results/.gitkeep`.
 
 The `profile/` folder holds a separate copy for the account profile. It can stay in the lab repository too; the next section explains where to copy it.
 
@@ -14,7 +14,7 @@ The root README references `assets/knewport-header.svg`. Keep that relative path
 
 Set the display name to **Knewport 🚬**. The display name can differ from the GitHub username.
 
-GitHub shows a profile README from a public repository named exactly after the account's username. Copy the contents of `profile/` into that repository:
+The public profile repository is [`pt2d47fmsf-cmyk`](https://github.com/pt2d47fmsf-cmyk/pt2d47fmsf-cmyk). Its live README is already published. The `profile/` folder in this lab remains a reusable starting copy with this layout:
 
 ```text
 README.md
@@ -28,7 +28,7 @@ Suggested bio:
 
 Windows, networking, cybersecurity, and a home lab built around gaming.
 
-Once the lab repository exists, link the profile's project title to its verified URL and pin the repository. No account name or repository URL is assumed in this kit.
+The [public profile](https://github.com/pt2d47fmsf-cmyk) links to the verified lab URL and pins `home-streaming-lab`.
 
 ## Keep it clean
 
