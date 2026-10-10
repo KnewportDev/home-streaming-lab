@@ -1,0 +1,13 @@
+results/*
+!results/.gitkeep
+*.local.*
+*.log
+.env
+.env.*
+*.pem
+*.key
+config/
+credentials/
+downloads/
+__pycache__/
+tests/test-output.md
