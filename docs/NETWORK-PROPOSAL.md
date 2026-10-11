@@ -1,16 +1,16 @@
 # Proposed LAN configuration
 
-Status: reviewed, not applied. Sunshine installation, firewall changes, controller-driver installation, and streaming tests are still awaiting approval.
+Status as of October 11, 2026: this document records the reviewed LAN rule scope, not a verification of the currently deployed firewall rules. Sunshine and ViGEmBus are installed; see the [validation record](VALIDATION.md). The first TV smoke-test result is pending.
 
 ## Installation route
 
-Use the official Sunshine MSI with its optional `CM_C_firewall` feature deselected. The installer labels it **Scripts > Add Firewall Exclusions**. Inspection of the actual MSI confirmed that this feature can be omitted. No previous Sunshine installation was found on the host.
+The reviewed installation plan called for the official Sunshine MSI with its optional `CM_C_firewall` feature deselected. The installer labels it **Scripts > Add Firewall Exclusions**. Inspection of the actual MSI confirmed that this feature can be omitted. No previous Sunshine installation was found during the pre-installation inspection.
 
 This replaces the earlier lite-ZIP proposal. The unsupported lite package is no longer needed for the planned setup. Do not modify the MSI or install broad rules with the intention of tightening them afterward.
 
-Omitting the firewall feature does not remove the installer's other effects. Review and approve the installation, service/startup behavior, and other system changes described in the [installation review](INSTALLATION-REVIEW.md) before running it.
+Omitting the firewall feature does not remove the installer's other effects. The [installation review](INSTALLATION-REVIEW.md) describes the installation, service/startup behavior and other effects considered before installation. Verify the actual resulting rules separately.
 
-## Exact security changes to approve
+## Reviewed firewall scope
 
 Keep the current network category **Public**. The plan does not change the adapter to Private.
 
@@ -39,11 +39,11 @@ This is a single-client allowlist. Do not substitute `LocalSubnet`, all remote a
 - Confirm that the default base port is still 47989 before using the port list. A custom base port needs its own review.
 - Verify that the MSI did not add broad Sunshine firewall exclusions. If unexpected rules or installer behavior appear, stop and review them before pairing or streaming.
 
-No rules, profile changes, or Sunshine configuration have been applied.
+This proposal does not establish whether these exact rules are currently applied. Check the active configuration privately before relying on the proposed scope; keep identifying values out of the repository.
 
 ## Controller dependency
 
-ViGEmBus is not installed. The proposed free virtual-controller route uses the official ViGEmBus 1.22.0 release, which is end-of-life. Installing that kernel driver requires separate explicit approval after reviewing its maintenance risk. Controller input is still untested. See the [installation review](INSTALLATION-REVIEW.md#controller-driver).
+The installed ViGEmBus driver was observed as version 1.21.442.0, signed and healthy. The original review links the official 1.22.0 release package. This kernel driver is end-of-life. Xbox 360 virtual-controller output is configured; controller input through the TV client remains unverified. See the [installation review](INSTALLATION-REVIEW.md#controller-driver).
 
 ## Rollback
 
