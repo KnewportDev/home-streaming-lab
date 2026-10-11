@@ -6,15 +6,25 @@ A Windows troubleshooting and PowerShell lab built around streaming PC games to 
 
 The goal is to play my PC games on my Vizio TV with a PS5 controller. The lab documents host inventory, network observations, controlled configuration changes, and verification of the results.
 
-Sunshine and ViGEmBus are installed and running on my Windows PC. Moonlight will run at the TV. The client is an onn 4K Plus (2025) Google TV device, now purchased. Configuration validation, TV pairing, controller checks, and the first end-to-end stream are still pending.
+Sunshine and ViGEmBus are installed on my Windows PC, and the first local Red Dead Redemption 2 benchmark is recorded below. The TV setup uses an onn 4K Plus (2025) Google TV client with Moonlight. The first TV smoke-test result is still pending.
 
-## Where it stands
+## Results and status
 
-- **Report checks:** All 20 automated checks passed on Windows PowerShell 5.1 on October 10, 2026. They cover report calculations and input validation; they are not streaming/controller tests or a comprehensive test suite for the host readiness checker. The host inventory ran, and the sample report was generated.
-- **Still to do:** Validate the configuration, set up and pair the TV client, test the controller, and record the first real stream.
-- **Sample data only:** The example CSV uses made-up numbers to test the report. It says nothing about this PC's streaming performance.
+Last updated: October 11, 2026.
 
-The [validation notes](docs/VALIDATION.md) have the runtime details and host observations. The [installation review](docs/INSTALLATION-REVIEW.md) covers the MSI option for skipping its broad firewall exclusions and the separate controller-driver decision. Sunshine and ViGEmBus installation is complete; configuration validation and real streaming tests remain pending.
+| Check | Recorded result |
+| --- | --- |
+| Local RDR2 benchmark | **95.35 FPS average**, 32.57 minimum, 139.89 maximum |
+| Host software | Sunshine 2026.914.233613 and signed ViGEmBus driver 1.21.442.0 healthy |
+| Controller configuration | Xbox 360 virtual-controller output configured; TV input check pending |
+| PowerShell report checks | 20/20 passed on Windows PowerShell 5.1, October 10 |
+| TV stream | Five-minute smoke-test result pending; audio, video and controller behavior unverified |
+
+The benchmark ran locally on the PC using RDR2's built-in benchmark, with 1920×1080 output, Vulkan, HDR off, Ultra textures, High TAA, High shadows and 16× anisotropic filtering. It was started by holding X for about four seconds.
+
+The minimum is the game's reported minimum FPS, not a 1% low. This run does not measure TV streaming performance, controller-to-display latency, or a locked 60 FPS experience. See the [validation record](docs/VALIDATION.md#local-rdr2-benchmark---october-11) for the setup and limits.
+
+The automated checks cover report calculations and input validation. The example CSV contains synthetic data used to test reporting; its numbers are separate from the local game benchmark. TV testing follows the [first-stream plan](docs/TEST-PLAN.md).
 
 ## Start here
 
@@ -35,14 +45,14 @@ flowchart LR
 
 | Part | Current details |
 | --- | --- |
-| PC | Ryzen 7 5800X, Radeon RX 5700 XT, 31.9 GiB memory |
+| PC | Ryzen 7 5800X, Radeon RX 5700 XT 8 GB, 32 GB RAM (31.9 GiB reported) |
 | OS | Windows 11 Pro |
 | Host connection | Wi-Fi; Ethernet was disconnected during the inventory |
-| TV client | onn 4K Plus (2025), purchased; setup pending |
+| TV client | onn 4K Plus (2025) with Moonlight; end-to-end result pending |
 | Display | Vizio V405-H19, user-confirmed; HDMI baseline still to test |
-| Controller | PS5 DualSense; connection and in-game input still to test |
+| Controller | PS5 DualSense; Xbox 360 virtual output configured on the host, TV input check pending |
 
-The first test will use H.264, 1080p, 60 FPS, and SDR. I'll record the bitrate and change one setting at a time after that. These are starting settings, not measured results.
+The planned first-stream baseline is H.264, 1080p, 60 FPS and SDR. Record the actual bitrate and duration, then change one setting at a time. These stream settings remain a test target.
 
 This first build stays on the home network. See the [LAN proposal](docs/NETWORK-PROPOSAL.md) for the proposed firewall scope and rollback steps.
 
@@ -52,8 +62,7 @@ This first build stays on the home network. See the [LAN proposal](docs/NETWORK-
 - `scripts/New-StreamingReport.ps1` turns a session CSV into a Markdown report.
 - `tests/Run-Tests.ps1` checks the report calculations and input validation.
 - `examples/` has a blank CSV header and clearly labeled sample rows.
-- `docs/` holds the installation review, network proposal, test plan, and validation record.
-- `profile/` is a separate GitHub profile README and matching header. [Setup instructions](SETUP.md) explain where it goes.
+- `docs/` holds the installation review, network proposal, test plan, troubleshooting case and validation record.
 
 The scripts don't install software or change network settings. The readiness checker uses read-only queries and writes a JSON file only when an output path is supplied. It leaves out hostnames, IP and MAC addresses, SSIDs, usernames, and serial numbers. A check it can't complete is marked unknown.
 
