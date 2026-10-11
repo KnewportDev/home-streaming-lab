@@ -1,6 +1,8 @@
 # Installation review - 2026-10-10
 
-No Sunshine installer has been executed. No firewall, network-profile, router, or UPnP settings have been changed. ViGEmBus is not installed. Installation, firewall changes, driver installation, and streaming tests are still awaiting approval.
+This document preserves the October 10 pre-installation review. Sunshine and ViGEmBus were installed later that day. As of October 11, Sunshine 2026.914.233613 and the signed ViGEmBus driver 1.21.442.0 were healthy, with Xbox 360 virtual-controller output configured. See the [validation record](VALIDATION.md) for current observations.
+
+The MSI and firewall details below describe the reviewed installation route. They do not certify every current firewall rule or establish end-to-end TV streaming. The first TV smoke-test result is pending.
 
 One approved process-only PowerShell override was used for project verification and ended. Persistent execution policies remain unchanged.
 
@@ -16,17 +18,17 @@ SHA256 verified against the release metadata:
 1d7fed8beecd5889dc7ff14cf9f42d6d38f37c3066c13c6c2a5f4e91847e0ccf
 ```
 
-Authenticode verification returned Valid. Publisher certificate subject: CN=David Lane, O=David Lane, L=KISSIMMEE, S=Florida, C=US.
+Authenticode verification returned Valid for the official installer.
 
 Installer and upstream source copies are outside the project repository.
 
 ## Verified MSI feature selection
 
-Inspection of the actual MSI found the optional feature `CM_C_firewall`, shown as **Scripts > Add Firewall Exclusions**. It can be deselected. No previous Sunshine installation was found on the host.
+Inspection of the actual MSI found the optional feature `CM_C_firewall`, shown as **Scripts > Add Firewall Exclusions**. It can be deselected. No previous Sunshine installation was found during the pre-installation inspection.
 
-The planned route is the official MSI with that feature omitted, followed by the separately approved narrow rules in the [LAN proposal](NETWORK-PROPOSAL.md). The earlier conclusion that no firewall-skip route had been verified is superseded by this MSI inspection. The unsupported lite ZIP is no longer part of the plan.
+The reviewed plan called for the official MSI with that feature omitted, followed by separately approved narrow rules in the [LAN proposal](NETWORK-PROPOSAL.md). The earlier conclusion that no firewall-skip route had been verified is superseded by this MSI inspection. The unsupported lite ZIP is no longer part of the plan.
 
-This is an inspected installation plan, not a completed installation. Confirm the feature selection before proceeding and verify the resulting rules afterward.
+The MSI inspection established that this option exists. Installation is now complete; the installed state and any current firewall rules need their own verification rather than being inferred from this plan.
 
 ## Other installer effects
 
@@ -46,19 +48,19 @@ Sources:
 
 ## Controller driver
 
-ViGEmBus is not installed. The proposed free controller route requires the official [ViGEmBus 1.22.0 release](https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0).
+The pre-installation review selected the official [ViGEmBus 1.22.0 release](https://github.com/nefarius/ViGEmBus/releases/tag/v1.22.0). The installed driver was later observed as version 1.21.442.0, signed and healthy. The release-package version and observed driver version are recorded separately.
 
-ViGEmBus is a kernel-mode virtual-controller driver whose project is retired. It is end-of-life and no longer maintained; review the author's [end-of-life statement](https://docs.nefarius.at/projects/ViGEm/End-of-Life/) before deciding whether to install it. Its installation requires separate explicit approval. No driver installation, successful controller emulation, or tested DualSense feature support is claimed here.
+ViGEmBus is a kernel-mode virtual-controller driver whose project is retired. It is end-of-life and no longer maintained; see the author's [end-of-life statement](https://docs.nefarius.at/projects/ViGEm/End-of-Life/). Installation was a separate approval decision. Xbox 360 virtual-controller output is now configured, but end-to-end controller input and advanced DualSense features remain unverified.
 
-## Approval gates
+## Review gates and current status
 
 1. **Completed:** The original helper scripts passed all 20 tests. The inventory and sample report ran in one approved temporary PowerShell process, which ended. See the [validation record](VALIDATION.md).
-2. **Pending Sunshine installation:** Approve the inspected official MSI with `CM_C_firewall` deselected and its remaining system/service/startup effects.
-3. **Pending firewall configuration:** Keep the current network profile Public. Approve only the specific program/interface/exact-client-IP rules in the [LAN proposal](NETWORK-PROPOSAL.md), with no remote web UI, UPnP, or router port forwarding.
-4. **Pending controller driver:** Review and explicitly approve the official end-of-life ViGEmBus 1.22.0 route before installing it.
-5. **Pending hardware tests:** Pairing, controller checks, and a real Moonlight session still need to happen after the relevant approvals and setup.
+2. **Sunshine installed:** The review covered the official MSI, optional `CM_C_firewall` feature and remaining system/service/startup effects. Current host observations are in the validation record.
+3. **Firewall scope to verify:** The [LAN proposal](NETWORK-PROPOSAL.md) describes the reviewed program/interface/exact-client-IP scope, with no remote web UI, UPnP or router port forwarding. This review does not certify the current rules.
+4. **Controller driver installed:** Signed driver version 1.21.442.0 was observed healthy; the maintenance risk remains relevant.
+5. **TV result pending:** Pairing, controller checks, video and audio must be verified from the real Moonlight session.
 
-This review does not itself grant permission to execute any of those pending steps.
+This record is documentation, not permission for additional system or security changes.
 
 ## Rollback plan
 
