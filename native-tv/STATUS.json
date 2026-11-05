@@ -1,0 +1,33 @@
+{
+  "version": "0.2.0",
+  "stage": "awaiting_tv_pin",
+  "live_device": {
+    "reported_model": "V405-H9",
+    "firmware": "1.720.9.1-1",
+    "ViziOS": "mtk5691-1.6.1770.1"
+  },
+  "validation": {
+    "metadata_offline_tests": 9,
+    "native_session_offline_tests": 13,
+    "usb_diagnostic_tests": "passed",
+    "home_javascript_syntax": "passed",
+    "visual_tv_test": "pending",
+    "windows_state_write": "verified_on_target_pc",
+    "offline_suite_total": 23,
+    "remote_partial_grid_checks": "passed"
+  },
+  "native_execution_on_tv": "not_yet_verified",
+  "root": "not_established",
+  "permanent_home_install": "not_attempted",
+  "firmware_replacement": "not_available",
+  "pairing": "fresh_challenge_saved; awaiting_current_on_screen_pin",
+  "interface": {
+    "style": "early_2000s_media_center",
+    "accents": [
+      "Aqua",
+      "Cobalt",
+      "Silver"
+    ],
+    "app_catalog": "empty_until_verified"
+  }
+}

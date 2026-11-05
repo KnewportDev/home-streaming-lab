@@ -1,0 +1,54 @@
+# Local credentials and device-specific configuration
+.private/
+private/
+secrets/
+.env
+.env.*
+!.env.example
+!.env.template
+*.private.*
+*auth*.json
+*token*.json
+*credential*.json
+*state*.json
+*session*.json
+*.pem
+*.key
+*.p12
+*.pfx
+/home/config.json
+
+# Runtime dependencies and logs
+node_modules/
+*.log
+logs/
+*.pid
+.cache/
+coverage/
+
+# Generated diagnostics, captures, backups and scratch output
+*-report.json
+reports/
+backups/
+scratch/
+.scratch/
+_scratch/
+tmp/
+temp/
+artifacts/
+usb-kit/
+new-usb-diagnostic/
+usb-diagnostic/
+*.tmp
+*.bak
+*.orig
+*.zip
+*.tgz
+*.tar.gz
+
+# Editor and operating-system metadata
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo

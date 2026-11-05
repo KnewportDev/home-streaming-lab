@@ -1,6 +1,21 @@
 ![Knewport: Windows, networking, cybersecurity, and homelab](assets/knewport-header.svg)
 
-# PC-to-TV streaming lab
+# Home media lab
+
+A personal homelab for Windows troubleshooting, home networking, and native TV software. Each project records what was built, how it was checked, and what still needs hardware verification.
+
+## Native TV / Media Center
+
+The current project is a custom interface for the VIZIO television's own browser, styled after early-2000s TV menus and Windows Media Center. It includes bounded network discovery, PIN-pairing tools, a local preview, offline regression tests, and a GitHub Actions preview-build pipeline.
+
+- [Project and quick start](native-tv/README.md)
+- [Engineering notes: a real Windows state-write failure](native-tv/docs/ENGINEERING-NOTES.md)
+- [Portfolio summary and interview walkthrough](native-tv/docs/PORTFOLIO.md)
+- [Development workflow](.github/workflows/native-tv.yml)
+
+**Current result:** the interface source and 23 offline tests are ready. The TV reports V405-H9 / firmware 1.720.9.1-1. PIN pairing, authenticated on-TV execution, and persistent installation still need verification. The existing streaming work below is its own recorded lab.
+
+## PC-to-TV streaming lab
 
 A Windows troubleshooting and PowerShell lab built around streaming PC games to a TV.
 
@@ -8,7 +23,7 @@ The goal is to play my PC games on my Vizio TV with a PS5 controller. The lab do
 
 Sunshine and ViGEmBus are installed on my Windows PC, and the first local Red Dead Redemption 2 benchmark is recorded below. The TV setup uses an onn 4K Plus (2025) Google TV client with Moonlight. The first TV smoke-test result is still pending.
 
-## Results and status
+### Results and status
 
 Last updated: October 11, 2026.
 
@@ -26,14 +41,14 @@ The minimum is the game's reported minimum FPS, not a 1% low. This run does not 
 
 The automated checks cover report calculations and input validation. The example CSV contains synthetic data used to test reporting; its numbers are separate from the local game benchmark. TV testing follows the [first-stream plan](docs/TEST-PLAN.md).
 
-## Start here
+### Start here
 
 - [Troubleshooting case: a UTF-8 BOM in a configuration file](docs/TROUBLESHOOTING-UTF8-BOM.md) - symptom, byte-level diagnosis, minimal repair, and verification from the real setup.
 - [Validation record](docs/VALIDATION.md) - what ran, what passed, and what remains untested.
 - [Host readiness checker](scripts/Test-HostReadiness.ps1), [report generator](scripts/New-StreamingReport.ps1), and [20-check test runner](tests/Run-Tests.ps1) - inspect the PowerShell work.
 - [First-stream test plan](docs/TEST-PLAN.md) - the pending TV, controller, and measured streaming checks.
 
-## The setup
+### The setup
 
 ```mermaid
 flowchart LR
@@ -56,7 +71,7 @@ The planned first-stream baseline is H.264, 1080p, 60 FPS and SDR. Record the ac
 
 This first build stays on the home network. See the [LAN proposal](docs/NETWORK-PROPOSAL.md) for the proposed firewall scope and rollback steps.
 
-## What's in this repo
+### What's in this repo
 
 - `scripts/Test-HostReadiness.ps1` checks hardware, network adapters, and Sunshine-related service and firewall state.
 - `scripts/New-StreamingReport.ps1` turns a session CSV into a Markdown report.
@@ -66,7 +81,7 @@ This first build stays on the home network. See the [LAN proposal](docs/NETWORK-
 
 The scripts don't install software or change network settings. The readiness checker uses read-only queries and writes a JSON file only when an output path is supplied. It leaves out hostnames, IP and MAC addresses, SSIDs, usernames, and serial numbers. A check it can't complete is marked unknown.
 
-## Run the tools
+### Run the tools
 
 Use Windows PowerShell 5.1 with its built-in CIM and network cmdlets. No extra PowerShell modules are needed. Run these from the repository folder when your execution policy permits it; don't weaken a managed policy to run the project.
 
@@ -78,7 +93,7 @@ Use Windows PowerShell 5.1 with its built-in CIM and network cmdlets. No extra P
 
 The report generator rejects mixed sample and measured data, duplicate run IDs, invalid values, and extra columns. Blank metrics stay blank. Its medians summarize the recorded runs, not individual frames or packets.
 
-## Log a real session
+### Log a real session
 
 Follow the [first-stream checklist](docs/TEST-PLAN.md). Copy the header from `examples/blank-session.csv` into a CSV under `results/`, which is excluded from Git.
 
@@ -94,7 +109,7 @@ The four metric fields can be blank: `average_fps`, `network_latency_ms`, `decod
 
 Record only what the overlay actually provides. Network latency and decode latency are separate measurements; neither is full controller-to-display latency. Review any results or screenshots for private information before publishing them.
 
-## Credits
+### Credits
 
 The helper scripts and documentation are included here. Sunshine and Moonlight are separate projects with their own licenses; their code isn't bundled in this repo.
 
