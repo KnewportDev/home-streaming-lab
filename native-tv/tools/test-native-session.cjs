@@ -99,6 +99,83 @@ test('temporary launch uses app17 and closes its server on rejection without exp
   }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
 
+test('public-page CLI accepts only explicit HTTPS GitHub Pages project URLs',()=>{
+  const parse=url=>tool.parseArgs(['launch-page','--state',path.resolve('private.json'),'--url',url]);
+  assert.equal(parse('https://knewportdev.github.io/home-streaming-lab/').url,'https://knewportdev.github.io/home-streaming-lab/');
+  assert.equal(parse('https://KnewportDev.github.io:443/home-streaming-lab/index.html').url,'https://knewportdev.github.io/home-streaming-lab/index.html');
+  for(const url of [
+    'http://knewportdev.github.io/home-streaming-lab/',
+    'https://github.io/project/',
+    'https://knewportdev.github.io.evil.example/project/',
+    'https://192.168.1.20/project/',
+    'https://user:private-token@knewportdev.github.io/project/',
+    'https://knewportdev.github.io:8443/project/',
+    'https://knewportdev.github.io/',
+    'https://knewportdev.github.io',
+    'https://knewportdev.github.io/project/?token=private-token',
+    'https://knewportdev.github.io/project/?',
+    'https://knewportdev.github.io/project/#section',
+    'https://knewportdev.github.io/project/#',
+    'https://knewportdev.github.io/project/%2e%2e/',
+    'https://knewportdev.github.io/project/../other/',
+    'https://knewportdev.github.io//project/',
+    'https://knewportdev.github.io/project/\\file',
+    'https://knewportdev.github.io/project/\n',
+    'javascript:alert(1)'
+  ])assert.throws(()=>parse(url));
+});
+
+async function pairedFixture(){
+  const fixture=await pendingFixture();fixture.state.phase='paired';fixture.state.token='private-page-token';delete fixture.state.challenge;
+  await tool.writeState(fixture.filename,fixture.state);return fixture;
+}
+
+test('public-page launch verifies the TV, sends app17 with auth only to the TV and reports no readiness claim',async()=>{
+  const {dir,filename}=await pairedFixture(),calls=[],events=[],url='https://knewportdev.github.io/home-streaming-lab/';
+  try{
+    const before=await fs.readFile(filename,'utf8');
+    await tool.execute({command:'launch-page',state:filename,url},{transport:async(tv,op,body,token)=>{
+      calls.push({tv,op,body,token});if(op==='info')return metadata();return {STATUS:{RESULT:'SUCCESS'}};
+    },createServer:()=>{throw Error('Public-page launch must not start a server');},report:e=>events.push(e)});
+    assert.deepEqual(calls.map(x=>x.op),['info','launch']);
+    assert.deepEqual(calls[1],{tv:'192.168.1.50',op:'launch',body:{VALUE:{NAME_SPACE:4,APP_ID:'17',MESSAGE:url}},token:'private-page-token'});
+    assert.equal(events.length,1);assert.equal(events[0].event,'page_launch_accepted');assert.equal(events[0].screenVerification,'pending');
+    assert.doesNotMatch(JSON.stringify(events),/private-page-token|192\.168|github\.io|owned-client-id|tv_javascript_ready/);
+    assert.equal(await fs.readFile(filename,'utf8'),before);
+  }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test('public-page launch refuses invalid state or URL before networking and rejects live profile changes before launch',async()=>{
+  const {dir,filename,state}=await pairedFixture(),url='https://knewportdev.github.io/home-streaming-lab/';
+  try{
+    for(const change of [{phase:'awaiting_pin'},{token:''},{restartPending:true},{challenge:{}}]){
+      await tool.writeState(filename,{...state,...change});let calls=0;
+      await assert.rejects(()=>tool.execute({command:'launch-page',state:filename,url},{transport:async()=>{calls++;throw Error('Unexpected request');}}));
+      assert.equal(calls,0);
+    }
+    await tool.writeState(filename,state);let badUrlCalls=0;
+    await assert.rejects(()=>tool.execute({command:'launch-page',state:filename,url:'https://example.com/project/'},{transport:async()=>{badUrlCalls++;}}));
+    assert.equal(badUrlCalls,0);
+    for(const response of [metadata('M657-G0'),metadata('V405-H9','different-firmware')]){
+      const calls=[];
+      await assert.rejects(()=>tool.execute({command:'launch-page',state:filename,url},{transport:async(tv,op)=>{calls.push(op);return response;}}));
+      assert.deepEqual(calls,['info']);
+    }
+  }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test('a rejected public-page launch produces no acceptance event or private response detail',async()=>{
+  const {dir,filename}=await pairedFixture(),events=[];
+  try{
+    await assert.rejects(()=>tool.execute({command:'launch-page',state:filename,url:'https://knewportdev.github.io/home-streaming-lab/'},{transport:async(tv,op)=>{
+      if(op==='info')return metadata();return {STATUS:{RESULT:'FAILURE',DETAIL:'private-page-token'},ITEM:{AUTH_TOKEN:'private-page-token'}};
+    },report:e=>events.push(e)}),error=>{
+      assert.equal(error.tvStatus,'FAILURE');assert.doesNotMatch(tool.safeErrorMessage(error),/private-page-token/);return true;
+    });
+    assert.deepEqual(events,[]);
+  }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
 test('safe API diagnostics preserve known status codes without exposing body, detail or unknown status text',()=>{
   let blocked;try{tool.validateTvResponse({STATUS:{RESULT:'blocked',DETAIL:'PIN2468 AUTH private-token'},ITEM:{AUTH_TOKEN:'private-token'}},'start');}catch(e){blocked=e;}
   assert.equal(blocked.tvStatus,'BLOCKED');assert.equal(tool.safeErrorMessage(blocked),'TV reported BLOCKED: pairing is already in progress.');

@@ -27,4 +27,4 @@ Keep assets local and avoid external fonts, analytics, or advertising. Preserve 
 
 Credentials, pairing state, PINs, raw device responses, and personal configuration remain local and ignored. Use `.private/` for device state and captures, and `home/config.json` for personal configuration. Never put those values in source, screenshots, issues, logs, CI, or commit messages. Shared examples use placeholder addresses and synthetic values.
 
-The repository workflow checks code and packages a static preview from an explicit asset allowlist. Preserve the branch, checks, preview artifact, TV verification, and future release progression. CI does not deploy to or monitor the TV. Keep MIT attribution and upstream reference links intact.
+The repository workflow checks code and packages a static preview from an explicit asset allowlist. Successful main-branch builds publish that same public preview to GitHub Pages. Preserve the branch, checks, preview artifact, TV verification, and future release progression. CI does not launch software on or monitor the TV. Keep MIT attribution and upstream reference links intact.

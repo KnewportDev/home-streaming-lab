@@ -16,20 +16,33 @@ const HELP='Native TV session (Node.js24; no dependencies)\n\n'+
   '  node tools/native-session.cjs pair-retry --state ABSOLUTE_PRIVATE_FILE\n'+
   '  node tools/native-session.cjs pair-restart --state ABSOLUTE_PRIVATE_FILE\n'+
   '  node tools/native-session.cjs pair-code --state ABSOLUTE_PRIVATE_FILE --pin FOUR_DIGIT_PIN\n'+
-  '  node tools/native-session.cjs serve-launch --state ABSOLUTE_PRIVATE_FILE --bind 192.168.1.20 --port 8137 --home HOME_DIRECTORY\n\n'+
+  '  node tools/native-session.cjs serve-launch --state ABSOLUTE_PRIVATE_FILE --bind 192.168.1.20 --port 8137 --home HOME_DIRECTORY\n'+
+  '  node tools/native-session.cjs launch-page --state ABSOLUTE_PRIVATE_FILE --url https://OWNER.github.io/PROJECT/\n\n'+
   'State parent directory must exist; pair-start exclusively creates a new private file.\n'+
   'pair-restart preserves a private recovery snapshot, waits 30 seconds, and requests one fresh PIN.\n'+
   'Home requires index.html, home.css, home.js, and config.json.\n'+
+  'launch-page opens an explicit public GitHub Pages project URL; screen verification remains manual.\n'+
   'Each action verifies V405-H9/H19 and firmware1.720.9.1-1.\n'+
   'A launch acceptance is separate from the TV JavaScript readiness callback.\n'+
   'Keep serve-launch running; Ctrl+C stops only its local server.\n';
 function privateIp(ip){if(!isPrivateIPv4(ip))fail('A private IPv4 address is required.');return ip;}
+function pageUrl(value){
+  const message='Use an HTTPS GitHub Pages project URL without credentials, encoded paths, query, fragment, or a nondefault port.';
+  if(typeof value!=='string'||value.length>2048||!/^https:\/\//i.test(value)||/[\s\\%?#]/.test(value))fail(message);
+  let url;try{url=new URL(value);}catch{fail(message);}
+  const rawPath=value.slice(value.indexOf('/',value.indexOf('://')+3));
+  if(url.protocol!=='https:'||url.username||url.password||url.port||
+    !/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.github\.io$/.test(url.hostname)||
+    !/^\/[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*\/?$/.test(rawPath)||
+    rawPath.split('/').some(part=>part==='.'||part==='..'))fail(message);
+  return url.href;
+}
 
 function parseArgs(argv){
   if(argv.includes('--help')||argv.includes('-h'))return {command:'help'};
   const [command,...args]=argv, out={command};
-  const allowed={ 'pair-start':['tv','state'], 'pair-retry':['state'], 'pair-restart':['state'], 'pair-code':['state','pin'], 'serve-launch':['state','bind','port','home'] };
-  if(!allowed[command])fail('Use pair-start, pair-retry, pair-restart, pair-code, or serve-launch.');
+  const allowed={ 'pair-start':['tv','state'], 'pair-retry':['state'], 'pair-restart':['state'], 'pair-code':['state','pin'], 'serve-launch':['state','bind','port','home'], 'launch-page':['state','url'] };
+  if(!allowed[command])fail('Use pair-start, pair-retry, pair-restart, pair-code, serve-launch, or launch-page.');
   for(let i=0;i<args.length;i+=2){const key=args[i]?.replace(/^--/,'');
     if(!args[i]?.startsWith('--')||!allowed[command].includes(key)||out[key]!==undefined||!args[i+1]||args[i+1].startsWith('--'))fail('Invalid or duplicate command option.');
     out[key]=args[i+1];
@@ -38,6 +51,7 @@ function parseArgs(argv){
   if(!path.isAbsolute(out.state))fail('--state must be an absolute private file path.');
   if(out.tv)privateIp(out.tv);if(out.bind)privateIp(out.bind);
   if(command==='pair-code'&&!/^\d{4}$/.test(out.pin))fail('The PIN must contain exactly four digits.');
+  if(command==='launch-page')out.url=pageUrl(out.url);
   if(command==='serve-launch'){out.port=Number(out.port||8137);if(!Number.isInteger(out.port)||out.port<1024||out.port>65535)fail('Use a port from1024 to65535.');}
   return out;
 }
@@ -213,6 +227,14 @@ async function execute(options,{transport=request,createServer=http.createServer
       throw error;
     }
     return;
+  }
+  if(options.command==='launch-page'){
+    const url=pageUrl(options.url);
+    if(state.phase!=='paired'||typeof state.token!=='string'||!state.token||state.token.length>4096||Object.hasOwn(state,'challenge')||Object.hasOwn(state,'restartPending'))fail('Complete PIN pairing before launching a public page.');
+    await verify(state.tv,state.metadata,transport);
+    const response=await transport(state.tv,'launch',{VALUE:{NAME_SPACE:4,APP_ID:'17',MESSAGE:url}},state.token);
+    validateTvResponse(response,'launch');
+    report({event:'page_launch_accepted',screenVerification:'pending',instruction:'Check that the page appears and remote controls respond on the TV.'});return;
   }
   await verify(state.tv,state.metadata,transport);
   if(options.command==='pair-code'){

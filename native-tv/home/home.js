@@ -36,14 +36,6 @@
   }
   updateClock(); root.setInterval(updateClock, 30000); setAccent(savedAccent, false);
   function report(message) { status.textContent = message; }
-  function telemetryReady() {
-    /* Same-origin execution receipt only. No identifiers, tokens or key contents. */
-    try {
-      var receipt = new XMLHttpRequest();
-      receipt.open("GET", "telemetry?event=ready", true); receipt.timeout = 3000;
-      receipt.send();
-    } catch (ignored) { /* Receipt availability never blocks the TV UI. */ }
-  }
   function focus(index) { selected = Math.max(0, Math.min(index, tiles.length - 1)); if (tiles[selected]) tiles[selected].focus(); }
   function showHelp() { returnFocus = doc.activeElement; help.hidden = false; close.focus(); }
   function hideHelp() { help.hidden = true; if (returnFocus && doc.body.contains(returnFocus)) returnFocus.focus(); else focus(selected); }
@@ -146,9 +138,9 @@
   });
   render();
   request("config.json", "GET", null, null, function (error, config) {
-    if (error) { report("Setup is unavailable · open Settings"); telemetryReady(); return; }
+    if (error) { report("Setup is unavailable · open Settings"); return; }
     if (!config || !Array.isArray(config.apps) || config.apps.length > 12 || !config.apps.every(validApp)) {
-      report("App setup needs attention · open Settings"); telemetryReady(); return;
+      report("App setup needs attention · open Settings"); return;
     }
     catalog = config.apps; bridgeEnabled = !!(config.nativeBridge && config.nativeBridge.enabled === true);
     testMode = config.testMode === true;
@@ -161,6 +153,5 @@
     if (typeof config.title === "string" && config.title.length <= 64 && config.title.trim()) doc.getElementById("title").textContent = config.title;
     doc.getElementById("bridge-state").textContent = nativeOrigin && bridgeEnabled ? "App controls enabled. Launch support still needs verification." : "App controls are not connected yet.";
     render(); report(testMode ? "Interface preview" : (catalog.length ? "Choose an app to open" : "No apps added yet"));
-    telemetryReady();
   });
 }(typeof window !== "undefined" ? window : {}));
