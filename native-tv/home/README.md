@@ -44,4 +44,4 @@ After the UI initializes and its relative `config.json` request finishes, the pa
 
 ## Current hardware identification
 
-The parent session read the television device-info response and reports model `V405-H9`, firmware `1.720.9.1-1`, ViziOS `mtk5691-1.6.1770.1`. Native loopback compatibility and persistent installation on this hardware remain unverified. A PC-hosted Conjure session can run the menu but does not satisfy the native-origin gate.
+A read-only device-information check reported model `V405-H9`, firmware `1.720.9.1-1`, ViziOS `mtk5691-1.6.1770.1`. Native loopback compatibility and persistent installation on this hardware remain unverified. A PC-hosted Conjure session is the planned first on-TV test and does not satisfy the native-origin gate.

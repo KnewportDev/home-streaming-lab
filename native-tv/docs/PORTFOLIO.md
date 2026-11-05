@@ -34,4 +34,4 @@ Built a dependency-free Node.js homelab toolkit for VIZIO TV discovery, metadata
 
 The observed target is V405-H9 on firmware `1.720.9.1-1`. Network metadata and the Windows failure were observed directly; the file-handling fix and other boundaries have offline regression coverage. PIN pairing is pending completion. No completed TV installation, root access, firmware replacement, or persistent Home modification is claimed.
 
-As milestones are verified, update this summary with the tested commit and hardware observations. Keep the explanation focused on decisions and evidence rather than expanding it into unsupported claims about production deployment or independent authorship.
+As milestones are verified, update this summary with the tested commit and hardware observations. Use the linked implementation and engineering notes to explain the design decisions and remaining work.

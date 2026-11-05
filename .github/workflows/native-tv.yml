@@ -20,8 +20,6 @@ jobs:
     defaults:
       run:
         working-directory: native-tv
-    env:
-      VIZIO_PREVIEW_ARCHIVE: ${{ runner.temp }}/native-tv-preview-${{ github.sha }}.zip
     steps:
       - name: Check out source
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -37,6 +35,8 @@ jobs:
       - name: Run offline tests
         run: node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs
       - name: Package browser preview
+        env:
+          VIZIO_PREVIEW_ARCHIVE: ${{ runner.temp }}/native-tv-preview-${{ github.sha }}.zip
         run: |
           python3 - <<'PY'
           import os
@@ -63,7 +63,7 @@ jobs:
       - name: Upload browser preview
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          path: ${{ env.VIZIO_PREVIEW_ARCHIVE }}
+          path: ${{ runner.temp }}/native-tv-preview-${{ github.sha }}.zip
           archive: false
           if-no-files-found: error
           retention-days: 14
