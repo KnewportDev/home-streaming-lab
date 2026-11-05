@@ -1,14 +1,14 @@
-# Local Home for Vizio — native launcher candidate
+# Local Media Center for Vizio
 
-**Deployment and compatibility are UNVERIFIED on VIZIO V405-H9.** This is executable launcher source for the stock TV browser, with a documented native API adapter. It is not replacement firmware, an Android installation, a root exploit, or evidence that a TV was modified.
+An original, remote-friendly interface for the stock TV browser, with an early-2000s Media Center appearance. The [public HTTPS preview](https://knewportdev.github.io/home-streaming-lab/) is deployed and checked in a desktop browser. On the V405-H9, PIN pairing and authenticated Conjure launch requests are verified; the TV accepted the HTTPS page request, while its screen remains unverified. The earlier PC-hosted attempt produced no readiness callback and the owner saw “no network detected.”
 
 ## Runtime
 
-Serve these files from the TV's existing internal static server only after a separate, model-specific installation route is verified. The reference project runs a Home page at `http://127.0.0.1:12345/scfs/codex-home/index.html`. This package does not install files or change that server. Opening the page on a computer displays its interface but deliberately disables native TV calls.
+For development, use the project's local preview server. For a TV test, the paired `launch-page` helper can request the public HTTPS Pages URL without a PC asset server. Alternatively, `serve-launch` serves the files from the PC and injects an execution receipt. Both routes leave native app controls disabled. An internal installation route would need separate model-specific verification; the reference project's internal origin is `http://127.0.0.1:12345`.
 
-Copy `config.example.json` to `config.json` beside the page. Initially the catalog is empty, and native access is disabled. Up to 12 apps are accepted. Each app requires `label` (nonempty text) and `launch` containing the TV-observed `NAME_SPACE` integer, `APP_ID` string, and `MESSAGE` string or null. No example app identifiers are included because no identifiers have been verified on the user's TV. Obtain values from the actual television or a confirmed model-specific app catalog; a launch value cannot install an app.
+Local serving uses `config.json` beside the page; copy the shared example for initial setup. The public bundle uses only `config.example.json`, renamed to `config.json`. Its catalog is empty and native access is disabled. Up to 12 apps are accepted, each with a nonempty `label` and an observed `launch` object containing `NAME_SPACE`, `APP_ID`, and `MESSAGE`. Conjure's app 17 identifier is verified for the test launcher; no user-facing application catalog has been verified or populated.
 
-Set `nativeBridge.enabled` to `true` only after native installation and interface support are verified. The origin guard requires precisely HTTP, host `127.0.0.1`, port `12345`. The fixed adapter calls local `http://127.0.0.1:7346/app/get_auth_token`, reads `ITEM.VALUE`, then sends `PUT /app/launch` with header `AUTH` and JSON `{ "VALUE": <observed launch object> }`. It requires `STATUS.RESULT` to equal `SUCCESS` before reporting **request accepted**. It cannot confirm the resulting app actually opened. Tokens stay in memory for that launch and are never persisted. There is no paired-token PC API, proxy, fallback transport, Internet request, analytics or remote resource.
+Set `nativeBridge.enabled` to `true` only after native installation and interface support are verified. The origin guard requires precisely HTTP, host `127.0.0.1`, port `12345`. The fixed adapter calls local `http://127.0.0.1:7346/app/get_auth_token`, reads `ITEM.VALUE`, then sends `PUT /app/launch` with header `AUTH` and JSON `{ "VALUE": <observed launch object> }`. It requires `STATUS.RESULT` to equal `SUCCESS` before reporting **request accepted**. Tokens stay in memory for that launch and are never persisted. Public HTTPS pages cannot satisfy this origin guard. They fetch only their static assets and configuration; no TV credentials, analytics, or external assets are included.
 
 ## Remote
 
@@ -19,6 +19,8 @@ Arrow keys navigate only populated tiles, with up to four columns on a TV. Up fr
 The visual direction is early-2000s media-center software: blue glass, chrome edges, soft light trails and a strong remote-focus glow. Aqua, Cobalt and Silver are local accent choices. The stable internal theme keys are `sage`, `glacier` and `amber` respectively. Only the selected accent is stored, under `local-home.accent`; no credentials are stored by the page. Storage failure leaves the interface usable for the current session. The clock and greeting use the rendering device's local time.
 
 From the `native-tv` project directory, run `node tools/preview-home.cjs`, then open the printed localhost URL on that computer. It serves only the four interface assets and never sends commands to the TV. Restart the preview process after editing files. This browser preview does not prove on-TV compatibility.
+
+The [verified Pages build](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065) passed 34 tests and deployed commit `3dfa54ff948a9d4a8e867678b226c8c6ecef22ee`. On the live site, Settings opened, Cobalt changed the theme, and Escape closed the dialog and restored focus. Those observations were made in a desktop browser.
 
 ## Primary compatibility evidence
 
@@ -40,8 +42,8 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ## Local execution receipt
 
-After the UI initializes and its relative `config.json` request finishes, the page sends a relative `GET telemetry?event=ready`. This stays on the serving origin and contains no identifiers, token values, or key contents. A receipt proves this code executed; it does not establish successful app launch or native installation. Receipt failure does not block the interface. The page does not create or read cookies. With an empty catalog, the page shows one TV-information control instead of placeholder apps. `testMode` displays a Preview badge and the optional `device` object supplies the observed model/firmware for the information panel.
+The local `serve-launch` server injects a same-origin `GET telemetry?event=ready` receipt. Only a callback from the expected TV is recorded as `tv_javascript_ready`; a PC request does not count. This verifies execution of the injected callback, while screen appearance and remote behavior require direct observation. Public static files contain no receipt request. The page does not use cookies. With an empty catalog it shows one working This TV control. `testMode` displays a Preview badge; optional local `device` configuration supplies model/firmware information.
 
 ## Current hardware identification
 
-A read-only device-information check reported model `V405-H9`, firmware `1.720.9.1-1`, ViziOS `mtk5691-1.6.1770.1`. Native loopback compatibility and persistent installation on this hardware remain unverified. A PC-hosted Conjure session is the planned first on-TV test and does not satisfy the native-origin gate.
+A read-only device-information check reported model `V405-H9`, firmware `1.720.9.1-1`, ViziOS `mtk5691-1.6.1770.1`. Pairing succeeded and an authenticated current-app read confirmed Conjure app 17 / namespace 4. The PC-hosted attempt did not render successfully; Windows has an explicit inbound Node block and no firewall changes were made. The public HTTPS page is deployed, and its TV launch request was accepted. Actual TV rendering, native loopback compatibility, and persistent installation remain unverified.

@@ -53,7 +53,7 @@ The Windows file probe established that `'r+'` opened the disposable file succes
 - The updated file can be read back as valid state.
 - Separate tests preserve paired, awaiting-PIN, and incomplete-challenge states during recovery.
 
-The test is named `Windows-compatible writes use exclusive creation and r+ before handle truncation` in [test-native-session.cjs](../tools/test-native-session.cjs). It uses synthetic state and a temporary directory. This validates the file-handling fix; it does not establish completed TV pairing or installation.
+The test is named `Windows-compatible writes use exclusive creation and r+ before handle truncation` in [test-native-session.cjs](../tools/test-native-session.cjs). It uses synthetic state and a temporary directory. This validates file handling; live pairing completion is recorded separately below.
 
 ### Reproduce the offline checks
 
@@ -65,7 +65,7 @@ node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-u
 node --test --test-name-pattern="Windows-compatible writes" tools/test-native-session.cjs
 ```
 
-Recorded baseline: **30 tests passed, 0 failed** for the full suite. Tests use synthetic inputs, mocked TV transports, loopback servers, and temporary files. No TV credentials or home-network access are required.
+Recorded baseline: **34 tests passed, 0 failed, 0 skipped** for the full suite. Tests use synthetic inputs, mocked TV transports, loopback servers, and temporary files. No TV credentials or home-network access are required.
 
 To compare the underlying open behavior on a Windows runtime, this optional PowerShell probe creates and removes only its own temporary files:
 
@@ -103,15 +103,25 @@ The [official VIZIO launcher's](https://vizio-pm.s3-us-west-1.amazonaws.com/conj
 
 Recovery regressions cover ordering, snapshot preservation, invalid states, device mismatch, known rejection, lost responses, failed state writes, and incomplete challenges. They use synthetic state and mocked responses. A fresh PIN still must come from the actual television; offline tests do not complete pairing.
 
-On the target Windows PC, the original file-symlink fixture could not be created without extra privileges. The test now falls back to a real directory junction and verifies both read and write rejection through the parent-path check. The complete 20-test session suite passed on that PC with zero skips after this fixture fix; production path checks were unchanged.
+On the target Windows PC, the original file-symlink fixture could not be created without extra privileges. The test now falls back to a real directory junction and verifies both read and write rejection through the parent-path check; production path checks were unchanged. The latest **24-test session suite passed on Windows with Node.js 24.22.1: 0 failed, 0 skipped**.
+
+## Pairing and page delivery
+
+Ordinary PIN pairing completed successfully. The TV accepted an authenticated Conjure launch request, and a subsequent authenticated current-app read reported **app 17, namespace 4**. These observations verify pairing and the control path.
+
+The PC asset server answered locally, but no JavaScript readiness callback arrived from the TV. The owner reported “no network detected.” An explicit inbound Node block was observed in Windows; the process was not elevated and no firewall rules were changed. Rendering remains unverified.
+
+The new delivery path uses `launch-page` to request the [public HTTPS interface](https://knewportdev.github.io/home-streaming-lab/). The paired credential is used only for the TV control request; no PC asset server or inbound firewall change is needed. The helper emitted `page_launch_accepted` for this URL. The public page uses shared example configuration with native app controls disabled. Local `serve-launch` injects its readiness callback; public static files contain no receipt request. The HTTPS request still requires direct TV-screen and remote-control observations.
 
 ## Delivery evidence and next experiment
 
-The workflow definition checks JavaScript syntax, runs the offline suite, and packages a six-file preview ZIP from an explicit allowlist. Local packaging verification confirmed the ZIP's entry list and that `config.json` comes from the shared example. A workflow definition or local test result is not evidence of a successful hosted run; use the matching GitHub Actions run when reporting CI status.
+The source repository is public and Pages uses GitHub Actions. The workflow checks JavaScript syntax, runs the offline suite, and packages a six-file preview ZIP. The same allowlist feeds Pages publishing after a successful main-branch build; pull requests do not deploy. `config.json` comes from the shared example, with no private state or credentials. Deployment permissions belong only to the Pages job.
 
-The earlier [hosted run for commit afabe7c](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42116511358) completed successfully with the then-current 23-test suite and uploaded its preview. The seven recovery regressions were added afterward; use the corresponding later run to verify that revision.
+The earlier [hosted run for commit afabe7c](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42116511358) passed its 23-test suite. The [recovery build](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42120822505) then passed 30 tests. [Run 42124719065](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065), at commit `3dfa54ff948a9d4a8e867678b226c8c6ecef22ee`, passed both the **34-test offline job** and the **Pages deployment job**. Pages settings confirmed the live URL.
 
-The next hardware experiment is to complete normal PIN pairing and request Conjure app 17 to load the local interface. Record API acceptance, a callback from the TV, visible layout, and remote behavior separately. Root access, replacement firmware, internal installation, and persistence remain unverified.
+The actual deployed site was opened in a desktop browser. The interface rendered, Settings opened, selecting Cobalt changed the theme, and Escape closed Settings and restored focus. A screenshot was captured. This verifies the deployed web interface in that browser; it does not establish that the TV has rendered it.
+
+The next observation is the TV screen after its accepted HTTPS launch, followed by remote-navigation checks. API acceptance, local callback evidence, browser rendering, TV-screen observations, and persistent installation remain separate milestones. Root access, replacement firmware, internal installation, and persistence remain unverified.
 
 ## References
 

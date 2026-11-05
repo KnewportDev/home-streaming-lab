@@ -13,7 +13,7 @@ A custom interface intended for the VIZIO TV’s own browser, supported by bound
 
 [Project guide](native-tv/README.md) · [Debugging case](native-tv/docs/ENGINEERING-NOTES.md#windows-pairing-state-write-failure) · [Source and tests](native-tv/tools/) · [Preview workflow](.github/workflows/native-tv.yml)
 
-**Status:** 34 offline tests pass. PIN pairing succeeded and the TV accepted an authenticated app 17 launch. The local page did not load: the TV displayed “no network detected,” and the PC has an explicit inbound Node.js firewall block. The pipeline now publishes the static interface through HTTPS GitHub Pages after a successful main-branch build; deployment and on-TV screen verification are pending. Persistent installation remains unverified.
+**Status:** 34 offline tests pass. PIN pairing succeeded and the TV accepted an authenticated app 17 launch. The local page did not load: the TV displayed “no network detected,” and the PC has an explicit inbound Node.js firewall block. The [live HTTPS interface](https://knewportdev.github.io/home-streaming-lab/) is deployed and [the 34-test build passed](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065). The TV accepted the new HTTPS launch; its screen and remote behavior still need direct verification. Persistent installation remains unverified.
 
 ### PC-to-TV streaming
 **Windows · PowerShell · Sunshine / Moonlight**

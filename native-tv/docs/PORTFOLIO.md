@@ -6,11 +6,13 @@
 
 An ongoing project to build a custom interface in a VIZIO TV's own browser and document what the actual hardware supports. The work combines LAN discovery, API integration, Windows troubleshooting, local credential handling, JavaScript interface development, and repeatable offline checks.
 
-Repository: [KnewportDev/home-streaming-lab](https://github.com/KnewportDev/home-streaming-lab), under `native-tv/`.
+Public repository: [KnewportDev/home-streaming-lab](https://github.com/KnewportDev/home-streaming-lab), under `native-tv/`.
+
+[Live interface](https://knewportdev.github.io/home-streaming-lab/) · [Passing build and deployment](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065)
 
 ## Resume bullet
 
-Built a dependency-free Node.js homelab toolkit for VIZIO TV discovery, metadata inspection, and PIN-pairing state management; diagnosed a Windows file-write failure, added a 30-test offline suite, and implemented a GitHub Actions pipeline that packages a local browser-interface preview.
+Built a dependency-free Node.js homelab toolkit for VIZIO TV discovery and authenticated launch requests; diagnosed Windows state-write and network-delivery issues, added 34 offline tests, and implemented a GitHub Actions workflow for preview packaging and Pages publishing.
 
 ## 60-second project explanation
 
@@ -18,7 +20,7 @@ Built a dependency-free Node.js homelab toolkit for VIZIO TV discovery, metadata
 
 “One useful debugging case was a pairing attempt that displayed a PIN on the TV but failed in the client. The problem was saving state: on the Windows machine, one numeric file-open flag combination returned EINVAL. I isolated that with disposable files, changed the update to use a checked file handle, and added a regression that runs offline.
 
-“The project now has 30 passing offline tests, a remote-friendly interface, and an automated preview pipeline. Completing authenticated launch and proving the interface runs on the TV are the next milestones. I keep those hardware results separate from what a local preview or a passing test can prove.”
+“Pairing now works, and the authenticated current-app API confirms Conjure after an accepted launch. The TV could not load the PC-hosted page, so I checked the delivery path and found an inbound Node block. I added public HTTPS delivery without changing the firewall. The pipeline now passes 34 tests and deploys the interface to Pages; I checked its settings and theme controls in a desktop browser. The TV accepted the HTTPS launch request, and the next milestone is observing the actual TV screen.”
 
 ## Evidence a reviewer can inspect
 
@@ -28,10 +30,10 @@ Built a dependency-free Node.js homelab toolkit for VIZIO TV discovery, metadata
 | API integration and recoverable state | [Pairing/session client](../tools/native-session.cjs) and [session tests](../tools/test-native-session.cjs). |
 | Windows fault isolation | [Failure, fix, and validation notes](ENGINEERING-NOTES.md#windows-pairing-state-write-failure). |
 | Interface development | [Local interface source](../home/) and the preview command in the [README](../README.md#start-with-the-local-preview). |
-| Repeatable delivery | Repository-root `.github/workflows/native-tv.yml`: scoped checks and an explicit preview asset allowlist. A specific hosted run should be cited only after it has completed. |
+| Repeatable delivery | Repository-root `.github/workflows/native-tv.yml`: checks, six allowlisted preview assets, and main-only Pages publishing. [Run 42124719065](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065) passed the 34-test job and deployed commit `3dfa54ff948a9d4a8e867678b226c8c6ecef22ee`. |
 
 ## Current result and next milestone
 
-The observed target is V405-H9 on firmware `1.720.9.1-1`. Network metadata and the Windows failure were observed directly; the file-handling fix and other boundaries have offline regression coverage. PIN pairing is pending completion. No completed TV installation, root access, firmware replacement, or persistent Home modification is claimed.
+The target is V405-H9 on firmware `1.720.9.1-1`. PIN pairing completed, a launch request was accepted, and an authenticated read confirmed app 17 / namespace 4. The local attempt returned no JavaScript callback and the owner reported “no network detected.” The source and HTTPS preview are public. The live page's settings, Cobalt theme, and Escape/focus behavior were checked in a desktop browser. The TV accepted the HTTPS launch request, but on-TV rendering remains pending. Root access, firmware replacement, and a persistent Home modification have not been established.
 
 As milestones are verified, update this summary with the tested commit and hardware observations. Use the linked implementation and engineering notes to explain the design decisions and remaining work.

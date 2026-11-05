@@ -4,9 +4,11 @@ A personal IT and networking homelab for building a custom interface in a VIZIO 
 
 The engineering problem is compatibility: finding what this particular TV exposes, integrating its control API, and proving each step on the actual firmware. The project includes a remote-friendly interface, bounded network discovery, a PIN-pairing client, and an offline test and preview pipeline.
 
-Canonical source: [KnewportDev/home-streaming-lab](https://github.com/KnewportDev/home-streaming-lab), under `native-tv/`. Original project code is [MIT licensed](LICENSE).
+Public source: [KnewportDev/home-streaming-lab](https://github.com/KnewportDev/home-streaming-lab), under `native-tv/`. Original project code is [MIT licensed](LICENSE).
 
-**Current status:** the interface and tools are built, the TV's metadata has been read, and the offline suite passes **30 tests**. PIN pairing is pending completion. Authenticated launch, JavaScript execution on the TV, internal installation, root access, and a persistent Home replacement remain unverified.
+[Live interface preview](https://knewportdev.github.io/home-streaming-lab/) · [Verified build and deployment](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065)
+
+**Current status:** PIN pairing succeeded, an authenticated launch was accepted, and the current-app API confirmed Conjure app **17**, namespace **4**. The local preview produced no TV callback and the owner saw “no network detected.” The public HTTPS preview is now deployed and checked in a desktop browser; the TV accepted its launch request, with TV-screen verification still pending. The hosted build passes **34 tests**, and all **24 session tests** also pass on the Windows PC.
 
 ## What this project demonstrates
 
@@ -16,7 +18,7 @@ Canonical source: [KnewportDev/home-streaming-lab](https://github.com/KnewportDe
 | API integration | Model and firmware checks, ordinary VIZIO PIN pairing, explicit pairing states, and the documented Conjure app 17 launch request. |
 | Windows troubleshooting | Isolated a state-write failure after the TV displayed a PIN; replaced the failing numeric open flags with a checked file handle and added a regression. |
 | Local data handling | Pairing state stays in an explicit private file; reports and status messages omit credentials and device identifiers. |
-| Testing and CI | 30 passing offline tests at the current baseline; a scoped GitHub Actions workflow checks source and packages only the preview's allowlisted files. |
+| Testing and CI | 34 passing offline tests; a scoped workflow checks source, packages an allowlisted preview, and publishes Pages only after a successful main-branch build. |
 | Interface development | Local HTML, CSS, and JavaScript with directional navigation, visible focus, and no external fonts or analytics. |
 
 Read the [engineering notes](docs/ENGINEERING-NOTES.md) for the debugging evidence and [portfolio summary](docs/PORTFOLIO.md) for a short project explanation.
@@ -37,6 +39,8 @@ The television responded directly on the home network on 5 November 2026:
 Older notes called the set V405-H19. The live API identity is used for this build; this does not establish whether the physical retail label uses a different suffix.
 
 The standard device-information API responds. The historical `/install` and `/scpl/` paths returned HTTP 404. Connections to the checked SSH, telnet, ADB, developer-debugging and internal-webserver ports timed out from the LAN. A network timeout does not establish whether a service exists internally.
+
+During the local preview test, the PC server responded locally but the TV did not return its readiness callback. Windows has an explicit inbound Node block; the process was not elevated, and no firewall rules were changed. Public HTTPS delivery avoids that inbound serving path. Its launch request was accepted; whether the interface appears on the TV still needs observation. [Engineering notes](docs/ENGINEERING-NOTES.md#pairing-and-page-delivery) record the separate control, browser, and screen evidence.
 
 **Root access, a bootloader unlock, replacement firmware, internal installation and a permanent Home replacement have not been established.** The custom browser interface is a separate, testable step toward the requested native-TV setup. It does not replace the TV's Linux kernel or proprietary firmware.
 
@@ -67,12 +71,12 @@ The preview automatically uses `home/config.example.json` when personal `home/co
 | `home/` | Computer or TV browser | Local HTML, CSS, JavaScript, remote navigation, and configuration. |
 | `preview-home.cjs` | Development PC | Local interface preview. |
 | `inspect-tv.cjs` | A PC on the TV's LAN | Bounded discovery and GET-only metadata inspection. |
-| `native-session.cjs` | A PC on the TV's LAN | PIN pairing, a temporary asset server, and Conjure app 17 launch. |
+| `native-session.cjs` | A PC on the TV's LAN | PIN pairing and authenticated Conjure app 17 launch, using either local assets or a public HTTPS page. |
 | `make-usb-diagnostic.cjs` | Development PC | Prepares a fixed diagnostic CGI; it does not execute it on a TV. |
 
-For a native browser test, the session tool serves four allowlisted assets from the PC under a random path. After pairing, it asks Conjure to open that URL. The TV executes the page and sends a small readiness callback. The PC must keep serving the files during this test.
+`serve-launch` serves four allowlisted assets from the PC under a random path and requests Conjure to open them. Its server injects a small readiness callback; a receipt is expected only if the TV loads and executes that page. The PC must keep serving during this test. `launch-page` instead requests a public HTTPS GitHub Pages project URL and starts no PC server.
 
-`launch_accepted` means the control request was accepted. `tv_javascript_ready` means the TV returned the page's JavaScript callback. Screen appearance, remote navigation, application launching, and persistence need their own observations. The internal native API adapter has a separate origin guard and is not enabled by a PC-hosted preview.
+`launch_accepted` means the control request was accepted. For local sessions, `tv_javascript_ready` means the TV returned the injected callback. Pages has no execution-receipt endpoint, so its screen and remote behavior must be observed directly. The internal native API adapter has a separate origin guard and stays disabled in both public and PC-hosted previews.
 
 ## Inspect
 
@@ -102,12 +106,25 @@ The first start creates a new state file exclusively. Use the PIN currently disp
 
 ```powershell
 node tools/native-session.cjs pair-code --state "$tvState" --pin TV_PIN
+```
+
+Reuse an existing paired state instead of starting pairing again. Open the deployed public interface with:
+
+```powershell
+node tools/native-session.cjs launch-page --state "$tvState" --url https://knewportdev.github.io/home-streaming-lab/
+```
+
+This verifies the paired target and sends the public HTTPS URL to Conjure. It does not start an inbound server or send pairing credentials to GitHub Pages. Confirm the interface on the TV and test Settings, the accent controls, and Back. The shared configuration keeps native app control disabled.
+
+For a local delivery test instead:
+
+```powershell
 node tools/native-session.cjs serve-launch --state "$tvState" --bind 192.168.1.20 --port 8137 --home ./home
 ```
 
-The native session requires `home/index.html`, `home/home.css`, `home/home.js`, and a local `home/config.json`. The PC must remain available during this test. If a firewall rule is needed, restrict it to the TV's IP and this server port. Ctrl+C stops the PC server; it does not issue a TV power or app command. On other operating systems, the same CLI works with an absolute state path in a private directory.
+Local serving requires `home/index.html`, `home/home.css`, `home/home.js`, and personal `home/config.json`. The PC must remain available and permit the TV to reach that port. No firewall changes are made by the helper. Ctrl+C stops only the PC server. On other operating systems, use an absolute state path in a private directory.
 
-An accepted launch request alone is not a successful test. Verify that the television requests the page and sends the expected readiness callback, and confirm the screen and remote controls with the owner. Native app-control integration and permanent installation remain separate checks.
+An accepted launch request alone does not prove rendering. For local delivery, check the TV readiness callback; for either route, confirm the actual screen and remote controls. Native app-control integration and permanent installation remain separate checks.
 
 Do not publish the pairing state file, authentication token, local addresses or raw television configuration. The source archive deliberately excludes those values.
 
@@ -146,9 +163,9 @@ node --check home/home.js
 node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs
 ```
 
-The recorded baseline on 5 November 2026 is **30 tests passed, 0 failed**. Tests use synthetic metadata, mocked TV transports, loopback servers, and temporary files; they do not contact the TV. They cover private address restrictions, metadata redaction, model/firmware checks, pairing recovery, Windows-compatible state writes, local serving restrictions, and diagnostic generation.
+The recorded baseline on 5 November 2026 is **34 tests passed, 0 failed, 0 skipped**. The 24-test session suite also passed on the target Windows PC with Node.js 24.22.1, with zero failures or skips. Tests use synthetic metadata, mocked TV transports, loopback servers, and temporary files; they do not contact the TV. Coverage includes request boundaries, metadata redaction, pairing recovery, Windows state writes, and local/public-page launch validation.
 
-The repository-root workflow, `.github/workflows/native-tv.yml`, defines these checks for changes to `native-tv/`. It uses Node.js 24 and commit-pinned GitHub actions. After successful checks, it packages a browser preview ZIP and uploads it to that workflow run. It has no TV credentials, device access, or deployment step. A passing build validates code; it does not prove TV installation.
+The repository-root workflow, `.github/workflows/native-tv.yml`, uses Node.js 24 and commit-pinned GitHub actions. It checks source and uploads a preview ZIP; successful pushes to `main` then deploy the same six allowlisted assets to GitHub Pages. Deployment permissions are isolated to the Pages job. It has no TV credentials or device access. [Run 42124719065](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065), for commit `3dfa54ff948a9d4a8e867678b226c8c6ecef22ee`, passed both the 34-test offline job and the Pages deployment job. The live interface was checked in a desktop browser: Settings opened, Cobalt changed the theme, and Escape closed Settings and restored focus. These browser checks do not establish TV rendering.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) for development conventions.
 
@@ -157,14 +174,15 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) for developmen
 1. **Branch:** make a focused change under `native-tv/` and open a pull request.
 2. **Checks:** GitHub Actions checks the interface's JavaScript syntax and runs the offline regression suite.
 3. **Preview artifact:** a successful run provides `native-tv-preview-COMMIT_SHA.zip` in its artifacts. It contains only `index.html`, `home.css`, `home.js`, a `config.json` made from the shared example, the interface README, and the MIT license. Personal configuration and state are excluded. Artifacts are retained for 14 days.
-4. **TV verification:** use the matching source revision for a temporary native browser session and record the exact model, firmware, page callback, screen behavior, and remote controls actually observed.
-5. **Future release:** promote a revision only with clear release notes describing the tested behavior and remaining limits. A firmware installer or persistent TV deployment is a future milestone, not part of the current workflow.
+4. **Public preview:** successful pushes to `main` publish those same six assets to Pages. Pull requests do not publish. Personal state and configuration never enter the deployed bundle.
+5. **TV verification:** use the matching revision, open it through the paired launcher, and record the screen and remote controls actually observed. Local server tests also record the readiness callback.
+6. **Future release:** publish release notes with the tested behavior and remaining limits. A firmware installer or persistent TV deployment remains a separate milestone.
 
 For local development, the Node preview command above is the quickest route. The downloaded artifact is a flat static bundle that can also be served by a local HTTP server; opening its HTML directly as a file may prevent its configuration request from working.
 
 ## Next milestones
 
-- Complete ordinary PIN pairing and capture the first verified TV JavaScript callback.
+- Confirm that the accepted HTTPS launch displays the deployed interface on the TV.
 - Validate screen layout, remote keys, and return-to-Home behavior on the exact target firmware.
 - Populate a small catalog using application identifiers observed on that TV.
 - Investigate a reversible internal hosting or installation route, with backups and observed restart behavior before calling it persistent.
