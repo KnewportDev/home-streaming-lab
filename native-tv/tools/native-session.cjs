@@ -7,7 +7,7 @@ const path=require('node:path'), crypto=require('node:crypto');
 const https=require('node:https'), http=require('node:http');
 const {isPrivateIPv4,normalizeMetadata}=require('./inspect-tv.cjs');
 const FIRMWARE='1.720.9.1-1', MODELS=new Set(['V405-H9','V405-H19']);
-const ROUTES=Object.freeze({info:['GET','/state/device/deviceinfo'],start:['PUT','/pairing/start'],pair:['PUT','/pairing/pair'],cancel:['PUT','/pairing/cancel'],launch:['PUT','/app/launch']});
+const ROUTES=Object.freeze({info:['GET','/state/device/deviceinfo'],start:['PUT','/pairing/start'],pair:['PUT','/pairing/pair'],launch:['PUT','/app/launch']});
 const ASSETS={'index.html':'text/html; charset=utf-8','home.css':'text/css; charset=utf-8','home.js':'text/javascript; charset=utf-8','config.json':'application/json; charset=utf-8'};
 const problem=message=>Object.assign(Error(message),{safeForDisplay:true});
 const fail=message=>{throw problem(message);};
@@ -18,7 +18,7 @@ const HELP='Native TV session (Node.js24; no dependencies)\n\n'+
   '  node tools/native-session.cjs pair-code --state ABSOLUTE_PRIVATE_FILE --pin FOUR_DIGIT_PIN\n'+
   '  node tools/native-session.cjs serve-launch --state ABSOLUTE_PRIVATE_FILE --bind 192.168.1.20 --port 8137 --home HOME_DIRECTORY\n\n'+
   'State parent directory must exist; pair-start exclusively creates a new private file.\n'+
-  'pair-restart cancels only the saved pending challenge and requests one fresh PIN.\n'+
+  'pair-restart preserves a private recovery snapshot, waits 30 seconds, and requests one fresh PIN.\n'+
   'Home requires index.html, home.css, home.js, and config.json.\n'+
   'Each action verifies V405-H9/H19 and firmware1.720.9.1-1.\n'+
   'A launch acceptance is separate from the TV JavaScript readiness callback.\n'+
@@ -86,7 +86,7 @@ function validateTvResponse(data,operation){
 }
 function request(tv,operation,body,token){
   privateIp(tv);if(!Object.hasOwn(ROUTES,operation))fail('Unsupported TV operation.');
-  if((operation==='start'||operation==='pair'||operation==='cancel')&&token)fail('Pairing requests cannot send an auth header.');
+  if((operation==='start'||operation==='pair')&&token)fail('Pairing requests cannot send an auth header.');
   const [method,url]=ROUTES[operation], bytes=body?Buffer.from(JSON.stringify(body)):null;
   return new Promise((resolve,reject)=>{
     let done=false,timer;const finish=(err,data)=>{if(done)return;done=true;clearTimeout(timer);err?reject(err):resolve(data);};
@@ -123,7 +123,7 @@ async function beginPairing(state,filename,transport,report){
   // silently start a new challenge over that uncertain state.
   state.challenge=challenge;
   state.phase=validToken&&validType?'awaiting_pin':'pairing_response_incomplete';
-  delete state.restartPending;
+  if(state.phase==='awaiting_pin')delete state.restartPending;
   await writeState(filename,state);
   if(state.phase!=='awaiting_pin')fail('TV pairing response was incomplete. Available challenge fields were preserved privately; do not start another pairing over this state.');
   report({event:'pairing_started',model:state.metadata.model,firmware:state.metadata.firmware.system,instruction:'Read the four-digit PIN on the TV and use pair-code.'});
@@ -168,7 +168,7 @@ function makeHandler({tv,bind,nonce,files,onReady}){
   };
 }
 
-async function execute(options,{transport=request,createServer=http.createServer,report=x=>process.stdout.write(JSON.stringify(x)+'\n')}={}){
+async function execute(options,{transport=request,createServer=http.createServer,wait=ms=>new Promise(resolve=>setTimeout(resolve,ms)),report=x=>process.stdout.write(JSON.stringify(x)+'\n')}={}){
   if(options.command==='pair-start'){
     privateIp(options.tv);
     const metadata=await verify(options.tv,null,transport);
@@ -188,17 +188,28 @@ async function execute(options,{transport=request,createServer=http.createServer
     const validType=Number.isInteger(type)&&type>=0&&type<=255;
     if(state.phase!=='awaiting_pin'||Object.hasOwn(state,'token')||Object.hasOwn(state,'restartPending')||!validToken||!validType)fail('Restart requires this client\'s complete pending challenge without a pairing credential. Existing pairing state was preserved.');
     await verify(state.tv,state.metadata,transport);
-    // The fixed response is the documented cancellation value, not a PIN guess.
-    // https://github.com/exiva/Vizio_SmartCast_API#cancel-pairing
-    const cancelled=await transport(state.tv,'cancel',{DEVICE_ID:state.deviceId,CHALLENGE_TYPE:type,PAIRING_REQ_TOKEN:token,RESPONSE_VALUE:'1111'});
-    validateTvResponse(cancelled,'cancel');
-    state.phase='starting';delete state.challenge;state.restartPending=true;
-    // Persist the guard before requesting another PIN. If saving its response
-    // fails, neither retry command may silently replace that uncertain session.
+    // VIZIO's launcher startOver() waits 30 seconds, then returns to ordinary
+    // pairing/start with the same client ID. This target rejects cancellation.
+    // https://vizio-pm.s3-us-west-1.amazonaws.com/conjure-launcher.html
+    const previous={...state},snapshot=options.state+'.recovery-'+crypto.randomUUID()+'.json';
+    await writeState(snapshot,previous,true);
+    state.phase='restart_waiting';state.restartPending=true;
+    // Keep the previous challenge privately and persist the guard before the
+    // wait or network action. A lost response cannot cause an automatic replay.
     await writeState(options.state,state);
-    try{await beginPairing(state,options.state,transport,report);}
+    report({event:'pairing_restart_wait',seconds:30,instruction:'Waiting 30 seconds before one fresh pairing request.'});
+    try{
+      await wait(30000);
+      state.phase='starting';await writeState(options.state,state);
+      await beginPairing(state,options.state,transport,report);
+    }
     catch(error){
-      if(state.phase==='starting'){state.phase='restart_uncertain';await writeState(options.state,state);}
+      if(error.tvStatus==='BLOCKED'&&state.phase==='starting'){
+        await writeState(options.state,previous);
+        const blocked=problem('TV reported BLOCKED: pairing is already in progress. Press Back on the TV remote to dismiss its pairing screen, then run pair-restart once.');
+        blocked.tvStatus='BLOCKED';throw blocked;
+      }
+      if(state.phase==='starting'||state.phase==='restart_waiting'){state.phase='restart_uncertain';await writeState(options.state,state);}
       throw error;
     }
     return;

@@ -14,7 +14,12 @@
     "visual_tv_test": "pending",
     "windows_state_write": "verified_on_target_pc",
     "offline_suite_total": 30,
-    "remote_partial_grid_checks": "passed"
+    "remote_partial_grid_checks": "passed",
+    "windows_session_tests": {
+      "passed": 20,
+      "failed": 0,
+      "skipped": 0
+    }
   },
   "native_execution_on_tv": "not_yet_verified",
   "root": "not_established",
@@ -29,5 +34,9 @@
       "Silver"
     ],
     "app_catalog": "empty_until_verified"
+  },
+  "publication": {
+    "repository": "KnewportDev/home-streaming-lab",
+    "visibility": "public"
   }
 }

@@ -97,9 +97,13 @@ Other operating systems or runtime versions may produce different results. The c
 
 The client can retain an `awaiting_pin` challenge after the on-screen PIN is no longer available. Reusing an earlier PIN failed on the target; the saved state still had no authentication credential. The original `pair-retry` command correctly refused to overwrite this pending challenge, but there was no explicit recovery command.
 
-`pair-restart` uses the [documented cancellation request](https://github.com/exiva/Vizio_SmartCast_API#cancel-pairing) with the saved client identity and challenge. It verifies the exact model and firmware first, requires a successful cancellation, then persists a restart guard before sending one fresh start. A failed cancellation preserves the original bytes. An uncertain start or failed response save remains guarded against repeated starts.
+The target rejected both the older challenge-based cancellation request and the client-ID/name cancellation form used by maintained SmartCast clients with `INVALID_PARAMETER`. Read-only device verification still passed, and the original pending state was preserved. These responses establish rejected cancellation requests; they do not establish that the challenge expired.
 
-Seven offline regressions cover the cancel/start ordering, failed cancellation, invalid states, device mismatch, lost start response, failed state save, and an incomplete fresh challenge. These checks use synthetic state and mocked responses. A fresh PIN still must come from the actual television; these tests do not complete pairing.
+The [official VIZIO launcher's](https://vizio-pm.s3-us-west-1.amazonaws.com/conjure-launcher.html) `startOver` function instead instructs a 30-second wait and returns to ordinary pairing start with the same client identifier. `pair-restart` follows that bounded flow: verify the target, save an exclusive private recovery snapshot, persist a guard, wait, and issue one start. A definitive `BLOCKED` response restores the pending state and requires the owner to dismiss the TV's pairing screen. Uncertain requests and failed saves remain guarded against replay.
+
+Recovery regressions cover ordering, snapshot preservation, invalid states, device mismatch, known rejection, lost responses, failed state writes, and incomplete challenges. They use synthetic state and mocked responses. A fresh PIN still must come from the actual television; offline tests do not complete pairing.
+
+On the target Windows PC, the original file-symlink fixture could not be created without extra privileges. The test now falls back to a real directory junction and verifies both read and write rejection through the parent-path check. The complete 20-test session suite passed on that PC with zero skips after this fixture fix; production path checks were unchanged.
 
 ## Delivery evidence and next experiment
 

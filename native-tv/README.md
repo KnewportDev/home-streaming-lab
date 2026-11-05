@@ -129,7 +129,7 @@ If this client's state is `awaiting_pin` and the displayed PIN is no longer curr
 node tools/native-session.cjs pair-restart --state "$tvState"
 ```
 
-The helper verifies the TV, cancels only the challenge saved by this client, and requests one fresh PIN with the same client identity. Use the new PIN displayed on the screen. A failed or unconfirmed cancellation preserves the original state. A lost response or failed state write after the new start blocks another automatic retry; do not delete that state to force a restart. The helper refuses paired sessions and incomplete challenges.
+The helper verifies the TV, saves a private recovery snapshot, waits 30 seconds, and makes one pairing-start request with the same client identity. This follows VIZIO's launcher recovery flow. Use the new PIN displayed on the screen. If the TV reports `BLOCKED`, dismiss its current pairing screen with Back on the physical remote before explicitly trying again. A lost response or failed state write blocks automatic replay; do not delete state to force a restart. The helper refuses paired sessions and incomplete challenges.
 
 ## Optional USB diagnostic preparation
 
