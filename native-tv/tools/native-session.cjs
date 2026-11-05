@@ -7,16 +7,18 @@ const path=require('node:path'), crypto=require('node:crypto');
 const https=require('node:https'), http=require('node:http');
 const {isPrivateIPv4,normalizeMetadata}=require('./inspect-tv.cjs');
 const FIRMWARE='1.720.9.1-1', MODELS=new Set(['V405-H9','V405-H19']);
-const ROUTES=Object.freeze({info:['GET','/state/device/deviceinfo'],start:['PUT','/pairing/start'],pair:['PUT','/pairing/pair'],launch:['PUT','/app/launch']});
+const ROUTES=Object.freeze({info:['GET','/state/device/deviceinfo'],start:['PUT','/pairing/start'],pair:['PUT','/pairing/pair'],cancel:['PUT','/pairing/cancel'],launch:['PUT','/app/launch']});
 const ASSETS={'index.html':'text/html; charset=utf-8','home.css':'text/css; charset=utf-8','home.js':'text/javascript; charset=utf-8','config.json':'application/json; charset=utf-8'};
 const problem=message=>Object.assign(Error(message),{safeForDisplay:true});
 const fail=message=>{throw problem(message);};
 const HELP='Native TV session (Node.js24; no dependencies)\n\n'+
   '  node tools/native-session.cjs pair-start --tv 192.168.1.50 --state ABSOLUTE_PRIVATE_FILE\n'+
   '  node tools/native-session.cjs pair-retry --state ABSOLUTE_PRIVATE_FILE\n'+
+  '  node tools/native-session.cjs pair-restart --state ABSOLUTE_PRIVATE_FILE\n'+
   '  node tools/native-session.cjs pair-code --state ABSOLUTE_PRIVATE_FILE --pin FOUR_DIGIT_PIN\n'+
   '  node tools/native-session.cjs serve-launch --state ABSOLUTE_PRIVATE_FILE --bind 192.168.1.20 --port 8137 --home HOME_DIRECTORY\n\n'+
   'State parent directory must exist; pair-start exclusively creates a new private file.\n'+
+  'pair-restart cancels only the saved pending challenge and requests one fresh PIN.\n'+
   'Home requires index.html, home.css, home.js, and config.json.\n'+
   'Each action verifies V405-H9/H19 and firmware1.720.9.1-1.\n'+
   'A launch acceptance is separate from the TV JavaScript readiness callback.\n'+
@@ -26,8 +28,8 @@ function privateIp(ip){if(!isPrivateIPv4(ip))fail('A private IPv4 address is req
 function parseArgs(argv){
   if(argv.includes('--help')||argv.includes('-h'))return {command:'help'};
   const [command,...args]=argv, out={command};
-  const allowed={ 'pair-start':['tv','state'], 'pair-retry':['state'], 'pair-code':['state','pin'], 'serve-launch':['state','bind','port','home'] };
-  if(!allowed[command])fail('Use pair-start, pair-retry, pair-code, or serve-launch.');
+  const allowed={ 'pair-start':['tv','state'], 'pair-retry':['state'], 'pair-restart':['state'], 'pair-code':['state','pin'], 'serve-launch':['state','bind','port','home'] };
+  if(!allowed[command])fail('Use pair-start, pair-retry, pair-restart, pair-code, or serve-launch.');
   for(let i=0;i<args.length;i+=2){const key=args[i]?.replace(/^--/,'');
     if(!args[i]?.startsWith('--')||!allowed[command].includes(key)||out[key]!==undefined||!args[i+1]||args[i+1].startsWith('--'))fail('Invalid or duplicate command option.');
     out[key]=args[i+1];
@@ -84,7 +86,7 @@ function validateTvResponse(data,operation){
 }
 function request(tv,operation,body,token){
   privateIp(tv);if(!Object.hasOwn(ROUTES,operation))fail('Unsupported TV operation.');
-  if((operation==='start'||operation==='pair')&&token)fail('Pairing requests cannot send an auth header.');
+  if((operation==='start'||operation==='pair'||operation==='cancel')&&token)fail('Pairing requests cannot send an auth header.');
   const [method,url]=ROUTES[operation], bytes=body?Buffer.from(JSON.stringify(body)):null;
   return new Promise((resolve,reject)=>{
     let done=false,timer;const finish=(err,data)=>{if(done)return;done=true;clearTimeout(timer);err?reject(err):resolve(data);};
@@ -121,6 +123,7 @@ async function beginPairing(state,filename,transport,report){
   // silently start a new challenge over that uncertain state.
   state.challenge=challenge;
   state.phase=validToken&&validType?'awaiting_pin':'pairing_response_incomplete';
+  delete state.restartPending;
   await writeState(filename,state);
   if(state.phase!=='awaiting_pin')fail('TV pairing response was incomplete. Available challenge fields were preserved privately; do not start another pairing over this state.');
   report({event:'pairing_started',model:state.metadata.model,firmware:state.metadata.firmware.system,instruction:'Read the four-digit PIN on the TV and use pair-code.'});
@@ -175,9 +178,30 @@ async function execute(options,{transport=request,createServer=http.createServer
   }
   const state=await readState(options.state);
   if(options.command==='pair-retry'){
-    if(state.phase!=='starting'||Object.hasOwn(state,'token')||Object.hasOwn(state,'challenge'))fail('Retry is only available for an untouched starting state without a token or challenge. Existing pairing state was preserved.');
+    if(state.phase!=='starting'||Object.hasOwn(state,'token')||Object.hasOwn(state,'challenge')||Object.hasOwn(state,'restartPending'))fail('Retry is only available for an untouched starting state without a token or challenge. Existing pairing state was preserved.');
     await verify(state.tv,state.metadata,transport);
     await beginPairing(state,options.state,transport,report);return;
+  }
+  if(options.command==='pair-restart'){
+    const challenge=state.challenge,token=challenge?.requestToken,type=challenge?.type;
+    const validToken=(typeof token==='string'&&token.length>0&&token.length<=4096)||(Number.isSafeInteger(token)&&token>=0);
+    const validType=Number.isInteger(type)&&type>=0&&type<=255;
+    if(state.phase!=='awaiting_pin'||Object.hasOwn(state,'token')||Object.hasOwn(state,'restartPending')||!validToken||!validType)fail('Restart requires this client\'s complete pending challenge without a pairing credential. Existing pairing state was preserved.');
+    await verify(state.tv,state.metadata,transport);
+    // The fixed response is the documented cancellation value, not a PIN guess.
+    // https://github.com/exiva/Vizio_SmartCast_API#cancel-pairing
+    const cancelled=await transport(state.tv,'cancel',{DEVICE_ID:state.deviceId,CHALLENGE_TYPE:type,PAIRING_REQ_TOKEN:token,RESPONSE_VALUE:'1111'});
+    validateTvResponse(cancelled,'cancel');
+    state.phase='starting';delete state.challenge;state.restartPending=true;
+    // Persist the guard before requesting another PIN. If saving its response
+    // fails, neither retry command may silently replace that uncertain session.
+    await writeState(options.state,state);
+    try{await beginPairing(state,options.state,transport,report);}
+    catch(error){
+      if(state.phase==='starting'){state.phase='restart_uncertain';await writeState(options.state,state);}
+      throw error;
+    }
+    return;
   }
   await verify(state.tv,state.metadata,transport);
   if(options.command==='pair-code'){

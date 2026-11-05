@@ -6,7 +6,7 @@ The engineering problem is compatibility: finding what this particular TV expose
 
 Canonical source: [KnewportDev/home-streaming-lab](https://github.com/KnewportDev/home-streaming-lab), under `native-tv/`. Original project code is [MIT licensed](LICENSE).
 
-**Current status:** the interface and tools are built, the TV's metadata has been read, and the offline suite passes **23 tests**. PIN pairing is pending completion. Authenticated launch, JavaScript execution on the TV, internal installation, root access, and a persistent Home replacement remain unverified.
+**Current status:** the interface and tools are built, the TV's metadata has been read, and the offline suite passes **30 tests**. PIN pairing is pending completion. Authenticated launch, JavaScript execution on the TV, internal installation, root access, and a persistent Home replacement remain unverified.
 
 ## What this project demonstrates
 
@@ -16,7 +16,7 @@ Canonical source: [KnewportDev/home-streaming-lab](https://github.com/KnewportDe
 | API integration | Model and firmware checks, ordinary VIZIO PIN pairing, explicit pairing states, and the documented Conjure app 17 launch request. |
 | Windows troubleshooting | Isolated a state-write failure after the TV displayed a PIN; replaced the failing numeric open flags with a checked file handle and added a regression. |
 | Local data handling | Pairing state stays in an explicit private file; reports and status messages omit credentials and device identifiers. |
-| Testing and CI | 23 passing offline tests at the current baseline; a scoped GitHub Actions workflow checks source and packages only the preview's allowlisted files. |
+| Testing and CI | 30 passing offline tests at the current baseline; a scoped GitHub Actions workflow checks source and packages only the preview's allowlisted files. |
 | Interface development | Local HTML, CSS, and JavaScript with directional navigation, visible focus, and no external fonts or analytics. |
 
 Read the [engineering notes](docs/ENGINEERING-NOTES.md) for the debugging evidence and [portfolio summary](docs/PORTFOLIO.md) for a short project explanation.
@@ -121,6 +121,16 @@ Retry is available only for an existing `starting` state without a token or chal
 
 `BLOCKED` means a pairing operation is already in progress. Retrying does not clear that TV-side condition. An incomplete successful response preserves any available challenge fields privately and stops further retries. Never fabricate a challenge token or submit guessed PINs. Windows state updates use a verified existing file handle, following the fix for the observed `EINVAL` failure.
 
+### Refresh an old saved PIN challenge
+
+If this client's state is `awaiting_pin` and the displayed PIN is no longer current:
+
+```powershell
+node tools/native-session.cjs pair-restart --state "$tvState"
+```
+
+The helper verifies the TV, cancels only the challenge saved by this client, and requests one fresh PIN with the same client identity. Use the new PIN displayed on the screen. A failed or unconfirmed cancellation preserves the original state. A lost response or failed state write after the new start blocks another automatic retry; do not delete that state to force a restart. The helper refuses paired sessions and incomplete challenges.
+
 ## Optional USB diagnostic preparation
 
 ```sh
@@ -136,7 +146,7 @@ node --check home/home.js
 node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs
 ```
 
-The recorded baseline on 5 November 2026 is **23 tests passed, 0 failed**. Tests use synthetic metadata, mocked TV transports, loopback servers, and temporary files; they do not contact the TV. They cover private address restrictions, metadata redaction, model/firmware checks, pairing recovery, Windows-compatible state writes, local serving restrictions, and diagnostic generation.
+The recorded baseline on 5 November 2026 is **30 tests passed, 0 failed**. Tests use synthetic metadata, mocked TV transports, loopback servers, and temporary files; they do not contact the TV. They cover private address restrictions, metadata redaction, model/firmware checks, pairing recovery, Windows-compatible state writes, local serving restrictions, and diagnostic generation.
 
 The repository-root workflow, `.github/workflows/native-tv.yml`, defines these checks for changes to `native-tv/`. It uses Node.js 24 and commit-pinned GitHub actions. After successful checks, it packages a browser preview ZIP and uploads it to that workflow run. It has no TV credentials, device access, or deployment step. A passing build validates code; it does not prove TV installation.
 

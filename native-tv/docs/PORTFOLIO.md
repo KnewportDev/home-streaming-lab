@@ -10,7 +10,7 @@ Repository: [KnewportDev/home-streaming-lab](https://github.com/KnewportDev/home
 
 ## Resume bullet
 
-Built a dependency-free Node.js homelab toolkit for VIZIO TV discovery, metadata inspection, and PIN-pairing state management; diagnosed a Windows file-write failure, added a 23-test offline suite, and defined a GitHub Actions pipeline that packages a local browser-interface preview.
+Built a dependency-free Node.js homelab toolkit for VIZIO TV discovery, metadata inspection, and PIN-pairing state management; diagnosed a Windows file-write failure, added a 30-test offline suite, and implemented a GitHub Actions pipeline that packages a local browser-interface preview.
 
 ## 60-second project explanation
 
@@ -18,7 +18,7 @@ Built a dependency-free Node.js homelab toolkit for VIZIO TV discovery, metadata
 
 “One useful debugging case was a pairing attempt that displayed a PIN on the TV but failed in the client. The problem was saving state: on the Windows machine, one numeric file-open flag combination returned EINVAL. I isolated that with disposable files, changed the update to use a checked file handle, and added a regression that runs offline.
 
-“The project now has 23 passing offline tests, a remote-friendly interface, and CI configuration for preview packaging. Completing authenticated launch and proving the interface runs on the TV are the next milestones. I keep those hardware results separate from what a local preview or a passing test can prove.”
+“The project now has 30 passing offline tests, a remote-friendly interface, and an automated preview pipeline. Completing authenticated launch and proving the interface runs on the TV are the next milestones. I keep those hardware results separate from what a local preview or a passing test can prove.”
 
 ## Evidence a reviewer can inspect
 

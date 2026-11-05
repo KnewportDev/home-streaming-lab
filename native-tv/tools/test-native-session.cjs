@@ -6,6 +6,7 @@ const metadata=(model='V405-H9',firmware='1.720.9.1-1')=>({STATUS:{RESULT:'SUCCE
 test('CLI accepts explicit private targets and refuses public targets or arbitrary commands',()=>{
   assert.deepEqual(tool.parseArgs(['--help']),{command:'help'});
   assert.equal(tool.parseArgs(['pair-start','--tv','192.168.1.50','--state',path.resolve('private.json')]).command,'pair-start');
+  assert.equal(tool.parseArgs(['pair-restart','--state',path.resolve('private.json')]).command,'pair-restart');
   assert.throws(()=>tool.parseArgs(['pair-start','--tv','8.8.8.8','--state',path.resolve('private.json')]));
   assert.throws(()=>tool.parseArgs(['pair-code','--state',path.resolve('private.json'),'--pin','12345']));
   assert.throws(()=>tool.parseArgs(['launch','--url','http://anything']));
@@ -124,6 +125,136 @@ test('an incomplete successful challenge is saved privately and blocks another r
     await assert.rejects(()=>tool.execute({command:'pair-retry',state:filename},{transport:async(tv,op)=>op==='info'?metadata():{ITEM:{PAIRING_REQ_TOKEN:'private-challenge'}}}));
     const state=await tool.readState(filename);assert.equal(state.phase,'pairing_response_incomplete');assert.equal(state.challenge.requestToken,'private-challenge');
     let calls=0;await assert.rejects(()=>tool.execute({command:'pair-retry',state:filename},{transport:async()=>{calls++;}}));assert.equal(calls,0);
+  }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
+async function pendingFixture(){
+  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'native-session-restart-')),filename=path.join(dir,'private.json');
+  const meta=await tool.verify('192.168.1.50',null,async()=>metadata());
+  const state={schemaVersion:1,tv:'192.168.1.50',metadata:meta,deviceId:'owned-client-id',phase:'awaiting_pin',challenge:{type:1,requestToken:654321}};
+  await tool.writeState(filename,state,true);
+  return {dir,filename,state};
+}
+
+test('restart cancels only its saved challenge before one new start with the same device ID',async()=>{
+  const {dir,filename}=await pendingFixture(),calls=[],events=[];
+  try{
+    const transport=async(tv,op,body,token)=>{
+      calls.push({tv,op,body,token});
+      if(op==='info')return metadata();
+      if(op==='cancel'){
+        assert.equal((await tool.readState(filename)).phase,'awaiting_pin');
+        return {STATUS:{RESULT:'SUCCESS'},ITEM:{}};
+      }
+      if(op==='start'){
+        const pending=await tool.readState(filename);
+        assert.equal(pending.phase,'starting');assert.equal(pending.restartPending,true);assert.equal(Object.hasOwn(pending,'challenge'),false);
+        return {ITEM:{PAIRING_REQ_TOKEN:987654,CHALLENGE_TYPE:1}};
+      }
+      throw Error('Unexpected operation');
+    };
+    await tool.execute({command:'pair-restart',state:filename},{transport,report:e=>events.push(e)});
+    assert.deepEqual(calls.map(x=>x.op),['info','cancel','start']);
+    assert.deepEqual(calls[1].body,{DEVICE_ID:'owned-client-id',CHALLENGE_TYPE:1,PAIRING_REQ_TOKEN:654321,RESPONSE_VALUE:'1111'});
+    assert.equal(calls[1].token,undefined);assert.equal(calls[2].token,undefined);
+    assert.equal(calls[2].body.DEVICE_ID,'owned-client-id');
+    const state=await tool.readState(filename);
+    assert.equal(state.deviceId,'owned-client-id');assert.equal(state.phase,'awaiting_pin');
+    assert.deepEqual(state.challenge,{requestToken:987654,type:1});assert.equal(Object.hasOwn(state,'restartPending'),false);
+    assert.deepEqual(events.map(e=>e.event),['pairing_started']);
+    assert.doesNotMatch(JSON.stringify(events),/owned-client-id|654321|987654|1111/);
+  }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test('failed or unconfirmed cancellation preserves the pending state and never starts another pairing',async()=>{
+  const {dir,filename}=await pendingFixture();
+  try{
+    const before=await fs.readFile(filename,'utf8');
+    for(const cancel of [async()=>({STATUS:{RESULT:'BLOCKED'}}),async()=>({ITEM:{}}),async()=>{throw Error('simulated timeout');}]){
+      const calls=[],events=[];
+      await assert.rejects(()=>tool.execute({command:'pair-restart',state:filename},{transport:async(tv,op)=>{
+        calls.push(op);if(op==='info')return metadata();if(op==='cancel')return cancel();throw Error('Unexpected start');
+      },report:e=>events.push(e)}));
+      assert.deepEqual(calls,['info','cancel']);assert.deepEqual(events,[]);
+      assert.equal(await fs.readFile(filename,'utf8'),before);
+    }
+  }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test('restart refuses credentials, uncertain states and incomplete challenges before any network request',async()=>{
+  const {dir,filename,state}=await pendingFixture();
+  try{
+    for(const changes of [
+      {phase:'paired',token:'private-auth'},
+      {token:''},
+      {phase:'starting'},
+      {phase:'pairing_response_incomplete'},
+      {phase:'restart_uncertain'},
+      {restartPending:true},
+      {challenge:{}},
+      {challenge:{type:1,requestToken:-1}},
+      {challenge:{type:'1',requestToken:654321}}
+    ]){
+      await tool.writeState(filename,{...state,...changes});
+      const before=await fs.readFile(filename,'utf8');let calls=0;
+      await assert.rejects(()=>tool.execute({command:'pair-restart',state:filename},{transport:async()=>{calls++;throw Error('Unexpected network');}}));
+      assert.equal(calls,0);assert.equal(await fs.readFile(filename,'utf8'),before);
+    }
+  }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test('restart verifies the current device profile before cancelling the saved challenge',async()=>{
+  const {dir,filename}=await pendingFixture(),calls=[];
+  try{
+    const before=await fs.readFile(filename,'utf8');
+    await assert.rejects(()=>tool.execute({command:'pair-restart',state:filename},{transport:async(tv,op)=>{calls.push(op);return metadata('V405-H9','different-firmware');}}));
+    assert.deepEqual(calls,['info']);assert.equal(await fs.readFile(filename,'utf8'),before);
+  }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test('an uncertain new start remains guarded instead of allowing another automatic retry',async()=>{
+  const {dir,filename}=await pendingFixture(),calls=[],events=[];
+  try{
+    await assert.rejects(()=>tool.execute({command:'pair-restart',state:filename},{transport:async(tv,op)=>{
+      calls.push(op);if(op==='info')return metadata();if(op==='cancel')return {STATUS:{RESULT:'SUCCESS'}};throw Error('simulated lost start response');
+    },report:e=>events.push(e)}));
+    assert.deepEqual(calls,['info','cancel','start']);assert.deepEqual(events,[]);
+    const state=await tool.readState(filename);assert.equal(state.phase,'restart_uncertain');assert.equal(state.restartPending,true);
+    assert.equal(state.deviceId,'owned-client-id');assert.equal(Object.hasOwn(state,'challenge'),false);
+    const before=await fs.readFile(filename,'utf8');let retries=0;
+    for(const command of ['pair-retry','pair-restart'])await assert.rejects(()=>tool.execute({command,state:filename},{transport:async()=>{retries++;throw Error('Unexpected retry');}}));
+    assert.equal(retries,0);assert.equal(await fs.readFile(filename,'utf8'),before);
+  }finally{await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test('a failed save after restarting leaves the durable guard and cannot trigger a second start',async(t)=>{
+  const {dir,filename}=await pendingFixture(),originalOpen=fs.open;let rejectUpdate=false;
+  t.mock.method(fs,'open',async(file,flag,...args)=>{
+    if(rejectUpdate&&file===filename&&flag==='r+')throw Object.assign(Error('simulated state write denial'),{code:'EACCES'});
+    return originalOpen(file,flag,...args);
+  });
+  try{
+    await assert.rejects(()=>tool.execute({command:'pair-restart',state:filename},{transport:async(tv,op)=>{
+      if(op==='info')return metadata();if(op==='cancel')return {STATUS:{RESULT:'SUCCESS'}};
+      rejectUpdate=true;return {ITEM:{CHALLENGE_TYPE:1,PAIRING_REQ_TOKEN:987654}};
+    }}),{code:'EACCES'});
+    const state=await tool.readState(filename);assert.equal(state.phase,'starting');assert.equal(state.restartPending,true);
+    let retries=0;
+    for(const command of ['pair-retry','pair-restart'])await assert.rejects(()=>tool.execute({command,state:filename},{transport:async()=>{retries++;throw Error('Unexpected retry');}}));
+    assert.equal(retries,0);
+  }finally{t.mock.restoreAll();await fs.rm(dir,{recursive:true,force:true});}
+});
+
+test('an incomplete fresh challenge replaces the cancelled challenge and blocks further restart',async()=>{
+  const {dir,filename}=await pendingFixture();
+  try{
+    await assert.rejects(()=>tool.execute({command:'pair-restart',state:filename},{transport:async(tv,op)=>{
+      if(op==='info')return metadata();if(op==='cancel')return {STATUS:{RESULT:'SUCCESS'}};return {ITEM:{PAIRING_REQ_TOKEN:'new-private-challenge'}};
+    }}));
+    const state=await tool.readState(filename);assert.equal(state.phase,'pairing_response_incomplete');
+    assert.deepEqual(state.challenge,{requestToken:'new-private-challenge'});assert.equal(Object.hasOwn(state,'restartPending'),false);
+    let calls=0;for(const command of ['pair-retry','pair-restart'])await assert.rejects(()=>tool.execute({command,state:filename},{transport:async()=>{calls++;}}));
+    assert.equal(calls,0);
   }finally{await fs.rm(dir,{recursive:true,force:true});}
 });
 

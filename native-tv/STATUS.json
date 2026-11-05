@@ -1,5 +1,5 @@
 {
-  "version": "0.2.0",
+  "version": "0.2.1",
   "stage": "awaiting_tv_pin",
   "live_device": {
     "reported_model": "V405-H9",
@@ -8,12 +8,12 @@
   },
   "validation": {
     "metadata_offline_tests": 9,
-    "native_session_offline_tests": 13,
+    "native_session_offline_tests": 20,
     "usb_diagnostic_tests": "passed",
     "home_javascript_syntax": "passed",
     "visual_tv_test": "pending",
     "windows_state_write": "verified_on_target_pc",
-    "offline_suite_total": 23,
+    "offline_suite_total": 30,
     "remote_partial_grid_checks": "passed"
   },
   "native_execution_on_tv": "not_yet_verified",

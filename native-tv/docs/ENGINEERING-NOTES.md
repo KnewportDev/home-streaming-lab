@@ -65,7 +65,7 @@ node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-u
 node --test --test-name-pattern="Windows-compatible writes" tools/test-native-session.cjs
 ```
 
-Recorded baseline: **23 tests passed, 0 failed** for the full suite. Tests use synthetic inputs, mocked TV transports, loopback servers, and temporary files. No TV credentials or home-network access are required.
+Recorded baseline: **30 tests passed, 0 failed** for the full suite. Tests use synthetic inputs, mocked TV transports, loopback servers, and temporary files. No TV credentials or home-network access are required.
 
 To compare the underlying open behavior on a Windows runtime, this optional PowerShell probe creates and removes only its own temporary files:
 
@@ -93,9 +93,19 @@ const os = require('node:os'), path = require('node:path');
 
 Other operating systems or runtime versions may produce different results. The cross-platform regression intentionally simulates the observed failure so it remains useful when CI runs on Linux.
 
+## Recovering an old saved pairing challenge
+
+The client can retain an `awaiting_pin` challenge after the on-screen PIN is no longer available. Reusing an earlier PIN failed on the target; the saved state still had no authentication credential. The original `pair-retry` command correctly refused to overwrite this pending challenge, but there was no explicit recovery command.
+
+`pair-restart` uses the [documented cancellation request](https://github.com/exiva/Vizio_SmartCast_API#cancel-pairing) with the saved client identity and challenge. It verifies the exact model and firmware first, requires a successful cancellation, then persists a restart guard before sending one fresh start. A failed cancellation preserves the original bytes. An uncertain start or failed response save remains guarded against repeated starts.
+
+Seven offline regressions cover the cancel/start ordering, failed cancellation, invalid states, device mismatch, lost start response, failed state save, and an incomplete fresh challenge. These checks use synthetic state and mocked responses. A fresh PIN still must come from the actual television; these tests do not complete pairing.
+
 ## Delivery evidence and next experiment
 
 The workflow definition checks JavaScript syntax, runs the offline suite, and packages a six-file preview ZIP from an explicit allowlist. Local packaging verification confirmed the ZIP's entry list and that `config.json` comes from the shared example. A workflow definition or local test result is not evidence of a successful hosted run; use the matching GitHub Actions run when reporting CI status.
+
+The earlier [hosted run for commit afabe7c](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42116511358) completed successfully with the then-current 23-test suite and uploaded its preview. The seven recovery regressions were added afterward; use the corresponding later run to verify that revision.
 
 The next hardware experiment is to complete normal PIN pairing and request Conjure app 17 to load the local interface. Record API acceptance, a callback from the TV, visible layout, and remote behavior separately. Root access, replacement firmware, internal installation, and persistence remain unverified.
 

@@ -13,7 +13,7 @@ The current project is a custom interface for the VIZIO television's own browser
 - [Portfolio summary and interview walkthrough](native-tv/docs/PORTFOLIO.md)
 - [Development workflow](.github/workflows/native-tv.yml)
 
-**Current result:** the interface source and 23 offline tests are ready. The TV reports V405-H9 / firmware 1.720.9.1-1. PIN pairing, authenticated on-TV execution, and persistent installation still need verification. The existing streaming work below is its own recorded lab.
+**Current result:** the interface source and 30 offline tests are ready. The TV reports V405-H9 / firmware 1.720.9.1-1. PIN pairing, authenticated on-TV execution, and persistent installation still need verification. The existing streaming work below is its own recorded lab.
 
 ## PC-to-TV streaming lab
 
