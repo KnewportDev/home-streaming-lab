@@ -2,11 +2,11 @@
 
 ## Canonical source and goal
 
-The source of record is `KnewportDev/home-streaming-lab`, under `native-tv/`. This is a continuing personal IT and networking homelab for software running in the VIZIO television's own browser. Keep changes focused on this goal and explain the concrete problem each change solves.
+The source of record is `KnewportDev/home-streaming-lab`, under `native-tv/`. This is a continuing personal IT and networking homelab whose target is the VIZIO television itself booting into an owned retro interface and, if a compatible hardware port and boot method are established, an owned native system. The current implementation is a browser interface and control tooling; it is not a replacement operating system. Keep changes focused on this goal and explain the concrete problem each change solves.
 
 The observed target is V405-H9, system firmware `1.720.9.1-1`, ViziOS build `mtk5691-1.6.1770.1`. Older H19 notes do not override live identity. Consult the current README for verification status before describing something as installed or compatible.
 
-The current scope is the TV setup, with the onn allowed for everyday streaming. The user has explicitly deferred running the PC continuously as a media or channel server. Keep the public guide on GitHub Pages; do not introduce a resident PC service to make this phase work. Preserve the open-source interface and development pipeline. Personal scheduled channels are a future phase, and the public guide is not an installed Google TV launcher or a replacement for VIZIO firmware.
+The user has explicitly deferred running the PC continuously as a media or channel server. The onn is allowed for everyday streaming, but is not a substitute for the native-TV goal. Keep the public guide on GitHub Pages for review and preserve the approved Suddenlink-style design in the native package. Personal scheduled channels are a future phase. Track native-system evidence in `docs/NATIVE-SYSTEM.md` and issue #1. Root, a backup/recovery path, native execution, persistent Home behavior, and full firmware replacement are separate milestones.
 
 ## Interface direction
 
@@ -30,3 +30,5 @@ Keep assets local and avoid external fonts, analytics, or advertising. Preserve 
 Credentials, pairing state, PINs, raw device responses, and personal configuration remain local and ignored. Use `.private/` for device state and captures, and `home/config.json` for personal configuration. Never put those values in source, screenshots, issues, logs, CI, or commit messages. Shared examples use placeholder addresses and synthetic values.
 
 The repository workflow checks code and packages a static preview from an explicit asset allowlist. Successful main-branch builds publish that same public preview to GitHub Pages. Preserve the branch, checks, preview artifact, TV verification, and future release progression. CI does not launch software on or monitor the TV. Keep MIT attribution and upstream reference links intact.
+
+Use focused branches and pull requests for continuing work. CI checks Linux and Windows Node behavior, packages an allowlisted native-interface preparation bundle with a content manifest, and publishes only the browser preview after a successful main-branch build. Preparation artifacts are not installers, firmware images, or proof of native compatibility.

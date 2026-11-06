@@ -76,7 +76,7 @@ try {
   });
   assert.equal(run.status, 0, run.stderr);
   assert(run.stdout.startsWith('Content-Type: text/plain; charset=utf-8\r\nCache-Control: no-store\r\n\r\n'));
-  assert(run.stdout.includes('V405-H19: UNTESTED'));
+  assert(run.stdout.includes('V405-H9/H19: UNTESTED'));
   assert(run.stdout.includes('== Identity =='));
   assert(run.stdout.includes('== Mount table: target filesystem access =='));
   assert(!fs.existsSync(marker), 'CGI input cannot request a command');

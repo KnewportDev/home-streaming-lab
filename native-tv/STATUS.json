@@ -1,6 +1,6 @@
 {
   "version": "0.3.0",
-  "stage": "cable_guide_deployed_tv_screen_verification_pending",
+  "stage": "native_preparation_built_hardware_access_unverified",
   "live_device": {
     "reported_model": "V405-H9",
     "firmware": "1.720.9.1-1",
@@ -59,6 +59,30 @@
       "expected_title": "Knewport Cable Guide",
       "guide_grid_present": true,
       "does_not_verify_tv_screen": true
+    },
+    "native_preparation_local_tests": {
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "runtime": "Node.js 24.22.1",
+      "platform": "Linux",
+      "includes": [
+        "native_platform_inspection",
+        "native_interface_packaging"
+      ]
+    },
+    "native_platform_device_check": {
+      "date": "2026-11-06",
+      "requests": 4,
+      "informational_endpoints": "all_ok",
+      "model": "V405-H9",
+      "firmware": "1.720.9.1-1",
+      "platform": "mtk5691",
+      "current_app": "17",
+      "namespace": 4,
+      "public_github_pages_url": true,
+      "root_proven": false,
+      "device_settings_changed": false
     }
   },
   "native_execution_on_tv": "not_yet_verified",
@@ -129,15 +153,31 @@
     "cable_guide_deployment": "verified_success",
     "pages_url": "https://knewportdev.github.io/home-streaming-lab/",
     "hosted_34_test_revision": "passed",
-    "deployed_commit": "25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7",
-    "verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476",
+    "deployed_commit": "9fa95629a8bcb1dec450a43ea2d96388089b72a5",
+    "verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42150339918",
     "previous_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207",
     "hosted_39_test_revision": "passed"
   },
   "scope": {
-    "current_delivery": "public_https_guide_without_always_on_pc",
-    "personal_continuous_channels": "deferred",
-    "media_server": "deferred",
+    "current_delivery": "public_https_retro_guide_and_native_preparation_tools",
+    "native_tv_overhaul": "active_goal",
+    "approved_style": "2000s_Suddenlink_inspired_original_branding",
+    "future_media_server": "planned_later_owned_homelab",
+    "always_on_pc_server_now": false,
+    "personal_continuous_channels": "future_phase",
     "actual_tv_content": "not_connected"
+  },
+  "native_development": {
+    "goal": "TV_boots_into_owned_retro_interface_and_future_native_system",
+    "branch": "feat/native-tv-baseline",
+    "tracking_issue": "https://github.com/KnewportDev/home-streaming-lab/issues/1",
+    "preparation_package": "implemented_offline_only",
+    "platform_inspection": "implemented_and_verified_on_target",
+    "ci_platforms": [
+      "Linux",
+      "Windows"
+    ],
+    "hardware_installation": "blocked_until_execution_backup_and_recovery_are_verified",
+    "full_firmware_image": "not_available_verified_for_target"
   }
 }

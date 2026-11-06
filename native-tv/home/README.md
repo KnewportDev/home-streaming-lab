@@ -1,6 +1,6 @@
 # Local Cable Guide for Vizio
 
-An original, remote-oriented interface for the stock TV browser, following the user's 2000s Suddenlink-style cable-guide direction. The deployed revision has labeled sample listings, My Apps, and Settings. Its [39-test build and Pages deployment](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476) passed at commit `25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7`. Browser review verified the retro layout, directional navigation, program dialogs, Settings, and the empty app state; the user approved the look. The [public preview](https://knewportdev.github.io/home-streaming-lab/) requires no always-on PC server. Actual TV-screen rendering remains unverified.
+An original, remote-oriented interface for the stock TV browser, inspired by 2000s Suddenlink cable guides. The deployed revision has labeled sample listings, My Apps, and Settings. Its [39-test build and Pages deployment](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476) passed at commit `25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7`. Browser review verified the retro layout, directional navigation, program dialogs, Settings, and the empty app state. The [public preview](https://knewportdev.github.io/home-streaming-lab/) requires no always-on PC server. Actual TV-screen rendering remains unverified.
 
 ## Sample guide
 
@@ -43,11 +43,11 @@ No actual television feed or EPG is connected. Personal continuous channels and 
 - [Open Home runtime source](https://github.com/jordanmateo-byte/vizio-open-home/blob/main/src/runtime.js): exact local authorization and app-launch endpoints, request body, token extraction and success response.
 - [Exiva SmartCast API](https://github.com/exiva/Vizio_SmartCast_API): external paired SmartCast control API. This package uses the on-TV local interface above, not external HTTPS control.
 
-The interface and implementation here are original. Native integration follows the cited protocol evidence. There are no copied upstream assets, app identifiers or installed vendor components. Actual firmware behavior, remote key delivery, origin policy, local API access and installation persistence still require verification on the user's TV. No root, flash or boot modification has been performed by this package.
+The interface and implementation here are original. Native integration follows the cited protocol evidence. There are no copied upstream assets, app identifiers or installed vendor components. Actual firmware behavior, remote key delivery, origin policy, local API access and installation persistence still require verification on the target TV. No root, flash or boot modification has been performed by this package.
 
 ## License — MIT
 
-Copyright (c) 2026 Local Home contributors
+Copyright (c) 2026 Knewport and contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 
