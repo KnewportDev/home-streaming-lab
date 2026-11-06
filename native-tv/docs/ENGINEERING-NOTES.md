@@ -1,5 +1,13 @@
 # Engineering notes
 
+## Physical TV Check observation — 6 November 2026
+
+The owner supplied a photo of the physical TV displaying Knewport TV Check. It shows **Page: Open**, **JavaScript: Running**, **Down received**, and **14 key events on this page**. **Local API: Not checked** is still visible, **Back to guide** is selected, and the footer says **VIZIO interface symbol: Not detected**. The [redacted observation](evidence/tv-check-owner-photo-2026-11-06.json) records those visible values; the room photo stays private.
+
+This closes the basic diagnostic-page rendering, JavaScript-start, and observed key-event checks. It does not establish 14 separate physical presses, full guide navigation, an API response, or native installation. No K1 badge is visible. The current source has one, and an older document remaining open is plausible, but the photo supplies no exact revision or observed code. The symbol result is not a test of any native SDK method.
+
+The next bounded observation is the Local API row after **Left once → OK on Check TV connection → wait about three seconds**. Selecting OK while Back to guide remains focused instead returns to the guide. The earlier pending-screen statements below describe the historical checkpoints before this photo arrived.
+
 ## Verified publisher source and native boundaries — 6 November 2026
 
 The owner-authorized publisher download completed, and the saved `5691_OSS_FUR7.2.zip` matched both pinned published digests. The archive is **7,946,973,901 bytes**. Its [redacted acquisition receipt](evidence/source-archive-2026-11-06.json) records the publisher pin and all three calculated hashes. Registration details, signed download URLs, and vendor source remain private on the development PC.

@@ -1,6 +1,6 @@
 {
   "version": "0.5.0",
-  "stage": "publisher_source_verified_static_review_native_access_unverified",
+  "stage": "tv_check_screen_and_key_receipts_observed_local_api_and_native_access_pending",
   "live_device": {
     "reported_model": "V405-H9",
     "firmware": "1.720.9.1-1",
@@ -32,7 +32,7 @@
     "offline_suite_total": 88,
     "offline_suite_failed": 0,
     "offline_suite_skipped": 0,
-    "visual_tv_test": "pending",
+    "visual_tv_test": "diagnostic_page_observed_full_guide_pending",
     "public_preview_browser": {
       "applies_to": "deployed_cable_guide",
       "commit": "25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7",
@@ -167,6 +167,19 @@
       "windows_passed": 87,
       "failed": 0,
       "skipped": 0
+    },
+    "tv_check_owner_photo": {
+      "received_on": "2026-11-06",
+      "page": "Open",
+      "javascript": "Running",
+      "remote_last_key": "Down",
+      "remote_key_events": 14,
+      "local_api": "Not checked",
+      "selected_control": "Back to guide",
+      "vizio_interface_symbol": "Not detected",
+      "k1_badge": "not_visible",
+      "rendered_revision": "unverified",
+      "evidence": "docs/evidence/tv-check-owner-photo-2026-11-06.json"
     }
   },
   "native_execution_on_tv": "not_yet_verified",
@@ -189,9 +202,9 @@
     "local_screen": "owner_reported_no_network_detected",
     "https_command": "launch-page",
     "https_request": "tv_check_launch_accepted",
-    "https_screen_verification": "pending_physical_observation",
+    "https_screen_verification": "owner_photo_shows_tv_check_page",
     "https_current_app_url": "tv_check_url_confirmed_by_authenticated_read",
-    "physical_remote_verification": "pending"
+    "physical_remote_verification": "recognized_key_event_receipt_visible_in_owner_photo"
   },
   "local_delivery": {
     "pc_server": "responded_locally",
@@ -241,8 +254,8 @@
     "previous_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207",
     "hosted_39_test_revision": "passed",
     "tv_check_url": "https://knewportdev.github.io/home-streaming-lab/tv-check.html",
-    "last_recorded_deployed_commit": "0d23a386092d2131c355e9f1919875a92f67f147",
-    "last_recorded_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42159281900",
+    "last_recorded_deployed_commit": "f33a54ea7f7c690e4b0af8ae368080a2b2d0e2ca",
+    "last_recorded_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42229021248",
     "revision_status_source": "GitHub pull-request checks and Actions; recorded runs are historical observations"
   },
   "scope": {
@@ -256,7 +269,7 @@
   },
   "native_development": {
     "goal": "TV_boots_into_owned_retro_interface_and_future_native_system",
-    "branch": "docs/verified-source",
+    "branch": "docs/tv-screen-observation",
     "tracking_issue": "https://github.com/KnewportDev/home-streaming-lab/issues/1",
     "preparation_package": "implemented_offline_only",
     "platform_inspection": "implemented_and_verified_on_target",
@@ -272,14 +285,16 @@
       "api_request": "explicit_button_only_fixed_unauthenticated_local_deviceinfo_get",
       "telemetry": false,
       "default_api_requests": 0,
-      "on_tv_result": "pending_physical_observation",
+      "on_tv_result": "page_javascript_and_key_receipts_observed_in_owner_photo",
       "native_guard_changed": false,
       "publication": "deployed",
       "launch": "accepted_and_current_app_url_matched",
       "source_commit": "2d06d8675b45536f670c70047a33a54dadf22a08",
       "result_format": "K1",
-      "owner_result": "pending",
-      "result_code_is_build_identifier": false
+      "owner_result": "photo_received_local_api_not_checked",
+      "result_code_is_build_identifier": false,
+      "rendered_revision": "unverified",
+      "physical_evidence": "docs/evidence/tv-check-owner-photo-2026-11-06.json"
     },
     "latest_implementation_pull_request": "https://github.com/KnewportDev/home-streaming-lab/pull/5",
     "source_intake": {
