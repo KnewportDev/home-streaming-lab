@@ -48,8 +48,11 @@ records `reportedConnected: true`; connection type stays unknown because its val
 did not match the output allowlist. This establishes the TV's reported local
 connection status, not DNS, TLS, Internet access, or page rendering.
 
-Standalone [TV Check](../home/tv-check.html) is prepared for publication at
-[the public check URL](https://knewportdev.github.io/home-streaming-lab/tv-check.html).
+Standalone [TV Check](../home/tv-check.html) is published at
+[the public check URL](https://knewportdev.github.io/home-streaming-lab/tv-check.html)
+following [PR #3](https://github.com/KnewportDev/home-streaming-lab/pull/3) and
+[main run 42155846531](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42155846531),
+which passed 69 Linux tests, 68 Windows tests, and Pages deployment.
 It provides visible page, JavaScript, and remote-key receipts without automatic
 probes or credentials. An explicit **Check TV connection** button can make one
 fixed unauthenticated GET to `http://127.0.0.1:7346/state/device/deviceinfo`, limited
@@ -57,10 +60,15 @@ to 3 seconds and 128 KiB. Browser status `0` is ambiguous and does not prove the
 is no Internet connection. Even a successful read would establish only access to
 that endpoint from the page's browser context.
 
-After publication, launch using the existing paired state and photograph the
-receipts on the actual television. TV Check publication, launch, and visual QA are
-not yet recorded. `/app/current` reports the requested application and URL, not
-what the screen displayed. The guide's origin restriction is a project policy,
+Desktop review observed page and JavaScript receipts, arrow-key receipt/focus
+changes, no automatic local request, and OK on Back returning to the original
+guide. The paired TV accepted its launch. Authenticated `/app/current` at
+**2026-11-06T03:23:03.364Z** matched app 17, namespace 4, and the exact public
+TV Check URL ([launch evidence](evidence/tv-check-launch-2026-11-06.json)).
+Physical TV rendering, physical remote behavior, and the optional Local API result
+remain pending. Photograph the receipts on the actual television next;
+`/app/current` reports launch metadata, not what the screen displayed.
+The guide's origin restriction is a project policy,
 not a measured H9 limitation; native controls remain disabled. The approved guide
 is preserved, and its eight-file preparation bundle now includes this check page.
 Root, bootloader control, recovery, native installation, persistent Home behavior,

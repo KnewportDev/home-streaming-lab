@@ -22,6 +22,8 @@ Loading the check page makes no API or receipt request. Choosing **Check TV conn
 
 The main guide's origin guard is a deliberate project rule. It is not evidence that this H9 browser has blocked the request; the optional check measures that separately. A matching metadata result would establish only that particular browser-to-API read, not native app control, root, an installed Home, or boot behavior. All results stay on screen; `/app/current` cannot read them back.
 
+The page was published in [run 42155846531](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42155846531), with 69 Linux tests and 68 Windows tests passing. Desktop review verified rendering, JavaScript, arrows, and return to the guide. The TV accepted its launch and an authenticated current-app read matched the exact check URL. [The redacted record](../docs/evidence/tv-check-launch-2026-11-06.json) keeps these observations separate from the pending physical TV screen and remote check.
+
 ## Remote
 
 | Control | Behavior |
@@ -69,4 +71,4 @@ The local `serve-launch` server injects a same-origin `GET telemetry?event=ready
 
 ## Current hardware identification
 
-A read-only device-information check reported model `V405-H9`, firmware `1.720.9.1-1`, ViziOS `mtk5691-1.6.1770.1`. Pairing succeeded. The latest authenticated `/app/current` read returned `SUCCESS`, app 17 / namespace 4, and the exact public guide URL in `MESSAGE`; no new launch request was sent during that check. A separate PC request received HTTP 200 and the expected guide markup. The PC-hosted attempt previously failed to render; Windows has an explicit inbound Node block and no firewall changes were made. The cable-guide revision is deployed and browser-verified. Actual TV rendering, physical remote behavior, native loopback compatibility, root access, and persistent installation remain unestablished.
+A read-only device-information check reported model `V405-H9`, firmware `1.720.9.1-1`, ViziOS `mtk5691-1.6.1770.1`. Pairing succeeded. After the TV Check launch, the authenticated `/app/current` read at 03:23:03 UTC on 6 November 2026 matched app 17 / namespace 4 and the exact public `tv-check.html` URL. The earlier guide launch and a separate PC HTTP 200 response remain recorded in the project history. The PC-hosted attempt previously failed to render; Windows has an explicit inbound Node block and no firewall changes were made. Both public pages are deployed and browser-verified. Actual TV rendering, physical remote behavior, native loopback compatibility, root access, and persistent installation remain unestablished.
