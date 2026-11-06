@@ -6,6 +6,8 @@ The source of record is `KnewportDev/home-streaming-lab`, under `native-tv/`. Th
 
 The observed target is V405-H9, system firmware `1.720.9.1-1`, ViziOS build `mtk5691-1.6.1770.1`. Older H19 notes do not override live identity. Consult the current README for verification status before describing something as installed or compatible.
 
+The current scope is the TV setup, with the onn allowed for everyday streaming. The user has explicitly deferred running the PC continuously as a media or channel server. Keep the public guide on GitHub Pages; do not introduce a resident PC service to make this phase work. Preserve the open-source interface and development pipeline. Personal scheduled channels are a future phase, and the public guide is not an installed Google TV launcher or a replacement for VIZIO firmware.
+
 ## Interface direction
 
 Use the user's latest direction: a 2000s Suddenlink-style cable guide, informed by classic i-Guide. Use contiguous blue program cells, a yellow selection, silver time headers, channel numbers, program details, and a bordered preview pane. Keep the project branding original. Sample listings must remain clearly labeled and never imply connected channels, live playback, or a real electronic program feed. Keep the result usable from a couch with a directional remote. Focus movement, readable contrast, large targets, and a working Back path take priority over decorative effects.

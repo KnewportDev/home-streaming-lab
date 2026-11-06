@@ -1,6 +1,6 @@
 # Local Cable Guide for Vizio
 
-An original, remote-oriented interface for the stock TV browser, following the user's 2000s Suddenlink-style cable-guide direction. The current revision adds labeled sample listings and retains My Apps and Settings. Its 39-test offline suite passes; browser and TV-screen checks of this revision are pending. The [public preview](https://knewportdev.github.io/home-streaming-lab/) and pairing/launch pipeline were verified on the previous interface revision; that evidence does not verify the new skin.
+An original, remote-oriented interface for the stock TV browser, following the user's 2000s Suddenlink-style cable-guide direction. The deployed revision has labeled sample listings, My Apps, and Settings. Its [39-test build and Pages deployment](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476) passed at commit `25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7`. Browser review verified the retro layout, directional navigation, program dialogs, Settings, and the empty app state; the user approved the look. The [public preview](https://knewportdev.github.io/home-streaming-lab/) requires no always-on PC server. Actual TV-screen rendering remains unverified.
 
 ## Sample guide
 
@@ -25,7 +25,7 @@ Set `nativeBridge.enabled` to `true` only after native installation and interfac
 | Back/Escape | Close an open dialog and restore its opener; otherwise open Settings. |
 | Tab in a dialog | Keep focus inside the dialog. |
 
-Settings changes only appearance and shows available device details. It sends no TV settings command. With no configured apps, My Apps remains an honest empty state. The page uses system fonts and ES5-style JavaScript. These are the new keyboard behavior contracts; current browser and TV verification are pending.
+Settings changes only appearance and shows available device details. It sends no TV settings command. With no configured apps, My Apps remains an honest empty state. The page uses system fonts and ES5-style JavaScript. Directional navigation, dialogs, Settings, and the app empty state were verified in the deployed browser preview; physical TV remote behavior still needs verification.
 
 ## Appearance and development
 
@@ -33,7 +33,9 @@ The design was revised on **5 November 2026** from Media Center/Aero to a 2000s 
 
 From the `native-tv` project directory, run `node tools/preview-home.cjs`, then open the printed localhost URL on that computer. It serves only the four interface assets and never sends commands to the TV. Restart the preview process after editing files. This browser preview does not prove on-TV compatibility.
 
-The [previous Pages build](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207) passed 34 tests and deployed commit `3344fc26faae28eee06c36cd209a1da2066055ac`. Earlier browser checks covered the previous Media Center interface, including Settings, Cobalt, and Escape/focus restoration. The current guide revision adds `tools/test-home-guide.cjs`; its five new checks pass, bringing the full offline suite to 39. Browser layout and deployment verification remain pending.
+The [current Pages build](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476) passed 39 tests with zero failures or skips and deployed commit `25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7`. The five checks in `tools/test-home-guide.cjs` also passed on Windows, in addition to the earlier separate 24-test Windows session suite. Browser review covered this cable-guide revision, with a local capture retained as `knewport-retro-cable-guide.png`. The previous CI baseline remains [34 passing tests](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207).
+
+No actual television feed or EPG is connected. Personal continuous channels and a media server are deferred; the public HTTPS guide remains usable without a PC serving its assets.
 
 ## Primary compatibility evidence
 
@@ -59,4 +61,4 @@ The local `serve-launch` server injects a same-origin `GET telemetry?event=ready
 
 ## Current hardware identification
 
-A read-only device-information check reported model `V405-H9`, firmware `1.720.9.1-1`, ViziOS `mtk5691-1.6.1770.1`. Pairing succeeded and an authenticated current-app read confirmed Conjure app 17 / namespace 4. The PC-hosted attempt did not render successfully; Windows has an explicit inbound Node block and no firewall changes were made. The previous Media Center interface was deployed over HTTPS, and its TV launch request was accepted. Actual TV rendering, the new cable-guide skin, native loopback compatibility, and persistent installation remain unverified.
+A read-only device-information check reported model `V405-H9`, firmware `1.720.9.1-1`, ViziOS `mtk5691-1.6.1770.1`. Pairing succeeded. The latest authenticated `/app/current` read returned `SUCCESS`, app 17 / namespace 4, and the exact public guide URL in `MESSAGE`; no new launch request was sent during that check. A separate PC request received HTTP 200 and the expected guide markup. The PC-hosted attempt previously failed to render; Windows has an explicit inbound Node block and no firewall changes were made. The cable-guide revision is deployed and browser-verified. Actual TV rendering, physical remote behavior, native loopback compatibility, root access, and persistent installation remain unestablished.

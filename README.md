@@ -13,7 +13,9 @@ A custom 2000s cable-guide interface intended for the VIZIO TV’s own browser, 
 
 [Project guide](native-tv/README.md) · [Debugging case](native-tv/docs/ENGINEERING-NOTES.md#windows-pairing-state-write-failure) · [Source and tests](native-tv/tools/) · [Preview workflow](.github/workflows/native-tv.yml)
 
-**Status:** 39 offline tests pass, including five cable-guide navigation and timeline checks. PIN pairing succeeded and the TV accepted an authenticated app 17 launch. The local page did not load: the TV displayed “no network detected,” and the PC has an explicit inbound Node.js firewall block. The [live HTTPS interface](https://knewportdev.github.io/home-streaming-lab/) is deployed and [the 34-test build passed](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065). The TV accepted the new HTTPS launch; its screen and remote behavior still need direct verification. Persistent installation remains unverified.
+**Status:** 39 offline tests pass, including five cable-guide navigation and timeline checks. PIN pairing succeeded and the TV accepted an authenticated app 17 launch. The local page did not load: the TV displayed “no network detected,” and the PC has an explicit inbound Node.js firewall block. The [live HTTPS cable guide](https://knewportdev.github.io/home-streaming-lab/) is deployed and [its 39-test build passed](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476). Browser guide navigation, program details, and settings were verified. The TV’s authenticated current-app response reports app 17 with the public guide URL; its physical screen and remote behavior still need direct verification. Persistent installation remains unverified.
+
+**Current scope:** finish the TV interface and use the TV or onn for everyday streaming. GitHub Pages hosts the guide, so it needs no continuously running PC web server. The guide currently contains labeled sample listings; personal media channels, real program data, and a continuously running channel server are deferred.
 
 ### PC-to-TV streaming
 **Windows · PowerShell · Sunshine / Moonlight**

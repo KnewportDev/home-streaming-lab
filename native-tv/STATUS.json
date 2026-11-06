@@ -1,6 +1,6 @@
 {
   "version": "0.3.0",
-  "stage": "cable_guide_awaiting_deployment_and_screen_check",
+  "stage": "cable_guide_deployed_tv_screen_verification_pending",
   "live_device": {
     "reported_model": "V405-H9",
     "firmware": "1.720.9.1-1",
@@ -26,45 +26,70 @@
     "home_guide_tests": {
       "passed": 5,
       "failed": 0,
-      "skipped": 0
+      "skipped": 0,
+      "windows": "passed_on_target_pc"
     },
     "offline_suite_total": 39,
     "offline_suite_failed": 0,
     "offline_suite_skipped": 0,
     "visual_tv_test": "pending",
     "public_preview_browser": {
-      "applies_to": "previous_media_center_interface",
+      "applies_to": "deployed_cable_guide",
+      "commit": "25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7",
       "rendering": "passed",
-      "settings_open": "passed",
-      "cobalt_theme": "passed",
-      "escape_and_focus_restore": "passed"
+      "directional_navigation": "passed",
+      "program_information_dialogs": "passed",
+      "settings": "passed",
+      "app_catalog_empty_state": "passed",
+      "user_visual_approval": "confirmed",
+      "screenshot": "knewport-retro-cable-guide.png",
+      "screenshot_scope": "local_review_capture_not_bundled"
     },
-    "cable_guide_browser": "pending",
+    "cable_guide_browser": "passed",
     "windows_state_write": "verified_on_target_pc",
-    "remote_partial_grid_checks": "passed_for_previous_interface"
+    "remote_partial_grid_checks": "passed_for_previous_interface",
+    "windows_guide_tests": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0,
+      "scope": "guide_suite_only_separate_from_previous_24_session_tests"
+    },
+    "public_page_pc_check": {
+      "http_status": 200,
+      "expected_title": "Knewport Cable Guide",
+      "guide_grid_present": true,
+      "does_not_verify_tv_screen": true
+    }
   },
   "native_execution_on_tv": "not_yet_verified",
   "root": "not_established",
-  "permanent_home_install": "not_attempted",
-  "firmware_replacement": "not_available",
+  "permanent_home_install": "not_established",
+  "firmware_replacement": "not_established",
   "pairing": "paired_authentication_verified",
   "launch": {
     "local_request": "accepted",
     "authenticated_current_app": {
+      "result": "SUCCESS",
       "app_id": "17",
-      "namespace": 4
+      "namespace": 4,
+      "message": "https://knewportdev.github.io/home-streaming-lab/",
+      "verification": "latest_authenticated_read_only_check",
+      "new_launch_sent_during_check": false
     },
     "local_javascript_callback": "not_received",
     "local_screen": "owner_reported_no_network_detected",
     "https_command": "launch-page",
-    "https_request": "accepted",
-    "https_screen_verification": "pending"
+    "https_request": "accepted_in_previous_launch",
+    "https_screen_verification": "pending",
+    "https_current_app_url": "confirmed_by_latest_authenticated_read",
+    "physical_remote_verification": "pending"
   },
   "local_delivery": {
     "pc_server": "responded_locally",
     "windows_inbound_node_rule": "explicit_block_observed",
     "process_elevated": false,
-    "firewall_modified": false
+    "firewall_modified": false,
+    "pc_asset_server_required_for_public_guide": false
   },
   "interface": {
     "style": "2000s_suddenlink_style_cable_guide",
@@ -92,19 +117,27 @@
       "real_epg": "not_connected",
       "playback": "not_implemented"
     },
-    "app_catalog": "empty_until_verified"
+    "app_catalog": "empty_until_verified",
+    "user_visual_approval": "confirmed"
   },
   "publication": {
     "repository": "KnewportDev/home-streaming-lab",
     "visibility": "public",
     "pages_source": "github_actions",
     "pages_deployment": "verified_success",
-    "deployed_interface": "previous_media_center",
-    "cable_guide_deployment": "pending",
+    "deployed_interface": "2000s_cable_guide",
+    "cable_guide_deployment": "verified_success",
     "pages_url": "https://knewportdev.github.io/home-streaming-lab/",
     "hosted_34_test_revision": "passed",
-    "deployed_commit": "3344fc26faae28eee06c36cd209a1da2066055ac",
-    "verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207",
-    "previous_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42120822505"
+    "deployed_commit": "25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7",
+    "verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476",
+    "previous_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207",
+    "hosted_39_test_revision": "passed"
+  },
+  "scope": {
+    "current_delivery": "public_https_guide_without_always_on_pc",
+    "personal_continuous_channels": "deferred",
+    "media_server": "deferred",
+    "actual_tv_content": "not_connected"
   }
 }

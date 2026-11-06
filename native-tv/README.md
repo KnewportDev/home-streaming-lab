@@ -6,9 +6,11 @@ The engineering problem is compatibility: finding what this particular TV expose
 
 Public source: [KnewportDev/home-streaming-lab](https://github.com/KnewportDev/home-streaming-lab), under `native-tv/`. Original project code is [MIT licensed](LICENSE).
 
-[Public preview](https://knewportdev.github.io/home-streaming-lab/) · [Previous verified build](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207)
+[Public preview](https://knewportdev.github.io/home-streaming-lab/) · [Verified build and deployment](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476)
 
-**Current revision:** a cable-guide interface with explicitly labeled sample listings. The offline suite passes **39 tests**, including five guide-navigation and timeline checks. Browser and TV-screen verification of this revision are pending. The previous revision passed **34 tests** in CI, deployed to Pages, and had **24 session tests** verified on Windows. PIN pairing and authenticated Conjure launch requests are verified; the API reported app **17**, namespace **4**. An accepted request has not yet been followed by confirmed interface rendering on the TV.
+**Current revision:** version **0.3.0**, a deployed cable-guide interface with explicitly labeled sample listings. Commit `25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7` passed **39 tests** in GitHub Actions and deployed to Pages. Browser checks verified the retro layout, directional navigation, program dialogs, Settings, and the empty app state; the user approved the visual direction. The five guide tests also passed on Windows, separately from the earlier **24 passing session tests**. PIN pairing and authenticated Conjure launch requests are verified. The latest read-only current-app check reported app **17**, namespace **4**, and the exact public guide URL. Actual TV-screen rendering and physical remote behavior remain unverified.
+
+The public HTTPS guide requires no always-on PC server. Running personal continuous channels is deferred; no television content, playback source, or real electronic program guide is connected.
 
 ## Cable-guide design — 5 November 2026
 
@@ -48,7 +50,7 @@ Older notes called the set V405-H19. The live API identity is used for this buil
 
 The standard device-information API responds. The historical `/install` and `/scpl/` paths returned HTTP 404. Connections to the checked SSH, telnet, ADB, developer-debugging and internal-webserver ports timed out from the LAN. A network timeout does not establish whether a service exists internally.
 
-During the local preview test, the PC server responded locally but the TV did not return its readiness callback. Windows has an explicit inbound Node block; the process was not elevated, and no firewall rules were changed. Public HTTPS delivery avoids that inbound serving path. Its launch request was accepted; whether the interface appears on the TV still needs observation. [Engineering notes](docs/ENGINEERING-NOTES.md#pairing-and-page-delivery) record the separate control, browser, and screen evidence.
+During the local preview test, the PC server responded locally but the TV did not return its readiness callback. Windows has an explicit inbound Node block; the process was not elevated, and no firewall rules were changed. Public HTTPS delivery avoids that inbound serving path and requires no PC asset server. An earlier HTTPS launch request was accepted. The latest authenticated, read-only `/app/current` request returned `SUCCESS`, app 17, namespace 4, and `MESSAGE` equal to `https://knewportdev.github.io/home-streaming-lab/`; no relaunch was sent during that check. A separate PC request returned HTTP 200 with the expected Knewport Cable Guide and guide-grid markup. Neither check establishes what the physical TV displayed. [Engineering notes](docs/ENGINEERING-NOTES.md#pairing-and-page-delivery) record the earlier control and delivery evidence.
 
 **Root access, a bootloader unlock, replacement firmware, internal installation and a permanent Home replacement have not been established.** The custom browser interface is a separate, testable step toward the requested native-TV setup. It does not replace the TV's Linux kernel or proprietary firmware.
 
@@ -171,9 +173,11 @@ node --check home/home.js
 node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs
 ```
 
-The previous baseline on 5 November 2026 was **34 tests passed, 0 failed, 0 skipped**. Its 24-test session suite also passed on the target Windows PC with Node.js 24.22.1, with zero failures or skips. The cable-guide revision adds five checks in `test-home-guide.cjs`; its full offline result is **39 passed, 0 failed, 0 skipped**. Tests use synthetic inputs, mocked TV transports, loopback servers, and temporary files; they do not contact the TV.
+The deployed cable-guide revision passed **39 tests, 0 failed, 0 skipped** in [GitHub Actions](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476), including five checks in `test-home-guide.cjs`. Those five guide tests also passed on the target Windows PC. Separately, the earlier 24-test session suite passed there with Node.js 24.22.1, with zero failures or skips; this is not a claim that the full 39-test suite ran on Windows. The previous CI baseline was 34 passing tests. Tests use synthetic inputs, mocked TV transports, loopback servers, and temporary files; they do not contact the TV.
 
-The repository-root workflow, `.github/workflows/native-tv.yml`, uses Node.js 24 and commit-pinned GitHub actions. It checks source and uploads a preview ZIP; successful pushes to `main` then deploy the same six allowlisted assets to GitHub Pages. Deployment permissions are isolated to the Pages job. It has no TV credentials or device access. The [previous build at commit 3344fc26](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207) passed its 34-test job and Pages deployment. Browser checks of the earlier Media Center interface covered Settings, the then-named Cobalt theme, and Escape/focus restoration. These results do not verify the new cable-guide skin or its behavior on the TV.
+The repository-root workflow, `.github/workflows/native-tv.yml`, uses Node.js 24 and commit-pinned GitHub actions. It checks source and uploads a preview ZIP; successful pushes to `main` then deploy the same six allowlisted assets to GitHub Pages. Deployment permissions are isolated to the Pages job. It has no TV credentials or device access. [Run 42144758476](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476) passed the 39-test job and deployed commit `25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7`.
+
+Browser review of that deployed revision verified the cable-guide layout, directional navigation, program-information dialogs, Settings, and the empty My Apps state. A local screenshot was retained as `knewport-retro-cable-guide.png`. These checks establish browser behavior; TV rendering and remote-key delivery require observation on the TV.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) for development conventions.
 
@@ -190,11 +194,12 @@ For local development, the Node preview command above is the quickest route. The
 
 ## Next milestones
 
-- Verify the cable-guide tests, browser layout, sample-program dialogs, and deployment.
-- Confirm that the accepted HTTPS launch displays the deployed interface on the TV.
+- Confirm whether the current HTTPS guide appears on the physical TV.
 - Validate screen layout, remote keys, and return-to-Home behavior on the exact target firmware.
 - Populate a small catalog using application identifiers observed on that TV.
 - Investigate a reversible internal hosting or installation route, with backups and observed restart behavior before calling it persistent.
+
+Personal continuous channels and a media-server setup are deferred. The current guide stays available from GitHub Pages without keeping a PC running.
 
 ## Primary references
 
