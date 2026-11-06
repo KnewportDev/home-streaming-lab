@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "observedAt": "2026-11-06 03:43:22 UTC",
+  "kind": "published_source_family_listing",
+  "repository": "opensource-vizio/5691_FUR7.2_OpenSourceSoftware",
+  "commit": "1d05e3cb76d453a8d6a76f38dd2b8409b428bb11",
+  "chipset": "5691",
+  "release": "FUR7.2",
+  "listedFirmwareFamily": "1.720.X.Y",
+  "observedTarget": {
+    "model": "V405-H9",
+    "firmware": "1.720.9.1-1",
+    "viziOS": "mtk5691-1.6.1770.1"
+  },
+  "familyMapping": "matches_published_catalog",
+  "exactBuildCompatibility": "unverified",
+  "archive": "5691_OSS_FUR7.2.zip",
+  "downloadPage": "https://d2mi77xcznxniv.cloudfront.net/index.html?file=5691_OSS_FUR7.2.zip",
+  "publishedChecksums": {
+    "md5": "5b62eb08af859ee6cd49e654c45c76b1",
+    "sha1": "38c0a3e5cefd2eafa9acdad074ed88cea90c7b63"
+  },
+  "archiveAcquired": false,
+  "archiveInspected": false,
+  "sourceExecuted": false,
+  "downloadFormSubmitted": false,
+  "requiredDownloadFields": [
+    "name",
+    "email",
+    "phone",
+    "company"
+  ],
+  "rootAccess": "unverified",
+  "recovery": "unverified",
+  "installationEligibility": "unverified",
+  "sources": {
+    "readme": "https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSoftware/blob/1d05e3cb76d453a8d6a76f38dd2b8409b428bb11/README.md",
+    "checksums": "https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSoftware/blob/1d05e3cb76d453a8d6a76f38dd2b8409b428bb11/checksums",
+    "catalog": "https://github.com/opensource-vizio/.github/blob/fed538e319826066d7e96cdf92bd385f139d24d9/profile/README.md"
+  }
+}
+

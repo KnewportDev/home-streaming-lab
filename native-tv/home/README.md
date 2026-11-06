@@ -16,7 +16,9 @@ Set `nativeBridge.enabled` to `true` only after native installation and interfac
 
 ## TV check screen
 
-`tv-check.html` is a separate, self-contained page for observing page rendering, JavaScript execution, and physical remote input. It uses the same blue-and-yellow visual language. Open it through the public preview or the local development server; it requires no other assets or configuration. Use arrows and OK/Enter, then photograph the result on the television. Back returns to the guide.
+`tv-check.html` is a separate, self-contained page for observing page rendering, JavaScript execution, and physical remote input. It uses the same blue-and-yellow visual language. Open it through the public preview or the local development server; it requires no other assets or configuration. Press Left, then OK/Enter on **Check TV connection**, wait three seconds, and send the yellow `K1-...` result code or a photo from the television. Back returns to the guide.
+
+`K1` is the result format, not a pairing PIN or build identifier. The next two characters indicate JavaScript and recognized remote input (`0` or `1`), followed by one API-state character. For example, `K1-110` means script and key input worked with no API check; `K1-11M` also reports matching target metadata; `K1-11U` leaves the attempted read inconclusive. The [setup guide](../docs/TV-SETUP.md#tv-check-visible-execution-receipts) defines all values. Codes remain on screen, with no telemetry or storage. Record a submitted value as an owner-reported observation and record its revision separately.
 
 Loading the check page makes no API or receipt request. Choosing **Check TV connection** makes one unauthenticated GET to the fixed TV-local device-information endpoint, with a three-second limit and a 128-KiB response cap. Only a matching V405-H9 / 1.720.9.1-1 response is reported as verified. No credentials, raw response, addresses, serial numbers, or full user agent are displayed or saved. A blocked, timed-out, or status-zero request is inconclusive about Internet access.
 

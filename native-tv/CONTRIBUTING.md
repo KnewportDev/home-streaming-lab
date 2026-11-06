@@ -9,7 +9,7 @@ The canonical project is `native-tv/` in [KnewportDev/home-streaming-lab](https:
 3. Run `node --check home/home.js` and the offline tests on Linux:
 
    ```sh
-   node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs tools/test-tv-check.cjs
+   node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs tools/test-tv-check.cjs tools/test-verify-source-bundle.cjs
    ```
 
 4. Open a pull request from a focused branch. The scoped workflow runs Linux checks and a separate Windows Node suite, then produces browser-preview and native-interface-preparation artifacts. The POSIX USB diagnostic test runs on Linux; all other suites also run on Windows.
@@ -24,6 +24,8 @@ Use [ENGINEERING-NOTES.md](docs/ENGINEERING-NOTES.md) for substantial investigat
 Record the exact model, firmware, operation, and observed result. Keep the distinctions between a successful HTTP response, code executing on the TV, a working app launch, and behavior surviving a restart. Findings from another TV or firmware are research leads until reproduced on this target.
 
 Publish concise, redacted findings. Keep raw responses, local addresses, serial numbers, PINs, pairing state, and credentials in `.private/`. Use synthetic fixtures in tests. Personal `home/config.json` is ignored; shared defaults belong in `home/config.example.json`.
+
+Source archives and extracted vendor code also stay in `.private/`; their licenses are separate from this project's MIT license. Follow [source intake](docs/SOURCE-INTAKE.md) and verify the pinned digests before inspection. CI tests synthetic bytes only and never downloads the real archive. An owner-reported TV Check code is a reported observation, not a machine-collected receipt; record its provenance and tested revision separately.
 
 ## Changes to protocol and runtime behavior
 

@@ -26,6 +26,7 @@ Developing a VIZIO TV overhaul with dependency-free Node.js tools for LAN discov
 | Interface development | [Guide source](../home/) implements directional navigation, visible focus, information dialogs, themes, and an empty app state. The listings are labeled samples. |
 | Native capability research | [Platform inspection](../tools/inspect-native-platform.cjs) reads informational endpoints from the paired TV. [Native-system evidence](NATIVE-SYSTEM.md) records model-specific findings and missing proof. |
 | Browser troubleshooting | Published [TV Check](https://knewportdev.github.io/home-streaming-lab/tv-check.html) separates page, script, key-event, and optional local metadata receipts. Desktop rendering, key receipts, return navigation, and absence of automatic local requests were checked; no credentials or telemetry. |
+| Source provenance | [Source intake](SOURCE-INTAKE.md) maps the published 5691 / FUR7.2 release to the observed firmware family. A bounded offline verifier compares pinned publisher digests, preserves inputs, and emits a report without local paths. Archive acquisition and exact-build compatibility remain open. |
 | Reproducible packaging | [Native preparation tool](../tools/package-native-home.cjs) assembles shared interface assets and a SHA-256 content manifest without private configuration or session data. |
 | GitHub delivery | Repository-root `.github/workflows/native-tv.yml` runs offline checks, attaches artifacts, and publishes the browser preview from `main`. It has no TV credentials. |
 
@@ -37,7 +38,7 @@ The TV reports **V405-H9**, firmware **1.720.9.1-1**, and ViziOS **mtk5691-1.6.1
 
 The inspector completed all four informational requests on the actual TV; its [redacted report](evidence/native-platform-2026-11-06.json) is included as evidence.
 
-An additional [seven-request inspection](evidence/native-network-2026-11-06.json) found that the TV reported a connected local network. The connection-type value remained unknown under the report's whitelist. This is a useful distinction when diagnosing the earlier network error, but it does not prove Internet access or browser rendering. The standalone check screen is ready for those separate observations on the actual TV; a physical-screen photo remains the next evidence needed.
+An additional [seven-request inspection](evidence/native-network-2026-11-06.json) found that the TV reported a connected local network. The connection-type value remained unknown under the report's whitelist. This is a useful distinction when diagnosing the earlier network error, but it does not prove Internet access or browser rendering. The standalone check screen is ready for those separate observations on the actual TV; an owner-reported `K1-...` screen code or physical-screen photo remains the next evidence needed.
 
 The PC-hosted delivery test received no TV readiness callback. An inbound Node block was observed on Windows, and no firewall rules were changed. Public HTTPS delivery removes the need for a PC asset server. Detailed commands and pairing-state reuse are in [TV setup](TV-SETUP.md).
 

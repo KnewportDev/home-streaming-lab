@@ -23,7 +23,7 @@ for the actual mainboard revision or a boot log.
 
 ## Current conclusion
 
-**A complete replacement firmware is not verified or supported for this target.**
+**A matching-family source release is available; native installation remains unverified.**
 The research found no reproducible root procedure, bootloader unlock, bootable
 replacement OS, or demonstrated USB/serial recovery procedure matching this exact
 model and firmware. This is a gap in available evidence, not proof that such work
@@ -66,7 +66,7 @@ guide. The paired TV accepted its launch. Authenticated `/app/current` at
 **2026-11-06T03:23:03.364Z** matched app 17, namespace 4, and the exact public
 TV Check URL ([launch evidence](evidence/tv-check-launch-2026-11-06.json)).
 Physical TV rendering, physical remote behavior, and the optional Local API result
-remain pending. Photograph the receipts on the actual television next;
+remain pending. Send the short `K1-...` result code or a photograph from the actual television next;
 `/app/current` reports launch metadata, not what the screen displayed.
 The guide's origin restriction is a project policy,
 not a measured H9 limitation; native controls remain disabled. The approved guide
@@ -86,18 +86,24 @@ and complete OS replacement remain unverified.
 | [MediaTek August 2023 bulletin](https://www.mediatek.com/product-security-bulletin/August-2023) | Includes MT5691 in several affected-chip lists; for example, CVE-2023-20811 requires existing System execution privileges and names Android 10/11 or Linux 4.19. | A chipset listing does not prove this VIZIO firmware is affected, unpatched, or remotely rootable. |
 | [Firsthand repair report, post 915](https://forosdeelectronica.com/threads/tv-debugging-tool.181567/page-46) | A September 9, 2025 poster reports a locked debug console on a VIZIO board identified as tpd.mt5691t.pc763. No remedy appears on that page. | Related board-family evidence only: no model/firmware match. UART must not be described as guaranteed root or recovery. |
 
-Exact-model, exact-firmware, platform-string, and public project searches did not
-locate a matching complete source archive. VIZIO's [firmware search](https://support.vizio.com/s/firmware-search?language=en_US)
-was not usable in the research fetch; it returned a loading/CSS error. No official
+The [published 5691 FUR7.2 source release](https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSoftware/blob/1d05e3cb76d453a8d6a76f38dd2b8409b428bb11/README.md)
+lists firmware family `1.720.X.Y`. Its chipset and release mapping match the
+observed target family. This supersedes the earlier search that did not find a
+matching-family source release. The archive has not been acquired or inspected;
+the download form requires contact details and has not been submitted.
+[Source intake](SOURCE-INTAKE.md) records the pinned publication, checksum
+verifier, acquisition step, and questions to investigate in the source.
+
+No exact-build image, execution/root route, signing authority, or recovery
+procedure follows from the family match. VIZIO's [firmware search](https://support.vizio.com/s/firmware-search?language=en_US)
+previously returned a loading/CSS error in the research fetch. No official
 recovery image for this exact unit has been obtained or verified.
 
-A useful parallel request is the complete corresponding source for the observed
-model/firmware, including build configuration, toolchain requirements, and
-compilation/installation scripts. VIZIO's source offer, reproduced in a
-[primary court filing](https://usethesource.sfconservancy.org/tmp_vizio_docs/486.pdf)
-for a different model, directs source requests to VIZIO Support. This is a route
-to request material, not evidence that a complete V405-H9 package or signing
-capability is available. No support request has been sent by this research task.
+A fresh bounded read of the documented development entry at port 9555 failed
+while authenticated current-app metadata matched the check page
+([redacted result](evidence/development-entry-2026-11-06.json)). No debug setting
+was enabled and no screen evidence was obtained. The documented development-TV
+route does not establish access on this retail set.
 
 ## Gated progression
 

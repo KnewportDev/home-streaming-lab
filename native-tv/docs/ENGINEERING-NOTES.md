@@ -1,5 +1,17 @@
 # Engineering notes
 
+## Matching source family and a shorter screen check — 6 November 2026
+
+The [published 5691 / FUR7.2 release](https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSoftware/blob/1d05e3cb76d453a8d6a76f38dd2b8409b428bb11/README.md) lists firmware `1.720.X.Y`. The pinned catalog maps that family to the chipset reported by the target. This closes the earlier failure to find matching-family source, while exact-build compatibility remains unverified. The download form requires contact details and has not been submitted; no archive has been acquired, extracted, or executed. [Source intake](SOURCE-INTAKE.md) records the publication and next inspection questions.
+
+`verify-source-bundle.cjs` reads a local archive in fixed 1 MiB chunks, checks the two pinned publisher digests, and records SHA-256 for later comparisons. It refuses existing output, linked paths, oversized input, and detected mid-read changes. Its JSON omits local paths and keeps compatibility and installation eligibility unverified. The 17 synthetic regressions cover known hashes, chunk boundaries, mismatch exit status, preservation, changed inputs, privacy, and platform path handling. No real vendor archive is included in tests or CI. Use trusted local directories; these portable path checks are not a guarantee against hostile transient directory swaps.
+
+A fresh read of the documented development entry on port 9555 failed while authenticated current-app metadata matched TV Check. The [redacted record](evidence/development-entry-2026-11-06.json) reports `connection_failed`, no settings change, and no screen evidence. [TV Labs' SmartCast documentation](https://docs.tvlabs.ai/platform/platforms/smartcast) and the [TrueX development guide](https://github.com/socialvibe/truex-ctv-web-reference-app/blob/develop/platforms/Vizio/README.md) describe development-TV access; it is not established on this retail set. No debug setting was enabled.
+
+TV Check now prints a large yellow `K1-...` result code. It carries JavaScript, recognized key input, and optional API status without a screenshot service or a new request. `K1` identifies the result format, not the code revision or an installation. A user can report the code shown on the TV; such a report must remain owner-reported evidence. The static value and each API outcome are covered by two new regressions. The [setup guide](TV-SETUP.md#tv-check-visible-execution-receipts) defines the characters.
+
+The combined local Linux suite passed **88 tests, 0 failed, 0 skipped** on Node.js 24.22.1. The workflow includes the new verifier suite in both operating-system jobs. Hosted run outcomes belong to the matching pull request and Actions record. The earlier screenshot below documents the previous TV Check revision before the code badge was added.
+
 ## Passive network status and visible execution checks — 6 November 2026
 
 The paired inspector's optional `--network` mode adds three fixed informational GETs to its existing four-read path: static and dynamic `network/connection_status`, then `network/connection_type`. The [extracted vendor companion SDK](https://github.com/vindeckyy/smartcast-backdoor/blob/aea6dec77bf3c6613c46b2ef45de5444e5f3dccc/extracted/companion-lib.js) compares `ITEMS[0].ELEMENTS[0]` from the static route with `ITEMS[0].VALUE` from the dynamic route. The inspector additionally requires bounded, recognized enum values; malformed or unavailable data remains unknown. It reads no network-address endpoint and retains the 3-second / 128-KiB per-request limits.

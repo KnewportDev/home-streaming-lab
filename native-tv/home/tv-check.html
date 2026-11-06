@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-ZVYKOnI0xF4gx0QBH/mYHkp3qeCHk/cvUMTT3hP4PYY='; style-src 'sha256-rl3HuOfTBD6j82SfK91DbXZcRUD96/DKzaZ2ppjbRuQ='; connect-src http://127.0.0.1:7346; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-7mTjB7v+6FN8n8uJ2V3KN4Jzn2gIYTCrRI1dXlTjCH8='; style-src 'sha256-9DftQwg8JQBCWljAPM4VVj4KG6Lp79pAqFZSa1LV5hw='; connect-src http://127.0.0.1:7346; base-uri 'none'; form-action 'none'">
 <title>Knewport — Check this TV</title>
 <style id="tv-check-style">
 /* Original MIT-licensed cable-guide check screen. No external assets. */
@@ -15,9 +15,10 @@ body{overflow:hidden}.receiver{height:100vh;min-height:560px;padding:3vh 4vw 2.2
 .check-label{display:flex;align-items:center;width:27%;flex:none;padding:1.5vh 1.8vw;border-right:2px solid #0a1535;background:linear-gradient(180deg,#c3cce0,#7386ac);color:#111e3a;font-size:2.6vh;font-weight:700;text-shadow:0 1px #e2e8f1}
 .check-result{display:flex;flex:1;min-width:0;flex-direction:column;justify-content:center;padding:1.4vh 2vw}.value{font-size:3.05vh;font-weight:700;line-height:1.2}.detail{margin-top:.7vh;font-size:1.75vh;line-height:1.35;color:#c8d6ee}.check-row[data-state="pass"] .value{color:#f7e29a}.check-row[data-state="working"] .value{color:#ffe680}.check-row[data-state="attention"] .value{color:#ffe680}
 .actions{display:flex;margin-top:2.4vh}.actions button{font:700 2.2vh Arial,Helvetica,sans-serif;min-height:6.5vh;padding:1.2vh 2vw;border:2px solid #93a5c8;border-bottom-color:#07112d;background:#25448a;color:#fff;text-shadow:1px 2px #0d1d44;cursor:pointer}.actions button+button{margin-left:1.4vw}.actions button:focus{outline:3px solid #fff0a6;outline-offset:2px;color:#111d3b;background:linear-gradient(180deg,#ffe27f,#efb936);text-shadow:0 1px rgba(255,255,255,.4)}
-.actions button[aria-disabled="true"]{border-style:dashed}.footer{display:flex;justify-content:space-between;align-items:flex-start;margin-top:2vh;padding-top:1.2vh;border-top:1px solid #5f739a;font-size:1.55vh;line-height:1.5;color:#bfcee6}.footer p{margin:0}.footer .receipt{text-align:right;max-width:52%}.bridge{color:#dce5f5}.keys{display:block;margin-top:.35vh;color:#c9d4e8}
+.actions button[aria-disabled="true"]{border-style:dashed}.footer{display:flex;justify-content:space-between;align-items:flex-start;margin-top:2vh;padding-top:1.2vh;border-top:1px solid #5f739a;font-size:1.55vh;line-height:1.5;color:#bfcee6}.footer p{margin:0}.footer .receipt{text-align:right;max-width:52%}.result-code{display:block;font-size:3vh;font-weight:700;letter-spacing:.025em;color:#ffe680;white-space:nowrap}.bridge{color:#dce5f5}.keys{display:block;margin-top:.35vh;color:#c9d4e8}
 @media(max-width:800px){body{overflow:auto}.receiver{height:auto;min-height:700px;padding:22px 22px 18px}.masthead{min-height:48px;padding-bottom:10px}.brand{font-size:29px}.edition{font-size:10px}.intro{margin:23px 0 20px}h1{font-size:36px}.intro p{font-size:14px;margin-top:9px}.checks{min-height:332px}.check-row{min-height:83px}.check-label{font-size:18px;padding:14px;width:26%}.check-result{padding:14px 18px}.value{font-size:21px}.detail{font-size:12px;margin-top:6px}.actions{margin-top:22px}.actions button{min-height:49px;font-size:16px;padding:12px 19px}.actions button+button{margin-left:13px}.footer{font-size:11px;margin-top:20px;padding-top:12px}.keys{margin-top:4px}}
 @media(max-width:480px){.receiver{padding:18px 14px}.brand{font-size:27px}.edition{font-size:8px}h1{font-size:31px}.intro p{font-size:13px}.check-label{font-size:15px;width:28%;padding:12px 10px}.check-result{padding:12px}.value{font-size:18px}.detail{font-size:11px}.actions button{font-size:13px;padding:11px 13px}.actions button+button{margin-left:10px}.footer{display:block}.footer .receipt{max-width:none;text-align:left;margin-top:10px}}
+@media(max-width:800px){.result-code{font-size:22px}}
 </style>
 </head>
 <body>
@@ -31,7 +32,7 @@ body{overflow:hidden}.receiver{height:100vh;min-height:560px;padding:3vh 4vw 2.2
     <div class="check-row" id="api-row" data-state="waiting"><div class="check-label">Local API</div><div class="check-result"><span class="value" id="api-value">Not checked</span><span class="detail" id="api-detail">One read of device identity. No TV settings change.</span></div></div>
   </section>
   <nav class="actions" aria-label="Check controls"><button id="check-button" type="button" aria-disabled="false">Check TV connection</button><button id="back-button" type="button">Back to guide</button></nav>
-  <footer class="footer"><p><span class="bridge">VIZIO interface symbol: <span id="bridge-value">Not checked</span></span><span class="keys">Arrows move · OK selects · Back returns to guide</span></p><p class="receipt">Take a photo to share these results.<br>Read-only check. Results stay on this screen.</p></footer>
+  <footer class="footer"><p><span class="bridge">VIZIO interface symbol: <span id="bridge-value">Not checked</span></span><span class="keys">Arrows move · OK selects · Back returns to guide</span></p><p class="receipt"><strong class="result-code">Check result: <span id="result-code">K1-000</span></strong>Send this short result code or a photo.<br>Not a pairing PIN. Results stay on this screen.</p></footer>
 </main>
 <script id="tv-check-script">
 /* SPDX-License-Identifier: MIT. Original fixed, read-only diagnostic.
@@ -76,6 +77,8 @@ body{overflow:hidden}.receiver{height:100vh;min-height:560px;padding:3vh 4vw 2.2
     var doc = host.document, active = null, attempted = false, lastResult = "waiting", blockedEndpoint = null, count = 0;
     var checkButton = doc.getElementById("check-button"), backButton = doc.getElementById("back-button");
     var apiRow = doc.getElementById("api-row");
+    // K1 identifies this result format, not a build or installation state.
+    var resultCodes = { waiting: "0", checking: "C", match: "M", mismatch: "D", unable: "U", policy: "S", large: "L", invalid: "I", unsupported: "N" };
     var messages = {
       match: ["Target matched", "V405-H9 · Firmware 1.720.9.1-1"],
       mismatch: ["Different TV or firmware", "Expected V405-H9 with firmware 1.720.9.1-1."],
@@ -85,6 +88,9 @@ body{overflow:hidden}.receiver{height:100vh;min-height:560px;padding:3vh 4vw 2.2
       large: ["Response exceeded the limit", "The check stopped at 128 KiB."],
       unsupported: ["Connection check unavailable", "This browser cannot perform the local read."]
     };
+    function refreshResultCode() {
+      doc.getElementById("result-code").textContent = "K1-1" + (count > 0 ? "1" : "0") + resultCodes[lastResult];
+    }
     function show(result) {
       lastResult = result;
       doc.getElementById("api-value").textContent = messages[result][0];
@@ -92,6 +98,7 @@ body{overflow:hidden}.receiver{height:100vh;min-height:560px;padding:3vh 4vw 2.2
       apiRow.setAttribute("data-state", result === "match" ? "pass" : "attention");
       apiRow.setAttribute("aria-busy", "false");
       checkButton.setAttribute("aria-disabled", "false");
+      refreshResultCode();
     }
     function finish(request, result, abort) {
       if (!request || request.done) return;
@@ -114,6 +121,7 @@ body{overflow:hidden}.receiver{height:100vh;min-height:560px;padding:3vh 4vw 2.2
       apiRow.setAttribute("data-state", "working");
       apiRow.setAttribute("aria-busy", "true");
       checkButton.setAttribute("aria-disabled", "true");
+      refreshResultCode();
       var xhr = request.xhr;
       function unable() { finish(request, blockedEndpoint === ENDPOINT ? "policy" : "unable", true); }
       xhr.onerror = unable; xhr.ontimeout = unable;
@@ -161,6 +169,7 @@ body{overflow:hidden}.receiver{height:100vh;min-height:560px;padding:3vh 4vw 2.2
       doc.getElementById("remote-value").textContent = name + " received";
       doc.getElementById("remote-detail").textContent = count + (count === 1 ? " key event on this page." : " key events on this page.");
       doc.getElementById("remote-row").setAttribute("data-state", "pass");
+      refreshResultCode();
     }
     checkButton.onclick = check;
     backButton.onclick = leave;
@@ -188,6 +197,7 @@ body{overflow:hidden}.receiver{height:100vh;min-height:560px;padding:3vh 4vw 2.2
     doc.getElementById("bridge-value").textContent = present ? "Present" : "Not detected";
     doc.getElementById("js-value").textContent = "Running";
     doc.getElementById("js-row").setAttribute("data-state", "pass");
+    refreshResultCode();
     checkButton.focus();
   }
   if (typeof module !== "undefined" && module.exports) module.exports = { mount: mount };
