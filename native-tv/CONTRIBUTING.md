@@ -9,7 +9,7 @@ The canonical project is `native-tv/` in [KnewportDev/home-streaming-lab](https:
 3. Run `node --check home/home.js` and the offline tests on Linux:
 
    ```sh
-   node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs
+   node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs tools/test-tv-check.cjs
    ```
 
 4. Open a pull request from a focused branch. The scoped workflow runs Linux checks and a separate Windows Node suite, then produces browser-preview and native-interface-preparation artifacts. The POSIX USB diagnostic test runs on Linux; all other suites also run on Windows.

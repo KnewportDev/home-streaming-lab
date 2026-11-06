@@ -6,7 +6,7 @@ A personal TV overhaul project combining a retro cable guide, LAN discovery, aut
 
 ## Resume bullet
 
-Developing a VIZIO TV overhaul with dependency-free Node.js tools for LAN discovery, authenticated control, and private session storage; published a retro cable-guide interface through GitHub Actions with 57 passing local offline tests, reproducible interface packaging, and documented native-system requirements.
+Developing a VIZIO TV overhaul with dependency-free Node.js tools for LAN discovery, authenticated control, and private session storage; published a retro cable-guide interface through GitHub Actions with Linux and Windows checks, reproducible interface packaging, and documented native-system requirements.
 
 ## Project explanation
 
@@ -14,7 +14,7 @@ Developing a VIZIO TV overhaul with dependency-free Node.js tools for LAN discov
 
 “The working pieces are a browser interface, bounded network discovery, ordinary PIN pairing, and authenticated launch requests. A useful troubleshooting case involved a PIN appearing on the TV while the client failed to save its state. Testing the file-open operation on Windows isolated an EINVAL error; the fix uses a checked file handle, with an offline regression for that failure.
 
-“The guide is published on GitHub Pages, so it doesn't need a PC running to serve its assets. Its published baseline passed 39 offline tests. The next stage is proving native execution and recovery on the actual TV before making anything persistent. A personal media server and real channel schedules come later.”
+“The guide is published on GitHub Pages, so it doesn't need a PC running to serve its assets. The development pipeline checks Linux and Windows before publishing. A separate TV check screen helps distinguish page loading, JavaScript, remote input, and local API access. The next stage is proving native execution and recovery on the actual TV before making anything persistent. A personal media server and real channel schedules come later.”
 
 ## Work covered
 
@@ -25,6 +25,7 @@ Developing a VIZIO TV overhaul with dependency-free Node.js tools for LAN discov
 | Windows troubleshooting | [Engineering notes](ENGINEERING-NOTES.md#windows-pairing-state-write-failure) document the failed state write, the isolated file-operation test, and the checked-handle fix. |
 | Interface development | [Guide source](../home/) implements directional navigation, visible focus, information dialogs, themes, and an empty app state. The listings are labeled samples. |
 | Native capability research | [Platform inspection](../tools/inspect-native-platform.cjs) reads informational endpoints from the paired TV. [Native-system evidence](NATIVE-SYSTEM.md) records model-specific findings and missing proof. |
+| Browser troubleshooting | [TV check screen](../home/tv-check.html) separates visible rendering and remote input from an optional bounded local metadata request, without credentials or telemetry. |
 | Reproducible packaging | [Native preparation tool](../tools/package-native-home.cjs) assembles shared interface assets and a SHA-256 content manifest without private configuration or session data. |
 | GitHub delivery | Repository-root `.github/workflows/native-tv.yml` runs offline checks, attaches artifacts, and publishes the browser preview from `main`. It has no TV credentials. |
 
@@ -32,7 +33,9 @@ Developing a VIZIO TV overhaul with dependency-free Node.js tools for LAN discov
 
 The TV reports **V405-H9**, firmware **1.720.9.1-1**, and ViziOS **mtk5691-1.6.1770.1**. PIN pairing completed and an authenticated launch was accepted. A later current-app read reported Conjure app 17, namespace 4, and the exact public guide URL. These checks verify the control path; physical screen rendering and remote behavior still need observation.
 
-The cable-guide baseline passed **39 offline tests** and deployed in [Actions run 42150339918](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42150339918). Browser review covered the layout, directional navigation, program dialogs, Settings, and empty My Apps state. The expanded native preparation suite passes 57 local tests on Node.js 24.22.1. The new inspector also completed all four informational requests on the actual TV; its [redacted report](evidence/native-platform-2026-11-06.json) is included as evidence.
+The native-preparation baseline passed **57 Linux tests and 56 Windows tests** and deployed in [Actions run 42152947388](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42152947388). Browser review covered the guide layout, directional navigation, program dialogs, Settings, and empty My Apps state. The inspector also completed all four informational requests on the actual TV; its [redacted report](evidence/native-platform-2026-11-06.json) is included as evidence.
+
+An additional [seven-request inspection](evidence/native-network-2026-11-06.json) found that the TV reported a connected local network. The connection-type value remained unknown under the report's whitelist. This is a useful distinction when diagnosing the earlier network error, but it does not prove Internet access or browser rendering. The standalone check screen makes those separate observations visible on the TV.
 
 The PC-hosted delivery test received no TV readiness callback. An inbound Node block was observed on Windows, and no firewall rules were changed. Public HTTPS delivery removes the need for a PC asset server. Detailed commands and pairing-state reuse are in [TV setup](TV-SETUP.md).
 

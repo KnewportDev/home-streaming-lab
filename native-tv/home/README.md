@@ -14,6 +14,14 @@ Local serving uses `config.json` beside the page; copy the shared example for in
 
 Set `nativeBridge.enabled` to `true` only after native installation and interface support are verified. The origin guard requires precisely HTTP, host `127.0.0.1`, port `12345`. The fixed adapter calls local `http://127.0.0.1:7346/app/get_auth_token`, reads `ITEM.VALUE`, then sends `PUT /app/launch` with header `AUTH` and JSON `{ "VALUE": <observed launch object> }`. It requires `STATUS.RESULT` to equal `SUCCESS` before reporting **request accepted**. Tokens stay in memory for that launch and are never persisted. Public HTTPS pages cannot satisfy this origin guard. They fetch only their static assets and configuration; no TV credentials, analytics, or external assets are included.
 
+## TV check screen
+
+`tv-check.html` is a separate, self-contained page for observing page rendering, JavaScript execution, and physical remote input. It uses the same blue-and-yellow visual language. Open it through the public preview or the local development server; it requires no other assets or configuration. Use arrows and OK/Enter, then photograph the result on the television. Back returns to the guide.
+
+Loading the check page makes no API or receipt request. Choosing **Check TV connection** makes one unauthenticated GET to the fixed TV-local device-information endpoint, with a three-second limit and a 128-KiB response cap. Only a matching V405-H9 / 1.720.9.1-1 response is reported as verified. No credentials, raw response, addresses, serial numbers, or full user agent are displayed or saved. A blocked, timed-out, or status-zero request is inconclusive about Internet access.
+
+The main guide's origin guard is a deliberate project rule. It is not evidence that this H9 browser has blocked the request; the optional check measures that separately. A matching metadata result would establish only that particular browser-to-API read, not native app control, root, an installed Home, or boot behavior. All results stay on screen; `/app/current` cannot read them back.
+
 ## Remote
 
 | Control | Behavior |

@@ -39,6 +39,33 @@ control over the boot process.
 A green CI run, an open PR, and a desktop preview validate repository behavior.
 They do not establish TV compatibility or install anything on its storage.
 
+## Current software evidence and next screen check
+
+The [four-read platform report](evidence/native-platform-2026-11-06.json) succeeded
+on the paired target. The optional `--network` run then completed seven fixed,
+passive reads with no TV writes. Its [redacted report](evidence/native-network-2026-11-06.json)
+records `reportedConnected: true`; connection type stays unknown because its value
+did not match the output allowlist. This establishes the TV's reported local
+connection status, not DNS, TLS, Internet access, or page rendering.
+
+Standalone [TV Check](../home/tv-check.html) is prepared for publication at
+[the public check URL](https://knewportdev.github.io/home-streaming-lab/tv-check.html).
+It provides visible page, JavaScript, and remote-key receipts without automatic
+probes or credentials. An explicit **Check TV connection** button can make one
+fixed unauthenticated GET to `http://127.0.0.1:7346/state/device/deviceinfo`, limited
+to 3 seconds and 128 KiB. Browser status `0` is ambiguous and does not prove there
+is no Internet connection. Even a successful read would establish only access to
+that endpoint from the page's browser context.
+
+After publication, launch using the existing paired state and photograph the
+receipts on the actual television. TV Check publication, launch, and visual QA are
+not yet recorded. `/app/current` reports the requested application and URL, not
+what the screen displayed. The guide's origin restriction is a project policy,
+not a measured H9 limitation; native controls remain disabled. The approved guide
+is preserved, and its eight-file preparation bundle now includes this check page.
+Root, bootloader control, recovery, native installation, persistent Home behavior,
+and complete OS replacement remain unverified.
+
 ## Source compatibility record
 
 | Source | What it establishes | Relevance to this target |
@@ -88,7 +115,7 @@ capability is available. No support request has been sent by this research task.
    insufficient; unrelated firmware, a generic ARM image, or a launcher build
    is not a substitute for this proof.
 
-## Smallest useful physical evidence
+## Smallest useful hardware evidence
 
 If the existing software evidence cannot establish a native execution or boot
 route, the next physical investigation is **identify the exact mainboard and

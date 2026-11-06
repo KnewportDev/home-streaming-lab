@@ -18,6 +18,7 @@ const ASSETS = Object.freeze([
   { input: 'home/index.html', output: 'index.html', limit: 1048576 },
   { input: 'home/home.css', output: 'home.css', limit: 1048576 },
   { input: 'home/home.js', output: 'home.js', limit: 1048576 },
+  { input: 'home/tv-check.html', output: 'tv-check.html', limit: 1048576 },
   { input: 'LICENSE', output: 'LICENSE', limit: 65536 },
 ]);
 const GATES = Object.freeze([
@@ -160,12 +161,13 @@ function packageReadme() {
     '## Contents',
     '',
     '- index.html, home.css, home.js: current interface source, copied as bytes.',
+    '- tv-check.html: standalone screen and remote check; connection check is opt-in.',
     '- config.json: generated only from the shared config.example.json.',
     '- LICENSE: the original project MIT license.',
     '- README.md: this preparation status and package description.',
     '- manifest.json: target, unverified gates, file sizes and SHA-256 hashes.',
     '',
-    'The four runtime files use relative asset/configuration requests and must',
+    'The guide and its configuration use relative requests and must',
     'remain together if eventually served from a proven TV-internal HTTP origin.',
     'No internal HTTP service or deployment is created by this package.',
     'The native adapter remains disabled. The app catalog is empty; the guide',
@@ -288,7 +290,7 @@ function main(args = process.argv.slice(2)) {
     throw new Error(USAGE);
   }
   const result = generate(args[1]);
-  console.log('Prepared 7 files in ' + result.directory);
+  console.log('Prepared 8 files in ' + result.directory);
   console.log('Package version: ' + result.manifest.version);
   console.log('Native installation, boot and recovery remain unverified. No TV was contacted.');
 }

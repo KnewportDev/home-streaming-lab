@@ -1,12 +1,26 @@
 # Engineering notes
 
+## Passive network status and visible execution checks — 6 November 2026
+
+The paired inspector's optional `--network` mode adds three fixed informational GETs to its existing four-read path: static and dynamic `network/connection_status`, then `network/connection_type`. The [extracted vendor companion SDK](https://github.com/vindeckyy/smartcast-backdoor/blob/aea6dec77bf3c6613c46b2ef45de5444e5f3dccc/extracted/companion-lib.js) compares `ITEMS[0].ELEMENTS[0]` from the static route with `ITEMS[0].VALUE` from the dynamic route. The inspector additionally requires bounded, recognized enum values; malformed or unavailable data remains unknown. It reads no network-address endpoint and retains the 3-second / 128-KiB per-request limits.
+
+The [live redacted report](evidence/native-network-2026-11-06.json) completed seven requests against V405-H9 / `1.720.9.1-1`. All four original checks succeeded. Both connection-status reads succeeded and produced `reportedConnected: true`; the connection type did not match the output allowlist and remains `unknown` / `invalid_response`. No TV writes were sent. This does not resolve DNS, TLS, public-page loading, or the earlier on-screen “no network detected” message.
+
+The next experiment uses standalone [TV Check](../home/tv-check.html), with separate visible receipts for HTML, JavaScript execution, and remote-key events. It has no background requests, automatic probes, credentials, or receipt server. Only its explicit **Check TV connection** button sends a fixed unauthenticated GET to `http://127.0.0.1:7346/state/device/deviceinfo`, bounded to 3 seconds and 128 KiB. Browser status `0` is inconclusive, including when browser policy prevents reading the response; it must not be labeled “no Internet.” The guide's origin guard was our policy, not a measured H9 restriction. Its native app controls stay disabled.
+
+The planned publication target is [the TV Check page](https://knewportdev.github.io/home-streaming-lab/tv-check.html). Launch will reuse the existing paired state. Publication, TV Check launch, desktop browser QA, and physical TV receipts are not yet recorded. A photo of the television is needed because `/app/current` reports launch metadata rather than screen contents or script execution. The cable-guide design is unchanged.
+
+The new full suite passed **69 tests locally on Linux, with 0 failures and 0 skips**. Hosted results for this revision remain pending. Before these changes, merged-main [run 42152947388](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42152947388) passed **57 Linux tests and 56 Windows tests**; that remains the verified historical baseline. The preview allowlist now has seven files including TV Check; the native preparation bundle has eight including its manifest.
+
+The device-information parser also accepts `ITEMS[0].VALUE.SYSTEM_INFO.VERSION`, the shape in the [pinned vizaio capture](https://github.com/raman325/vizaio/blob/aa737707836ac1d97df753192640595583e7823e/tests/captured/device_info.json). A regression covers matching, mismatched, and malformed nested versions without exposing adjacent identifiers. Source attributes preserve LF line endings so inline CSP hashes and package byte hashes remain stable on Windows checkouts.
+
 ## Windows CI temporary-directory paths
 
 Adding a Windows job exposed a difference between local and hosted test environments. In [run 42152466657](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42152466657), the new inspector and packaging tests passed, but 16 existing session tests stopped at the state-directory check. The error was `State directories must not use symbolic links.` Linux passed all 57 tests.
 
 Those fixtures used the temporary-directory path returned by the operating system without resolving it. The session code compares a private state directory with its canonical path; Windows temporary paths can have aliases. The fixtures now call `fs.realpath()` after creating each disposable directory, matching the canonical paths already used by the new inspector tests.
 
-The production path guard and the deliberate linked-path rejection test remain intact. The existing 24 session tests passed locally after this fixture change; the Windows job in [PR #2](https://github.com/KnewportDev/home-streaming-lab/pull/2) checks the hosted behavior. This is a test-environment correction, with no changes to pairing or the TV.
+The production path guard and the deliberate linked-path rejection test remain intact. The existing 24 session tests passed locally after this fixture change. [PR #2](https://github.com/KnewportDev/home-streaming-lab/pull/2) merged, and [run 42152947388](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42152947388) passed the 57-test Linux and 56-test Windows jobs. This was a test-environment correction, with no changes to pairing or the TV.
 
 These notes record observed behavior and the decisions it led to. The baseline below is from **5 November 2026**. Local network addresses, raw device responses, and pairing credentials are deliberately absent.
 
@@ -119,20 +133,21 @@ Ordinary PIN pairing completed successfully. The TV accepted an authenticated Co
 
 The PC asset server answered locally, but no JavaScript readiness callback arrived from the TV. The owner reported “no network detected.” An explicit inbound Node block was observed in Windows; the process was not elevated and no firewall rules were changed. Rendering remains unverified.
 
-The new delivery path uses `launch-page` to request the [public HTTPS interface](https://knewportdev.github.io/home-streaming-lab/). The paired credential is used only for the TV control request; no PC asset server or inbound firewall change is needed. The helper emitted `page_launch_accepted` for this URL. The public page uses shared example configuration with native app controls disabled. Local `serve-launch` injects its readiness callback; public static files contain no receipt request. The HTTPS request still requires direct TV-screen and remote-control observations.
+The new delivery path uses `launch-page` to request the [public HTTPS interface](https://knewportdev.github.io/home-streaming-lab/). The paired credential is used only for the TV control request; no PC asset server or inbound firewall change is needed. The helper emitted `page_launch_accepted` for this URL. The public page uses shared example configuration with native app controls disabled. Local `serve-launch` injects its readiness callback; public static files send no automatic receipt callback. The HTTPS request still requires direct TV-screen and remote-control observations.
 
 ## Delivery evidence and next experiment
 
-The source repository is public and Pages uses GitHub Actions. The workflow checks JavaScript syntax, runs the offline suite, and packages a six-file preview ZIP. The same allowlist feeds Pages publishing after a successful main-branch build; pull requests do not deploy. `config.json` comes from the shared example, with no private state or credentials. Deployment permissions belong only to the Pages job.
+The source repository is public and Pages uses GitHub Actions. The workflow checks JavaScript syntax, runs the offline suite, and packages an allowlisted preview ZIP. The allowlist now includes standalone TV Check for seven files. The same allowlist feeds Pages publishing after a successful main-branch build; pull requests do not deploy. `config.json` comes from the shared example, with no private state or credentials. Deployment permissions belong only to the Pages job. Publication of the new TV Check page is still pending.
 
 The earlier [hosted run for commit afabe7c](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42116511358) passed its 23-test suite. The [recovery build](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42120822505) then passed 30 tests. [Run 42124719065](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065), at commit `3dfa54ff948a9d4a8e867678b226c8c6ecef22ee`, passed both the **34-test offline job** and the **Pages deployment job**. Pages settings confirmed the live URL.
 
 The actual deployed site was opened in a desktop browser. The interface rendered, Settings opened, selecting Cobalt changed the theme, and Escape closed Settings and restored focus. A screenshot was captured. This verifies the deployed web interface in that browser; it does not establish that the TV has rendered it.
 
-The next observation is the TV screen after its accepted HTTPS launch, followed by remote-navigation checks. API acceptance, local callback evidence, browser rendering, TV-screen observations, and persistent installation remain separate milestones. Root access, replacement firmware, internal installation, and persistence remain unverified.
+The next observation is a TV-screen photo of the standalone check after publication and launch, followed by remote-key receipts and then guide-navigation checks. API acceptance, local callback evidence, browser rendering, TV-screen observations, and persistent installation remain separate milestones. Root access, replacement firmware, internal installation, and persistence remain unverified.
 
 ## References
 
 - [Node.js 24 file-system flags](https://nodejs.org/docs/latest-v24.x/api/fs.html#file-system-flags) and [file-handle truncation](https://nodejs.org/docs/latest-v24.x/api/fs.html#filehandletruncatelen): documented API semantics; the specific `EINVAL` result above comes from the local Windows probe.
 - [VIZIO Conjure launcher](https://vizio-pm.s3-us-west-1.amazonaws.com/conjure-launcher.html): pairing and authenticated app-launch request structure.
 - [exiva SmartCast API](https://github.com/exiva/Vizio_SmartCast_API): pairing fields and result-code documentation.
+- [Extracted vendor companion SDK, pinned source](https://github.com/vindeckyy/smartcast-backdoor/blob/aea6dec77bf3c6613c46b2ef45de5444e5f3dccc/extracted/companion-lib.js): `Lg` / `Vg` connection-status reads and comparison, plus `Um` / `qm` connection-type read. The SDK source came from another model; the live report above records this H9's results.

@@ -1,0 +1,9 @@
+# Inline CSP hashes and native-package manifests depend on stable bytes.
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.cjs text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+LICENSE text eol=lf
+*.png binary
