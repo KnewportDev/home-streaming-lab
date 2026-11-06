@@ -1,8 +1,18 @@
 # Engineering notes
 
+## Verified publisher source and native boundaries — 6 November 2026
+
+The owner-authorized publisher download completed, and the saved `5691_OSS_FUR7.2.zip` matched both pinned published digests. The archive is **7,946,973,901 bytes**. Its [redacted acquisition receipt](evidence/source-archive-2026-11-06.json) records the publisher pin and all three calculated hashes. Registration details, signed download URLs, and vendor source remain private on the development PC.
+
+[Direct inspection](SOURCE-INSPECTION.md) records selected source paths and byte hashes. The review follows Home configuration through the orchestrator and its controllers, traces asset signature validation and activation, and identifies the explicit `mt5691_cast` BSP recipe using the `m7632` chip name. This is source evidence rather than runtime evidence from the owner's TV.
+
+The build review found an unresolved selection: `build_gpl_fw.sh` assigns `TARGET=mtk5695`. The reviewed rootfs recipe uses a shared branch for 5691 and 5695, so that assignment alone does not prove incompatibility. The BSP separately names the m7632 kernel and an MT164B eMMC/OP-TEE boot configuration. No build, signing process, vendor executable, or TV operation was run during this review.
+
+The decision is to retain the approved guide as the candidate UI and close the remaining native-access, installed-build, and recovery boundaries before treating source output as installable. The project does not acquire signing authority or a restore procedure by downloading source. The earlier family-discovery record below is preserved as history; archive acquisition is now complete.
+
 ## Matching source family and a shorter screen check — 6 November 2026
 
-The [published 5691 / FUR7.2 release](https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSoftware/blob/1d05e3cb76d453a8d6a76f38dd2b8409b428bb11/README.md) lists firmware `1.720.X.Y`. The pinned catalog maps that family to the chipset reported by the target. This closes the earlier failure to find matching-family source, while exact-build compatibility remains unverified. The download form requires contact details and has not been submitted; no archive has been acquired, extracted, or executed. [Source intake](SOURCE-INTAKE.md) records the publication and next inspection questions.
+The [published 5691 / FUR7.2 release](https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSoftware/blob/1d05e3cb76d453a8d6a76f38dd2b8409b428bb11/README.md) lists firmware `1.720.X.Y`. The pinned catalog maps that family to the chipset reported by the target. This closed the earlier failure to find matching-family source, while exact-build compatibility remained unverified. At this earlier checkpoint the contact form had not been submitted and no archive had been acquired, extracted, or executed. The completed acquisition is recorded above and in [Source intake](SOURCE-INTAKE.md).
 
 `verify-source-bundle.cjs` reads a local archive in fixed 1 MiB chunks, checks the two pinned publisher digests, and records SHA-256 for later comparisons. It refuses existing output, linked paths, oversized input, and detected mid-read changes. Its JSON omits local paths and keeps compatibility and installation eligibility unverified. The 17 synthetic regressions cover known hashes, chunk boundaries, mismatch exit status, preservation, changed inputs, privacy, and platform path handling. No real vendor archive is included in tests or CI. Use trusted local directories; these portable path checks are not a guarantee against hostile transient directory swaps.
 

@@ -1,0 +1,79 @@
+{
+  "sourceArchiveSha256": "974b76513f493e24494dcb2edce67add04795be4f6f60e07b95961131fe456bf",
+  "sourceTarSha256": "64039b0d6802798e7776508da912329271bc7c3e37aba6fb1f5198c87b38cd93",
+  "extractedAt": "2026-11-06T13:20:37.831Z",
+  "files": [
+    {
+      "path": "rootfs/ViziOS/feature-manager/src/main.cpp",
+      "bytes": 39584,
+      "sha256": "33e671b7601a337d20f19cb1f0911e0e682c2de9d53d8b572b41a878d7dd9fa0"
+    },
+    {
+      "path": "rootfs/ViziOS/platform_orchestrator/src/apibuilder.cpp",
+      "bytes": 25061,
+      "sha256": "a6906ed37cad347c5cf68e76414c675f1ec266d3775a26a788f27b137bffc5ee"
+    },
+    {
+      "path": "rootfs/ViziOS/platform_orchestrator/src/appsdatabase.cpp",
+      "bytes": 62317,
+      "sha256": "2e8c40c8e86ccf7246c7d0bbe390b1a4ac90033fb993a7c9492abd118d9c7539"
+    },
+    {
+      "path": "rootfs/ViziOS/platform_orchestrator/src/orchestrator.cpp",
+      "bytes": 51713,
+      "sha256": "d04be572c3c12ad296d6c2629bfdd8ecfdb77a0987a7d9e24223250ec8d1cad4"
+    },
+    {
+      "path": "rootfs/ViziOS/platform_orchestrator/src/scpladapter.cpp",
+      "bytes": 8710,
+      "sha256": "7d496342640fbf8a47f977d08caebb2666090d63af25a24a8e7d62479d06f30e"
+    },
+    {
+      "path": "rootfs/ViziOS/platform_orchestrator/src/spock/browserappcontroller.cpp",
+      "bytes": 6882,
+      "sha256": "244bc33d6f540c081a9d37501ed2ea067e31accd5e295ae2725b5d6be014e190"
+    },
+    {
+      "path": "rootfs/ViziOS/platform_orchestrator/src/spock/lokiappcontroller.cpp",
+      "bytes": 16379,
+      "sha256": "9de473f09738df880baf77f019c00af58a7dfab87463ade21b5d6e36123c9b36"
+    },
+    {
+      "path": "rootfs/OSUpdater/README.md",
+      "bytes": 3088,
+      "sha256": "2f004757a9dccd116a683ceb55a91e41ec42c36e8a54f26048e963870ec82cda"
+    },
+    {
+      "path": "rootfs/OSUpdater/osu/src/asset_installers/impl/sc_assets_installer.cpp",
+      "bytes": 11624,
+      "sha256": "98ad8095a75476dbc5b36a038a791dd1591d4c26858756c2ae3555f4b13778d5"
+    },
+    {
+      "path": "rootfs/OSUpdater/osu/src/asset_installers/impl/sc_config_installer.cpp",
+      "bytes": 15701,
+      "sha256": "eaf2c856deaec0114f3572f647e09cbf994fa2968196145f8b165c34fc495021"
+    },
+    {
+      "path": "rootfs/OSUpdater/osu/src/manifest/impl/manifest_parser.cpp",
+      "bytes": 2406,
+      "sha256": "f143cd20eb44f72a985d2ae89b9154f337907d9eb6da77169fca9aac6be2499c"
+    },
+    {
+      "path": "rootfs/OSUpdater/unpacker/src/unpacker.cpp",
+      "bytes": 16189,
+      "sha256": "6a7429fcbc226e80a7ae6135acfdf8f58b0c21a8b3a241ae5cf1119eb5d2011d"
+    },
+    {
+      "path": "README.md",
+      "bytes": 818,
+      "sha256": "c994c206642d3eabccd3b56ffcbd8c0bedc9e87fcab778bf419f83fc34d30c9f"
+    },
+    {
+      "path": "rootfs/ViziOS/platform_orchestrator/README.md",
+      "bytes": 276,
+      "sha256": "fb95c7543ea90e8e9f60a2b509b5732a0301fbc03d21e146fc997b2efebfef5a"
+    }
+  ],
+  "vendorCodeExecuted": false,
+  "tvContacted": false
+}

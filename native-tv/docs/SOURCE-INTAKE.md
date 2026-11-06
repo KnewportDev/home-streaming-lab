@@ -9,21 +9,26 @@ The [source README](https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSo
 and [checksums](https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSoftware/blob/1d05e3cb76d453a8d6a76f38dd2b8409b428bb11/checksums)
 are pinned to commit `1d05e3cb76d453a8d6a76f38dd2b8409b428bb11`.
 The [catalog mapping](https://github.com/opensource-vizio/.github/blob/fed538e319826066d7e96cdf92bd385f139d24d9/profile/README.md)
-is pinned separately. The [evidence record](evidence/source-family-5691-fur72.json)
-keeps publication, acquisition, inspection, and installation separate.
+is pinned separately. The [initial family record](evidence/source-family-5691-fur72.json)
+preserves the earlier discovery state. The later [acquisition receipt](evidence/source-archive-2026-11-06.json)
+and [direct inspection](SOURCE-INSPECTION.md) record the completed download and
+selected source review without changing that history.
 
 ## Get the archive
 
 The README links to the [download form for 5691_OSS_FUR7.2.zip](https://d2mi77xcznxniv.cloudfront.net/index.html?file=5691_OSS_FUR7.2.zip).
 The form requires name, email, phone, and company and describes compliance,
-audit, and download tracking. No contact details have been submitted for this
-project. The archive has not been acquired or inspected.
+audit, and download tracking. The owner approved the submission, and the normal
+publisher flow completed on **6 November 2026**. The downloaded ZIP measured
+**7,946,973,901 bytes** and matched both pinned published digests. Its SHA-256 is
+`974b76513f493e24494dcb2edce67add04795be4f6f60e07b95961131fe456bf`.
 
-If obtaining it, save the downloaded ZIP in the ignored
-`native-tv/.private/source-inbox/` directory. Keep contact details, the archive,
-and extracted vendor files out of this MIT-licensed repository. Another owner's
-inspection reports an archive around 7.9 GB; this project has not measured the
-download. Use sufficient local storage and a trusted directory.
+The ZIP and selected extracted source are saved in the ignored
+`native-tv/.private/source-inbox/` directory on the development PC. Contact
+details, registration identifiers, signed URLs, the archive, and vendor files
+stay out of this MIT-licensed repository. Only redacted evidence and original
+analysis are published. Other copies should also use sufficient local storage
+and a trusted directory.
 
 ## Verify without executing
 
@@ -66,23 +71,26 @@ prove that a mapped drive is physically local. Reading may update access time;
 the archive contents are never written. A checksum match is not a digital
 signature or an audit of the source.
 
-## Questions for source inspection
+## Source inspection record
 
 An [independent owner's inspection record](https://github.com/zerckzzyHD/Appliances/blob/40a7dc754ba14811d589a0925a56109a7669da72/TV-Workbench/docs/history/import-2026-10-23/forge/FIRMWARE-RESEARCH.md)
-reports ViziOS platform services and an OSUpdater in this release. The paths
-below are leads from that record, **not files inspected by this project**.
+reported ViziOS platform services and an OSUpdater in this release and supplied
+the initial leads. Selected files from our own verified publisher download have
+now been inspected. [The findings](SOURCE-INSPECTION.md) identify the actual
+members, hashes, controller behavior, updater checks, and unresolved boundaries.
 
-| Reported source area | Question to resolve |
+| Source area | Current review |
 | --- | --- |
-| `feature-manager/src/main.cpp` and `doc/features.md` | How namespace 4 and `ChromiumHtmlAppUris` relate to Home/local asset configuration. |
-| `platform_orchestrator/src/appsdatabase.cpp` | How Home, error, and onboarding applications are selected. |
-| `OSUpdater/osu/src/manifest/impl/manifest_parser.cpp` | How `SC-CONFIG` and `SC-ASSETS` are admitted. |
-| `OSUpdater/osu/src/asset_installers/impl/sc_assets_installer.cpp` | How local assets and the active web directory are selected. |
-| `OSUpdater/unpacker/src/unpacker.cpp` | What signature checks apply before installation. |
+| `feature-manager/src/main.cpp` | HomePage configuration updates the orchestrator registry; creating a temporary node is not persistence proof. |
+| `platform_orchestrator/src/appsdatabase.cpp` and controller implementations | Home alias/URI resolution, fallback ordering, and different Loki/browser behavior are traced. The retail TV's effective controller remains unobserved. |
+| `OSUpdater/osu/src/manifest/impl/manifest_parser.cpp` | The parser records a manifest signature; parsing alone does not validate it. |
+| `OSUpdater/osu/src/asset_installers/impl/sc_assets_installer.cpp`, config installer, and manager callers | Install/post-install precede aggregate status and path switching; web/config synchronization is called at manager startup. Runtime behavior and full failure recovery remain unverified. |
+| `OSUpdater/unpacker/src/unpacker.cpp` and verification helpers | Selected asset download validation reaches OpenSSL SHA-256 signature verification. This does not establish a way to install unsigned owner content. |
+| `build_gpl_fw.sh` and `mt5691_cast/Makefile` | The ViziOS script selects `mtk5695`; the separate MT5691 board target selects `m7632`. Exact output compatibility remains unresolved. |
 
-Begin with an archive listing and text inspection after acquisition and digest
-verification. Record the actual files, licenses, build instructions, and target
-identifiers before relying on reported paths. Source inspection can explain
+Inspection used archive listings and bounded reads of selected regular text
+files after digest verification. No vendor program was executed. Component
+license notices remain attached to the private source. Source inspection can explain
 architecture; it does not grant shell access, signing keys, a writable Home
 configuration, or a recovery procedure on the retail TV. The milestones in
 [NATIVE-SYSTEM.md](NATIVE-SYSTEM.md) remain open.
