@@ -19,6 +19,7 @@ The cable guide is published on GitHub Pages and works in a desktop browser. PIN
 | Cable-guide interface | Browser-verified layout, directional navigation, program dialogs, Settings, and empty My Apps state. |
 | TV control | PIN pairing completed. An authenticated current-app read reported Conjure app 17, namespace 4, and the public guide URL. |
 | Native preparation | A bounded, read-only platform report and an interface bundle with a SHA-256 manifest. |
+| Source release | Published 5691 / FUR7.2 source matches the `1.720` firmware family. Archive acquisition and exact-build compatibility remain open; [intake and verifier](docs/SOURCE-INTAKE.md) are ready. |
 | Local network report | Seven passive reads completed on 6 November: the TV reported connected; connection type remains unknown. [Redacted evidence](docs/evidence/native-network-2026-11-06.json). |
 | TV Check page | Published and checked in a desktop browser. Paired TV launch and exact current-app URL verified; physical TV receipts remain pending. |
 | Physical TV behavior | Screen rendering and physical remote behavior still need observation on the TV. |
@@ -68,6 +69,7 @@ The public HTTPS guide needs no PC serving its assets. A personal media server a
 | `tools/native-session.cjs` | PIN pairing, private session state, and authenticated Conjure launch requests. |
 | `tools/inspect-native-platform.cjs` | Read-only capability inspection using an already paired session; optional passive network-status reads. |
 | `tools/package-native-home.cjs` | Packages the interface, shared configuration, instructions, license, and content manifest. |
+| `tools/verify-source-bundle.cjs` | Reads a downloaded source ZIP and compares pinned publisher digests without extracting or executing it. |
 | `tools/make-usb-diagnostic.cjs` | Prepares a fixed read-only CGI diagnostic; does not contact or execute anything on a TV. |
 | `tools/preview-home.cjs` | Local development preview. |
 | `docs/` | Setup, engineering notes, native-system evidence, and a portfolio summary. |
@@ -104,13 +106,25 @@ The eight-file bundle preserves the cable-guide design and includes TV Check, sh
 
 Its optional **Check TV connection** button makes one fixed, unauthenticated GET to `http://127.0.0.1:7346/state/device/deviceinfo`, bounded to 3 seconds and 128 KiB. Browser status `0` is ambiguous; it does not mean “no Internet.” This check neither enables the guide's native controls nor establishes root or persistence.
 
-The TV accepted its launch using the existing paired state. At **2026-11-06 03:23:03 UTC**, authenticated `/app/current` matched app 17, namespace 4, and the exact public TV Check URL; the [launch report](docs/evidence/tv-check-launch-2026-11-06.json) records that result. This remains launch metadata, not a screenshot or execution receipt. Photograph the receipts on the actual TV next; [setup instructions](docs/TV-SETUP.md#tv-check-visible-execution-receipts) include the command. Physical screen rendering, physical remote behavior, and the optional Local API check on the TV remain pending.
+The TV accepted its launch using the existing paired state. At **2026-11-06 03:23:03 UTC**, authenticated `/app/current` matched app 17, namespace 4, and the exact public TV Check URL; the [launch report](docs/evidence/tv-check-launch-2026-11-06.json) records that result. This remains launch metadata, not a screenshot or execution receipt. The check now shows a short **`K1-...` result code**: send that code or a photo from the actual TV after pressing Left and OK. It is not a pairing PIN or build identifier. [Setup instructions](docs/TV-SETUP.md#tv-check-visible-execution-receipts) explain the values. Physical screen rendering, physical remote behavior, and the optional Local API result remain pending.
+
+## Matching source release
+
+The published **5691 / FUR7.2** release lists `1.720.X.Y`, matching the observed firmware family. Its ZIP has not been acquired: the download form requires contact details. [Source intake](docs/SOURCE-INTAKE.md) links the pinned records, the download page, and the next source questions.
+
+Once the ZIP is available locally, run the dependency-free verifier with an absolute path:
+
+```sh
+node tools/verify-source-bundle.cjs --archive ABS_ZIP --out ABS_NEW_JSON
+```
+
+It reads in bounded chunks, compares both published checksums, and records SHA-256 for future comparisons. The report omits personal paths, refuses overwrite, and leaves installation eligibility unverified. This step does not unpack or run vendor code. The new source-verifier and result-code regressions bring the local Linux suite to **88 passing tests**, with zero failures or skips; hosted results are recorded in the pull request and workflow.
 
 ## Develop and verify
 
 ```sh
 node --check home/home.js
-node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs tools/test-tv-check.cjs
+node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs tools/test-tv-check.cjs tools/test-verify-source-bundle.cjs
 ```
 
 Tests use synthetic responses, mocked transports, loopback servers, and temporary files. They do not contact the TV. The POSIX USB script is checked on Linux; the other Node suites also run in the Windows workflow job.

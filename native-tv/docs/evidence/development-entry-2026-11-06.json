@@ -1,0 +1,17 @@
+{
+  "observedAt": "2026-11-06T03:41:22.878Z",
+  "target": "V405-H9",
+  "firmware": "1.720.9.1-1",
+  "currentCheckAppMatched": true,
+  "operation": "documented_development_entry_read",
+  "port": 9555,
+  "path": "/",
+  "status": "connection_failed",
+  "screenEvidenceObtained": false,
+  "settingsChanged": false,
+  "sources": [
+    "https://docs.tvlabs.ai/platform/platforms/smartcast",
+    "https://github.com/socialvibe/truex-ctv-web-reference-app/blob/develop/platforms/Vizio/README.md"
+  ]
+}
+

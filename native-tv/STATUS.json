@@ -1,6 +1,6 @@
 {
-  "version": "0.4.0",
-  "stage": "tv_browser_check_deployed_physical_observation_pending",
+  "version": "0.5.0",
+  "stage": "matching_source_family_identified_archive_and_tv_observation_pending",
   "live_device": {
     "reported_model": "V405-H9",
     "firmware": "1.720.9.1-1",
@@ -29,7 +29,7 @@
       "skipped": 0,
       "windows": "passed_on_target_pc"
     },
-    "offline_suite_total": 69,
+    "offline_suite_total": 88,
     "offline_suite_failed": 0,
     "offline_suite_skipped": 0,
     "visual_tv_test": "pending",
@@ -103,7 +103,7 @@
       "evidence": "docs/evidence/native-network-2026-11-06.json"
     },
     "tv_check_local_tests": {
-      "passed": 10,
+      "passed": 12,
       "failed": 0,
       "skipped": 0,
       "runtime": "Node.js 24.22.1",
@@ -134,6 +134,30 @@
       "screenshot": "../images/tv-check-browser.png",
       "scope": "desktop_browser_not_tv_screen",
       "evidence": "docs/evidence/tv-check-launch-2026-11-06.json"
+    },
+    "source_intake_local_tests": {
+      "passed": 17,
+      "failed": 0,
+      "skipped": 0,
+      "runtime": "Node.js 24.22.1",
+      "platform": "Linux",
+      "real_archive_used": false
+    },
+    "source_intake_full_local_suite": {
+      "passed": 88,
+      "failed": 0,
+      "skipped": 0,
+      "runtime": "Node.js 24.22.1",
+      "platform": "Linux"
+    },
+    "development_entry_read": {
+      "observed_at": "2026-11-06T03:41:22.878Z",
+      "current_check_app_matched": true,
+      "port": 9555,
+      "status": "connection_failed",
+      "screen_evidence_obtained": false,
+      "settings_changed": false,
+      "evidence": "docs/evidence/development-entry-2026-11-06.json"
     }
   },
   "native_execution_on_tv": "not_yet_verified",
@@ -205,11 +229,12 @@
     "cable_guide_deployment": "verified_success",
     "pages_url": "https://knewportdev.github.io/home-streaming-lab/",
     "hosted_34_test_revision": "passed",
-    "deployed_commit": "2d06d8675b45536f670c70047a33a54dadf22a08",
-    "verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42155846531",
     "previous_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207",
     "hosted_39_test_revision": "passed",
-    "tv_check_url": "https://knewportdev.github.io/home-streaming-lab/tv-check.html"
+    "tv_check_url": "https://knewportdev.github.io/home-streaming-lab/tv-check.html",
+    "last_recorded_deployed_commit": "ccfaac78cad3cc1bb3cf679338f04066d1102379",
+    "last_recorded_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42156709565",
+    "revision_status_source": "GitHub pull-request checks and Actions; recorded runs are historical observations"
   },
   "scope": {
     "current_delivery": "public_https_retro_guide_and_native_preparation_tools",
@@ -222,7 +247,7 @@
   },
   "native_development": {
     "goal": "TV_boots_into_owned_retro_interface_and_future_native_system",
-    "branch": "docs/tv-check-evidence",
+    "branch": "feat/source-intake",
     "tracking_issue": "https://github.com/KnewportDev/home-streaming-lab/issues/1",
     "preparation_package": "implemented_offline_only",
     "platform_inspection": "implemented_and_verified_on_target",
@@ -242,8 +267,24 @@
       "native_guard_changed": false,
       "publication": "deployed",
       "launch": "accepted_and_current_app_url_matched",
-      "source_commit": "2d06d8675b45536f670c70047a33a54dadf22a08"
+      "source_commit": "2d06d8675b45536f670c70047a33a54dadf22a08",
+      "result_format": "K1",
+      "owner_result": "pending",
+      "result_code_is_build_identifier": false
     },
-    "latest_implementation_pull_request": "https://github.com/KnewportDev/home-streaming-lab/pull/3"
+    "latest_implementation_pull_request": "https://github.com/KnewportDev/home-streaming-lab/pull/3",
+    "source_intake": {
+      "published_family": "5691 / FUR7.2 / 1.720.X.Y",
+      "family_mapping": "matches_published_catalog",
+      "source_pin": "1d05e3cb76d453a8d6a76f38dd2b8409b428bb11",
+      "archive_acquired": false,
+      "archive_inspected": false,
+      "source_executed": false,
+      "download_form_submitted": false,
+      "verifier": "tools/verify-source-bundle.cjs",
+      "exact_build_compatibility": "unverified",
+      "installation_eligibility": "unverified",
+      "evidence": "docs/evidence/source-family-5691-fur72.json"
+    }
   }
 }

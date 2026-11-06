@@ -90,11 +90,27 @@ node tools/native-session.cjs launch-page --state "$tvState" --url https://knewp
 
 Desktop review observed **Page: Open**, **JavaScript: Running**, arrow-key receipts and focus changes, no automatic local request, and OK on Back returning to the original guide. The TV also accepted an authenticated launch using the existing paired state. At **2026-11-06 03:23:03 UTC**, `/app/current` matched app 17, namespace 4, and the exact public TV Check URL ([redacted launch evidence](evidence/tv-check-launch-2026-11-06.json)).
 
-Inspect the television itself next. Look for **Page: Open** and **JavaScript: Running**, then press an arrow and check whether **Remote** shows the key received and event count. Photograph the visible receipts and record the revision being tested. OK selects the focused button; Back returns to the guide. Each observation has a separate meaning: HTML appeared, script ran, or a key event reached that page. Physical screen rendering, physical remote input, and the optional Local API result on the TV remain pending. Neither desktop QA nor launch metadata establishes native installation or normal boot/Home behavior.
+Inspect the television itself next. Press **Left**, then **OK** on **Check TV connection**. After three seconds, send the yellow **`K1-...`** code at the bottom or a photo. If the TV shows a network error instead of this page, report that exact error. Back returns to the guide. Physical screen rendering, physical remote input, and the optional Local API result on the TV remain pending. Neither desktop QA nor launch metadata establishes native installation or normal boot/Home behavior.
+
+The code is an on-screen result, not a pairing PIN. `K1` identifies the result format, not the deployed revision. Its next two characters indicate JavaScript and a recognized key event (`0` or `1`); the final character is the API state:
+
+| Last character | Meaning |
+| --- | --- |
+| `0` | Not checked. |
+| `C` | Request in progress. |
+| `M` | Readable metadata matched the exact target model and firmware. |
+| `D` | Readable metadata identified a different target. |
+| `U` | Opaque, failed, timed-out, or unreadable request; Internet access unresolved. |
+| `S` | A matching browser CSP violation was observed. |
+| `L` | Response exceeded the size limit. |
+| `I` | Response was invalid. |
+| `N` | XMLHttpRequest unavailable. |
+
+For example, `K1-110` means JavaScript ran and a recognized key reached the page, with no API check yet. `K1-11M` adds a matching metadata read. The static HTML starts at `K1-000`. Record a submitted code as an **owner-reported observation**, with the tested revision separately. No code proves root, persistent Home behavior, or installation.
 
 Loading this page makes no background requests or automatic TV probes and uses no credentials. The optional **Check TV connection** button sends one fixed, unauthenticated GET to `http://127.0.0.1:7346/state/device/deviceinfo`, with a 3-second timeout and 128-KiB response limit. It does not scan, request a token, launch an app, or change settings. A browser status `0` can reflect browser restrictions or a failed/unreadable request; it is not evidence of “no Internet.” A successful response establishes only that this browser context could read that endpoint. The VIZIO interface-symbol indicator checks existence only; it does not call an SDK method or establish that one works.
 
-The guide's separate origin guard is our project policy, not a measured H9 firmware restriction. Native app controls remain disabled. The standalone check gathers evidence without changing that policy. A matching `/app/current` response only reports launch metadata, so the physical photo is still needed.
+The guide's separate origin guard is our project policy, not a measured H9 firmware restriction. Native app controls remain disabled. The standalone check gathers evidence without changing that policy. A matching `/app/current` response only reports launch metadata; an observation from the actual screen is still needed.
 
 ## Optional local delivery test
 

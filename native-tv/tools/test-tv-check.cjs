@@ -88,6 +88,60 @@ test('default load is passive and reports JS and SDK presence without invoking g
   }
 });
 
+test('short result code separates static HTML, JS, remote input and an explicit check', () => {
+  assert.match(html, /Check result: <span id="result-code">K1-000<\/span>/);
+  assert.match(html, /Not a pairing PIN/);
+  assert.match(html, /Send this short result code or a photo/);
+  const p = page({ vizio: true });
+  const code = () => p.elements['result-code'].textContent;
+  assert.equal(code(), 'K1-100');
+  assert.equal(p.requests.length, 0);
+  assert.equal(p.timers.size, 0);
+  p.key(65);
+  assert.equal(code(), 'K1-100', 'unrecognized keys do not claim remote support');
+  p.key(37);
+  assert.equal(code(), 'K1-110');
+  assert.equal(p.requests.length, 0);
+  p.click();
+  assert.equal(code(), 'K1-11C');
+  p.respond(p.requests[0], good());
+  assert.equal(code(), 'K1-11M');
+  p.click();
+  assert.equal(code(), 'K1-11C', 'a new explicit check replaces the previous result');
+  p.requests[1].onerror();
+  assert.equal(code(), 'K1-11U');
+  p.respond(p.requests[1], good());
+  assert.equal(code(), 'K1-11U', 'late responses cannot replace a finished result');
+  assert.equal(p.requests.length, 2);
+  assert.equal(p.timers.size, 0);
+});
+
+test('short result code distinguishes API outcomes without claiming root or installation', () => {
+  const cases = [
+    ['M', {}, p => p.respond(p.requests[0], { ...good(), ROOTED: false, INSTALLED: false })],
+    ['D', {}, p => p.respond(p.requests[0], { STATUS: { RESULT: 'SUCCESS' }, ITEM: { MODEL_NAME: 'other-model', VERSION: '1.720.9.1-1', ROOTED: true, INSTALLED: true } })],
+    ['U', {}, p => p.requests[0].onerror()],
+    ['U', {}, p => [...p.timers.values()][0].callback()],
+    ['S', {}, p => p.dispatch('securitypolicyviolation', { blockedURI: ENDPOINT })],
+    ['L', {}, p => p.requests[0].onprogress({ loaded: MAX_BYTES + 1 })],
+    ['I', {}, p => p.respond(p.requests[0], 'not JSON')],
+    ['N', { noXHR: true }, () => {}],
+  ];
+  for (const [suffix, options, settle] of cases) {
+    const p = page({ ...options, vizio: true });
+    p.click();
+    assert.equal(p.elements['result-code'].textContent, options.noXHR ? 'K1-10N' : 'K1-10C');
+    settle(p);
+    assert.equal(p.elements['result-code'].textContent, 'K1-10' + suffix);
+    p.key(37);
+    assert.equal(p.elements['result-code'].textContent, 'K1-11' + suffix, 'remote input preserves the API result');
+    assert.equal(p.requests.length, options.noXHR ? 0 : 1);
+    assert.equal(p.timers.size, 0);
+    assert.doesNotMatch(p.screen(), /root|install|persistent|bootloader|replacement OS/i);
+    if (suffix === 'M') assert.equal(p.elements['api-value'].textContent, 'Target matched');
+  }
+});
+
 test('explicit check makes one bounded unauthenticated fixed GET and recognizes observed response shapes', () => {
   for (const data of [good(), { STATUS: { RESULT: 'SUCCESS' }, ITEM: { VALUE: good().ITEM } }, { STATUS: { RESULT: 'SUCCESS' }, ITEMS: [{ VALUE: good().ITEM }] }]) {
     const p = page(); p.click(); p.click();
