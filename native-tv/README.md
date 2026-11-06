@@ -20,12 +20,12 @@ The cable guide is published on GitHub Pages and works in a desktop browser. PIN
 | TV control | PIN pairing completed. An authenticated current-app read reported Conjure app 17, namespace 4, and the public guide URL. |
 | Native preparation | A bounded, read-only platform report and an interface bundle with a SHA-256 manifest. |
 | Local network report | Seven passive reads completed on 6 November: the TV reported connected; connection type remains unknown. [Redacted evidence](docs/evidence/native-network-2026-11-06.json). |
-| TV Check page | A standalone page for visible HTML, JavaScript, and remote-key receipts. Publication, TV launch, and screen observation are pending. |
+| TV Check page | Published and checked in a desktop browser. Paired TV launch and exact current-app URL verified; physical TV receipts remain pending. |
 | Physical TV behavior | Screen rendering and physical remote behavior still need observation on the TV. |
 | Native system | Root, backup/restore, bootloader control, internal installation, and permanent Home replacement remain unverified. |
 | Media and schedules | Sample listings only; no television feed, playback source, or real program-guide data is connected. |
 
-The current changes passed **69 local Linux tests, with 0 failures and 0 skips**. Hosted validation for this revision is pending. Before the TV Check changes, the merged preparation baseline passed **57 Linux tests and 56 Windows tests** in [Actions run 42152947388](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42152947388). The [workflow](https://github.com/KnewportDev/home-streaming-lab/actions/workflows/native-tv.yml) reports results for each revision.
+[PR #3](https://github.com/KnewportDev/home-streaming-lab/pull/3) merged with **69 Linux tests and 68 Windows tests** passing in both [PR validation](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42155733173) and [main run 42155846531](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42155846531). The main run also published Pages. The [workflow](https://github.com/KnewportDev/home-streaming-lab/actions/workflows/native-tv.yml) reports results for each revision.
 
 The full native system is the goal. The current interface and preparation bundle are not a replacement OS or firmware installer. [Native-system evidence](docs/NATIVE-SYSTEM.md) records the compatibility gaps and the steps needed to close them.
 
@@ -100,11 +100,11 @@ The eight-file bundle preserves the cable-guide design and includes TV Check, sh
 
 ## TV Check: observe execution on the screen
 
-[TV Check](home/tv-check.html) is a standalone page prepared for the next Pages deployment at [the TV Check URL](https://knewportdev.github.io/home-streaming-lab/tv-check.html). **Page: Open**, **JavaScript: Running**, and the **Remote** key receipt separate page rendering, script execution, and delivered key events. The page makes no background requests or automatic TV probes and uses no credentials.
+[TV Check](https://knewportdev.github.io/home-streaming-lab/tv-check.html) is published as a standalone page ([source](home/tv-check.html)). **Page: Open**, **JavaScript: Running**, and the **Remote** key receipt separate page rendering, script execution, and delivered key events. Desktop review observed those page/script receipts, arrow-key receipt and focus changes, no automatic local request, and OK on Back returning to the original guide. [Engineering notes](docs/ENGINEERING-NOTES.md#passive-network-status-and-visible-execution-checks--6-november-2026) include the desktop screenshot. The page uses no credentials.
 
 Its optional **Check TV connection** button makes one fixed, unauthenticated GET to `http://127.0.0.1:7346/state/device/deviceinfo`, bounded to 3 seconds and 128 KiB. Browser status `0` is ambiguous; it does not mean “no Internet.” This check neither enables the guide's native controls nor establishes root or persistence.
 
-After publication, reuse the paired state to launch the page and photograph the receipts on the TV; [setup instructions](docs/TV-SETUP.md#tv-check-visible-execution-receipts) include the command. A matching `/app/current` result remains launch metadata, not a screenshot or execution receipt. TV Check has not yet been launched or visually verified on this set.
+The TV accepted its launch using the existing paired state. At **2026-11-06 03:23:03 UTC**, authenticated `/app/current` matched app 17, namespace 4, and the exact public TV Check URL; the [launch report](docs/evidence/tv-check-launch-2026-11-06.json) records that result. This remains launch metadata, not a screenshot or execution receipt. Photograph the receipts on the actual TV next; [setup instructions](docs/TV-SETUP.md#tv-check-visible-execution-receipts) include the command. Physical screen rendering, physical remote behavior, and the optional Local API check on the TV remain pending.
 
 ## Develop and verify
 
@@ -129,7 +129,7 @@ The preview contains seven shared files: `index.html`, `home.css`, `home.js`, `t
 
 ## Next stages
 
-- Publish and launch TV Check, record the visible receipts, then verify the guide's remote navigation, Settings, and return behavior on the TV.
+- Photograph TV Check's receipts on the television, verify physical remote input, then check the guide's navigation, Settings, and return behavior.
 - Establish a native execution path for this exact firmware, then obtain a backup and a tested recovery route.
 - Run the interface locally on the TV before attempting a reversible persistent Home change.
 - Pursue a complete system replacement only with a verified boot path and working support for the panel, inputs, sound, storage, networking, and power control.

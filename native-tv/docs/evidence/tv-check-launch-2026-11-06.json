@@ -1,0 +1,28 @@
+{
+  "observedAt": "2026-11-06T03:23:03.364Z",
+  "target": "V405-H9",
+  "firmware": "1.720.9.1-1",
+  "operation": "authenticated_current_app_read",
+  "expectedApp": "17",
+  "expectedNamespace": 4,
+  "expectedPage": "https://knewportdev.github.io/home-streaming-lab/tv-check.html",
+  "appMatches": true,
+  "namespaceMatches": true,
+  "pageMatches": true,
+  "screenRendering": "pending_physical_observation",
+  "physicalRemote": "pending_physical_observation",
+  "persistentInstallation": "unverified",
+  "sourceCommit": "2d06d8675b45536f670c70047a33a54dadf22a08",
+  "deploymentRun": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42155846531",
+  "launchRequest": "accepted",
+  "desktopBrowser": {
+    "page": "rendered",
+    "javascript": "running",
+    "arrowInput": "verified",
+    "returnToGuide": "verified",
+    "localApiCheck": "not_requested",
+    "screenshot": "../images/tv-check-browser.png",
+    "scope": "desktop_browser_not_tv_screen"
+  }
+}
+

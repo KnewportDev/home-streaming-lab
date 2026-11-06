@@ -82,13 +82,15 @@ Pages has no execution-receipt endpoint. Record the revision and the screen/remo
 
 ### TV Check: visible execution receipts
 
-The standalone [TV Check source](../home/tv-check.html) is prepared for publication at [tv-check.html](https://knewportdev.github.io/home-streaming-lab/tv-check.html). After the workflow publishes it, reuse the same paired state; no new PIN is needed:
+The standalone [TV Check source](../home/tv-check.html) is published at [tv-check.html](https://knewportdev.github.io/home-streaming-lab/tv-check.html) through [PR #3](https://github.com/KnewportDev/home-streaming-lab/pull/3) and successful [main run 42155846531](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42155846531). Reuse the same paired state to open it; no new PIN is needed:
 
 ```powershell
 node tools/native-session.cjs launch-page --state "$tvState" --url https://knewportdev.github.io/home-streaming-lab/tv-check.html
 ```
 
-Inspect the television itself. Look for **Page: Open** and **JavaScript: Running**, then press an arrow and check whether **Remote** shows the key received and event count. Photograph the visible receipts and record the revision being tested. OK selects the focused button; Back returns to the guide. Each observation has a separate meaning: HTML appeared, script ran, or a key event reached that page. None proves guide functionality, native installation, or normal boot/Home behavior. TV Check publication, launch, and visual verification are not yet recorded.
+Desktop review observed **Page: Open**, **JavaScript: Running**, arrow-key receipts and focus changes, no automatic local request, and OK on Back returning to the original guide. The TV also accepted an authenticated launch using the existing paired state. At **2026-11-06 03:23:03 UTC**, `/app/current` matched app 17, namespace 4, and the exact public TV Check URL ([redacted launch evidence](evidence/tv-check-launch-2026-11-06.json)).
+
+Inspect the television itself next. Look for **Page: Open** and **JavaScript: Running**, then press an arrow and check whether **Remote** shows the key received and event count. Photograph the visible receipts and record the revision being tested. OK selects the focused button; Back returns to the guide. Each observation has a separate meaning: HTML appeared, script ran, or a key event reached that page. Physical screen rendering, physical remote input, and the optional Local API result on the TV remain pending. Neither desktop QA nor launch metadata establishes native installation or normal boot/Home behavior.
 
 Loading this page makes no background requests or automatic TV probes and uses no credentials. The optional **Check TV connection** button sends one fixed, unauthenticated GET to `http://127.0.0.1:7346/state/device/deviceinfo`, with a 3-second timeout and 128-KiB response limit. It does not scan, request a token, launch an app, or change settings. A browser status `0` can reflect browser restrictions or a failed/unreadable request; it is not evidence of “no Internet.” A successful response establishes only that this browser context could read that endpoint. The VIZIO interface-symbol indicator checks existence only; it does not call an SDK method or establish that one works.
 
