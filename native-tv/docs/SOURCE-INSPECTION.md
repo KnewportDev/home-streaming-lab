@@ -255,5 +255,6 @@ DtvSvc contract for a named read operation. Exact-build and physical-board
 applicability still need evidence before proposing generated output for the TV.
 A tested native execution path and recovery procedure remain required before
 persistent installation. The approved retro interface remains the candidate
-Home UI for that work, and the physical TV Check observation remains a separate
-pending task.
+Home UI for that work. A later [owner photo](evidence/tv-check-owner-photo-2026-11-06.json)
+records basic TV Check rendering and script/key receipts. The optional Local API
+result and full guide workflow remain separate pending observations.

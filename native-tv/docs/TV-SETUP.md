@@ -78,7 +78,7 @@ This verifies the target and asks Conjure to open the public HTTPS URL. It start
 
 Check the physical TV screen, then test directional navigation, program dialogs, Settings, theme controls, and Back. The shared configuration keeps native app controls disabled. An accepted launch request or a matching `/app/current` response establishes the control path, not what appeared on screen.
 
-Pages has no execution-receipt endpoint. Record the revision and the screen/remote behavior actually observed. Physical TV rendering is still unverified in the current project record.
+Pages has no execution-receipt endpoint. Record the revision and the screen/remote behavior actually observed. The owner's TV Check photo now records basic diagnostic-page rendering and key receipts; the full guide workflow and exact rendered revision remain unverified.
 
 ### TV Check: visible execution receipts
 
@@ -90,7 +90,9 @@ node tools/native-session.cjs launch-page --state "$tvState" --url https://knewp
 
 Desktop review observed **Page: Open**, **JavaScript: Running**, arrow-key receipts and focus changes, no automatic local request, and OK on Back returning to the original guide. The TV also accepted an authenticated launch using the existing paired state. At **2026-11-06 03:23:03 UTC**, `/app/current` matched app 17, namespace 4, and the exact public TV Check URL ([redacted launch evidence](evidence/tv-check-launch-2026-11-06.json)).
 
-Inspect the television itself next. Press **Left**, then **OK** on **Check TV connection**. After three seconds, send the yellow **`K1-...`** code at the bottom or a photo. If the TV shows a network error instead of this page, report that exact error. Back returns to the guide. Physical screen rendering, physical remote input, and the optional Local API result on the TV remain pending. Neither desktop QA nor launch metadata establishes native installation or normal boot/Home behavior.
+The [owner-photo record](evidence/tv-check-owner-photo-2026-11-06.json) shows the actual TV displaying **Page: Open**, **JavaScript: Running**, **Down received / 14 key events**, and **Local API: Not checked**, with **Back to guide** selected. A held button can generate repeated events; 14 events are not necessarily 14 distinct presses. The VIZIO interface symbol was not detected, which is only a presence check.
+
+From **Back to guide**, press **Left once**, then **OK** on **Check TV connection**. After about three seconds, photograph the Local API row. Do not press OK while Back remains selected, because that returns to the guide. No K1 badge is visible in the submitted photo. An older page still being open is one possible explanation, but the photo cannot assign a revision or exclude a layout issue. A photo is sufficient; do not infer an unobserved code. Local API access and the full guide workflow remain pending. Diagnostic-page rendering does not establish native installation or normal boot/Home behavior.
 
 The code is an on-screen result, not a pairing PIN. `K1` identifies the result format, not the deployed revision. Its next two characters indicate JavaScript and a recognized key event (`0` or `1`); the final character is the API state:
 

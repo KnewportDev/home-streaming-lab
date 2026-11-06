@@ -65,9 +65,16 @@ changes, no automatic local request, and OK on Back returning to the original
 guide. The paired TV accepted its launch. Authenticated `/app/current` at
 **2026-11-06T03:23:03.364Z** matched app 17, namespace 4, and the exact public
 TV Check URL ([launch evidence](evidence/tv-check-launch-2026-11-06.json)).
-Physical TV rendering, physical remote behavior, and the optional Local API result
-remain pending. Send the short `K1-...` result code or a photograph from the actual television next;
-`/app/current` reports launch metadata, not what the screen displayed.
+A later [owner photo](evidence/tv-check-owner-photo-2026-11-06.json) shows TV Check
+on the physical TV with **Page: Open**, **JavaScript: Running**, and **Down received
+/ 14 key events**. This establishes the displayed diagnostic page and its script/key
+receipts. It does not establish the full guide's navigation or a native install.
+The Local API row remains **Not checked**. No K1 badge is visible, so the rendered
+revision and code remain unassigned. The footer reports that the VIZIO interface
+symbol was not detected; no SDK method was tested by that presence check.
+From the selected **Back to guide** button, press **Left once**, then **OK** on
+**Check TV connection**, wait three seconds, and photograph the resulting API row.
+The earlier `/app/current` response remains launch metadata, separate from this photo.
 The guide's origin restriction is a project policy,
 not a measured H9 limitation; native controls remain disabled. The approved guide
 is preserved, and its eight-file preparation bundle now includes this check page.

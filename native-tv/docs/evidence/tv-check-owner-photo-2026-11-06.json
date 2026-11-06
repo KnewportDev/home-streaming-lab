@@ -1,0 +1,50 @@
+{
+  "schemaVersion": 1,
+  "receivedOn": "2026-11-06",
+  "dateTimezone": "America/New_York",
+  "sourceType": "owner_supplied_photo",
+  "captureTime": "unknown",
+  "photoPublished": false,
+  "sourcePhotoSha256": "36c526a7c5549fe973f037815b672e79155e7bea5b7eb0f159dd522eeaa94c55",
+  "observationScope": "visible_screen_text_transcribed_from_owner_photo",
+  "deviceAssociation": "existing_owner_tv_check_thread_not_model_identification_from_photo",
+  "visible": {
+    "page": "Open",
+    "javascript": "Running",
+    "remoteLastKey": "Down",
+    "remoteKeyEvents": 14,
+    "localApi": "Not checked",
+    "selectedControl": "Back to guide",
+    "vizioInterfaceSymbol": "Not detected",
+    "k1Badge": "not_visible"
+  },
+  "resultCode": null,
+  "renderedRevision": "unverified",
+  "distinctPhysicalPressCount": null,
+  "establishes": [
+    "diagnostic_page_displayed_on_tv",
+    "javascript_running_receipt_visible",
+    "recognized_key_event_receipt_visible"
+  ],
+  "doesNotEstablish": [
+    "local_api_access",
+    "exact_rendered_revision",
+    "complete_guide_workflow",
+    "native_execution_privileges",
+    "root",
+    "persistent_home",
+    "normal_boot_behavior",
+    "firmware_replacement",
+    "recovery"
+  ],
+  "nextObservation": {
+    "actions": [
+      "Left once",
+      "OK on Check TV connection",
+      "wait about three seconds",
+      "photograph the Local API row"
+    ],
+    "newPairingRequired": false
+  },
+  "tvRequestSentDuringPhotoReview": false
+}

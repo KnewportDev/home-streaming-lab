@@ -21,8 +21,8 @@ The cable guide is published on GitHub Pages and works in a desktop browser. PIN
 | Native preparation | A bounded, read-only platform report and an interface bundle with a SHA-256 manifest. |
 | Source release | Publisher archive acquired, both published checksums matched, and selected Home, updater, and MT5691 build source inspected. [Findings and evidence](docs/SOURCE-INSPECTION.md); exact installed-build compatibility remains unverified. |
 | Local network report | Seven passive reads completed on 6 November: the TV reported connected; connection type remains unknown. [Redacted evidence](docs/evidence/native-network-2026-11-06.json). |
-| TV Check page | Published and checked in a desktop browser. Paired TV launch and exact current-app URL verified; physical TV receipts remain pending. |
-| Physical TV behavior | Screen rendering and physical remote behavior still need observation on the TV. |
+| TV Check page | Owner photo shows the page on the TV with JavaScript running and a Down-key receipt. Local API remains not checked. [Observation](docs/evidence/tv-check-owner-photo-2026-11-06.json). |
+| Physical TV behavior | Basic check-page rendering and key-event delivery are observed. The complete guide workflow, Local API result, and exact rendered revision remain unverified. |
 | Native system | Root, backup/restore, bootloader control, internal installation, and permanent Home replacement remain unverified. |
 | Media and schedules | Sample listings only; no television feed, playback source, or real program-guide data is connected. |
 
@@ -106,7 +106,11 @@ The eight-file bundle preserves the cable-guide design and includes TV Check, sh
 
 Its optional **Check TV connection** button makes one fixed, unauthenticated GET to `http://127.0.0.1:7346/state/device/deviceinfo`, bounded to 3 seconds and 128 KiB. Browser status `0` is ambiguous; it does not mean “no Internet.” This check neither enables the guide's native controls nor establishes root or persistence.
 
-The TV accepted its launch using the existing paired state. At **2026-11-06 03:23:03 UTC**, authenticated `/app/current` matched app 17, namespace 4, and the exact public TV Check URL; the [launch report](docs/evidence/tv-check-launch-2026-11-06.json) records that result. This remains launch metadata, not a screenshot or execution receipt. The check now shows a short **`K1-...` result code**: send that code or a photo from the actual TV after pressing Left and OK. It is not a pairing PIN or build identifier. [Setup instructions](docs/TV-SETUP.md#tv-check-visible-execution-receipts) explain the values. Physical screen rendering, physical remote behavior, and the optional Local API result remain pending.
+The TV accepted its launch using the existing paired state. At **2026-11-06 03:23:03 UTC**, authenticated `/app/current` matched app 17, namespace 4, and the exact public TV Check URL; the [launch report](docs/evidence/tv-check-launch-2026-11-06.json) records that result. This remains launch metadata rather than screen evidence.
+
+A later [owner-photo observation](docs/evidence/tv-check-owner-photo-2026-11-06.json) shows TV Check on the actual TV: **Page: Open**, **JavaScript: Running**, **Down received**, and **14 key events**. The Local API row says **Not checked**, and **Back to guide** is selected. No `K1-...` badge is visible, so no code or exact page revision is assigned. The footer's **VIZIO interface symbol: Not detected** is only a symbol-presence check.
+
+From that selected button, press **Left once**, then **OK** on **Check TV connection**, wait three seconds, and photograph the Local API result. The current source also supports a `K1-...` result badge, but a photo is sufficient when it is absent. [Setup instructions](docs/TV-SETUP.md#tv-check-visible-execution-receipts) explain the values. Guide navigation, Local API access, native execution, and permanent Home behavior remain separate checks.
 
 ## Matching source release
 
@@ -145,7 +149,7 @@ The preview contains seven shared files: `index.html`, `home.css`, `home.js`, `t
 
 ## Next stages
 
-- Photograph TV Check's receipts on the television, verify physical remote input, then check the guide's navigation, Settings, and return behavior.
+- Capture the optional Local API result, then check the guide's navigation, Settings, and return behavior. Basic check-page rendering and a key-event receipt are already recorded from the owner's photo.
 - Establish a native execution path for this exact firmware, then obtain a backup and a tested recovery route.
 - Run the interface locally on the TV before attempting a reversible persistent Home change.
 - Pursue a complete system replacement only with a verified boot path and working support for the panel, inputs, sound, storage, networking, and power control.
