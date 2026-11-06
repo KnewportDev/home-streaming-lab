@@ -2,6 +2,7 @@ name: Native TV checks
 
 on:
   push:
+    branches: [main]
     paths:
       - 'native-tv/**'
       - '.github/workflows/native-tv.yml'
@@ -9,6 +10,7 @@ on:
     paths:
       - 'native-tv/**'
       - '.github/workflows/native-tv.yml'
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -33,7 +35,18 @@ jobs:
       - name: Check interface JavaScript
         run: node --check home/home.js
       - name: Run offline tests
-        run: node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs
+        run: node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs
+      - name: Package native interface preparation
+        env:
+          VIZIO_NATIVE_DIR: ${{ runner.temp }}/native-tv-preparation
+        run: node tools/package-native-home.cjs --out "$VIZIO_NATIVE_DIR"
+      - name: Upload native interface preparation
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: native-tv-preparation-${{ github.sha }}
+          path: ${{ runner.temp }}/native-tv-preparation
+          if-no-files-found: error
+          retention-days: 14
       - name: Package browser preview
         env:
           VIZIO_PREVIEW_ARCHIVE: ${{ runner.temp }}/native-tv-preview-${{ github.sha }}.zip
@@ -78,9 +91,32 @@ jobs:
           path: ${{ runner.temp }}/native-tv-pages
           include-hidden-files: false
 
+  windows:
+    name: Windows Node checks
+    runs-on: windows-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: native-tv
+    steps:
+      - name: Check out source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js 24
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: '24'
+          package-manager-cache: false
+      - name: Check interface JavaScript
+        run: node --check home/home.js
+      - name: Run Windows Node tests
+        # The fixed POSIX USB script is exercised by the Linux job.
+        run: node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs
+
   pages:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: offline
+    needs: [offline, windows]
     runs-on: ubuntu-24.04
     timeout-minutes: 15
     permissions:

@@ -1,43 +1,51 @@
-# Portfolio summary
+# Vizio Native — portfolio summary
 
-## Project
+A personal TV overhaul project combining a retro cable guide, LAN discovery, authenticated device control, and a GitHub development workflow. The goal is to have the VIZIO itself boot into a custom system, with a self-hosted media server added later.
 
-**Vizio Native — a networked-TV development homelab**
-
-An ongoing project to build a custom interface in a VIZIO TV's own browser and document what the actual hardware supports. The work combines LAN discovery, API integration, Windows troubleshooting, local credential handling, JavaScript interface development, and repeatable offline checks. The current design is a 2000s Suddenlink-style cable guide with clearly labeled sample listings; it does not provide television playback or a real schedule feed.
-
-Public repository: [KnewportDev/home-streaming-lab](https://github.com/KnewportDev/home-streaming-lab), under `native-tv/`.
-
-[Public preview](https://knewportdev.github.io/home-streaming-lab/) · [Verified build and deployment](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476)
+[Repository](https://github.com/KnewportDev/home-streaming-lab) · [Browser preview](https://knewportdev.github.io/home-streaming-lab/) · [Native-system issue #1](https://github.com/KnewportDev/home-streaming-lab/issues/1)
 
 ## Resume bullet
 
-Built a dependency-free Node.js homelab toolkit for VIZIO TV discovery and authenticated launch requests; diagnosed Windows state-write and network-delivery issues, and published a browser-verified cable-guide interface through GitHub Actions with 39 passing offline tests.
+Developing a VIZIO TV overhaul with dependency-free Node.js tools for LAN discovery, authenticated control, and private session storage; published a retro cable-guide interface through GitHub Actions with 57 passing local offline tests, reproducible interface packaging, and documented native-system requirements.
 
-## 60-second project explanation
+## Project explanation
 
-“I wanted a custom home interface that could run in my TV's own browser, so I started by finding out what the hardware actually exposed. I built bounded SSDP discovery and GET-only metadata checks, then used those results to constrain the pairing client to the model and firmware I had observed.
+“I want my TV to boot into a system I control, starting with the blue-and-yellow cable guide I remember from the 2000s. The project uses the TV's reported model and firmware to guide compatibility work, and the source lives in my GitHub repository.
 
-“One useful debugging case was a pairing attempt that displayed a PIN on the TV but failed in the client. The problem was saving state: on the Windows machine, one numeric file-open flag combination returned EINVAL. I isolated that with disposable files, changed the update to use a checked file handle, and added a regression that runs offline.
+“The working pieces are a browser interface, bounded network discovery, ordinary PIN pairing, and authenticated launch requests. A useful troubleshooting case involved a PIN appearing on the TV while the client failed to save its state. Testing the file-open operation on Windows isolated an EINVAL error; the fix uses a checked file handle, with an offline regression for that failure.
 
-“Pairing works, and the authenticated current-app API confirms Conjure after an accepted launch. The TV could not load the PC-hosted page, so I checked the delivery path and found an inbound Node block. Public HTTPS delivery avoids that path without changing the firewall or requiring an always-on PC. The current 2000s cable guide passed 39 tests in CI and deployed to Pages. Browser checks cover navigation, program dialogs, Settings, and the empty app state. Its listings are samples; real content is not connected. Actual TV-screen observation is still pending.”
+“The guide is published on GitHub Pages, so it doesn't need a PC running to serve its assets. Its published baseline passed 39 offline tests. The next stage is proving native execution and recovery on the actual TV before making anything persistent. A personal media server and real channel schedules come later.”
 
-## Evidence a reviewer can inspect
+## Work covered
 
-| Skill | Evidence |
+| Area | Implementation and evidence |
 | --- | --- |
-| LAN discovery and request boundaries | [Inspection implementation](../tools/inspect-tv.cjs) and [discovery regression tests](../tools/test-inspect-tv.cjs). |
-| API integration and recoverable state | [Pairing/session client](../tools/native-session.cjs) and [session tests](../tools/test-native-session.cjs). |
-| Windows fault isolation | [Failure, fix, and validation notes](ENGINEERING-NOTES.md#windows-pairing-state-write-failure). |
-| Interface development | [Cable-guide source and controls](../home/), labeled sample data, and the preview command in the [README](../README.md#start-with-the-local-preview). The deployed layout, directional navigation, program dialogs, Settings, and app empty state were browser-verified. |
-| Repeatable delivery | Repository-root `.github/workflows/native-tv.yml`: checks, six allowlisted preview assets, and main-only Pages publishing. [Run 42144758476](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476) passed 39 tests and deployed commit `25c58b0cd4fcbeb21e5a843c0c6d1df40ff42bd7`. |
+| Network discovery | Bounded SSDP searches, private IPv4 validation, and fixed metadata requests in [inspect-tv.cjs](../tools/inspect-tv.cjs). A regression covers the TV's bare port-9080 announcement. |
+| Device API integration | Model/firmware checks, PIN pairing, private session state, and Conjure launch requests in [native-session.cjs](../tools/native-session.cjs). |
+| Windows troubleshooting | [Engineering notes](ENGINEERING-NOTES.md#windows-pairing-state-write-failure) document the failed state write, the isolated file-operation test, and the checked-handle fix. |
+| Interface development | [Guide source](../home/) implements directional navigation, visible focus, information dialogs, themes, and an empty app state. The listings are labeled samples. |
+| Native capability research | [Platform inspection](../tools/inspect-native-platform.cjs) reads informational endpoints from the paired TV. [Native-system evidence](NATIVE-SYSTEM.md) records model-specific findings and missing proof. |
+| Reproducible packaging | [Native preparation tool](../tools/package-native-home.cjs) assembles shared interface assets and a SHA-256 content manifest without private configuration or session data. |
+| GitHub delivery | Repository-root `.github/workflows/native-tv.yml` runs offline checks, attaches artifacts, and publishes the browser preview from `main`. It has no TV credentials. |
 
-## Current result and next milestone
+## Results so far
 
-The target is V405-H9 on firmware `1.720.9.1-1`. PIN pairing completed and a launch request was accepted. The latest authenticated current-app read returned `SUCCESS`, app 17 / namespace 4, and the exact public guide URL; no relaunch was sent during that read-only check. A separate PC request confirmed HTTP 200 and the expected guide markup. The earlier local attempt returned no callback and the owner reported “no network detected.” The source and HTTPS guide are public. The current cable-guide revision passed 39 tests in CI and deployed successfully; its five guide tests also passed on Windows, separately from the earlier 24 passing Windows session tests. The earlier CI baseline was 34 passing tests. Actual TV rendering and physical remote behavior remain unverified.
+The TV reports **V405-H9**, firmware **1.720.9.1-1**, and ViziOS **mtk5691-1.6.1770.1**. PIN pairing completed and an authenticated launch was accepted. A later current-app read reported Conjure app 17, namespace 4, and the exact public guide URL. These checks verify the control path; physical screen rendering and remote behavior still need observation.
 
-On **5 November 2026**, the design changed to a six-channel sample guide with three half-hour columns, yellow focus, a program-information panel, decorative color bars, and Guide/My Apps/Settings navigation. Cable Blue, Night Guide, and Classic Gray replace the earlier appearance labels. The deployed browser version passed review of its layout, directional navigation, dialogs, Settings, and app empty state; the user approved the retro look. A local review capture is retained as `knewport-retro-cable-guide.png`. The app catalog remains empty, with native API controls disabled in the public preview. Root access, firmware replacement, and a persistent Home modification have not been established.
+The cable-guide baseline passed **39 offline tests** and deployed in [Actions run 42150339918](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42150339918). Browser review covered the layout, directional navigation, program dialogs, Settings, and empty My Apps state. The expanded native preparation suite passes 57 local tests on Node.js 24.22.1. The new inspector also completed all four informational requests on the actual TV; its [redacted report](evidence/native-platform-2026-11-06.json) is included as evidence.
 
-The current delivery path requires no PC asset server. Personal continuous channels and media-server operation are deferred; no actual EPG, television feed, or playback source is connected. The next hardware milestone is observing the deployed guide on the TV and testing its physical remote controls.
+The PC-hosted delivery test received no TV readiness callback. An inbound Node block was observed on Windows, and no firewall rules were changed. Public HTTPS delivery removes the need for a PC asset server. Detailed commands and pairing-state reuse are in [TV setup](TV-SETUP.md).
 
-As milestones are verified, update this summary with the tested commit and hardware observations. Use the linked implementation and engineering notes to explain the design decisions and remaining work.
+Root, a tested backup/restore procedure, bootloader control, an internal installation, and a permanent Home replacement remain unverified. The interface package is not a replacement OS. Those distinctions are part of the project record and determine the next hardware steps.
+
+## Direction
+
+Keep the Suddenlink-style guide as the interface while working toward native boot and local operation on the TV. First verify the screen and remote, then establish a supported execution path and recovery method. A complete system replacement also needs working support for the panel, inputs, audio, storage, networking, and power control.
+
+A self-hosted server for personal media, schedules, and guide data is a later phase. No real television feed, playback source, or electronic program guide is connected yet, and no continuously running PC is required for the current public guide.
+
+## References and licensing
+
+The visual reference is the [classic i-Guide manual](https://www.wadsworthcity.com/DocumentCenter/View/1540/I-Guide-Manual---Manual-for-the-Digital-Guide-Our-Digital-Settop-Boxes-Use-PDF). Protocol work references [VIZIO's launcher](https://vizio-pm.s3-us-west-1.amazonaws.com/conjure-launcher.html), the [SmartCast API documentation](https://github.com/exiva/Vizio_SmartCast_API), and [Vizio Open Home](https://github.com/jordanmateo-byte/vizio-open-home). Its reported hardware support is for a different model and firmware. The [README](../README.md#references-and-credits) keeps the full research credits.
+
+Original project code is [MIT licensed](../LICENSE). The source includes no third-party firmware or proprietary binaries.

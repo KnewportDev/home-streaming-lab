@@ -1,21 +1,26 @@
 # Home Media Lab
 
-Windows troubleshooting, PowerShell automation, and networked-TV development — with source, test coverage, and explicit verification limits.
+I’m rebuilding my TV around the cable-guide look I grew up with: blue listings, yellow selection, channel numbers, and a remote that does what I expect.
 
-This personal lab contains two projects. Start with the evidence below, then follow the project guides for setup and implementation details.
+The long-term goal is a TV that boots into my own interface, with a media server I control supplying the channels later. For now, I’m working on the TV side without keeping my everyday PC running as a server. This repo also holds my Windows streaming and troubleshooting work.
+
+[Open the retro guide](https://knewportdev.github.io/home-streaming-lab/) · [Native TV progress](https://github.com/KnewportDev/home-streaming-lab/issues/1) · [Builds](https://github.com/KnewportDev/home-streaming-lab/actions)
+
+![Retro cable guide browser preview](native-tv/docs/images/retro-cable-guide.png)
+
+*Browser preview of the interface. The program listings are samples.*
 
 ## Projects
 
 ### Vizio Native
-**Node.js · JavaScript · HTML/CSS · LAN discovery**
 
-A custom 2000s cable-guide interface intended for the VIZIO TV’s own browser, with a blue listing grid, yellow selection, program details, and clearly labeled sample channels. It is supported by bounded discovery, device inspection, and PIN-pairing tools. A Windows state-file failure is documented alongside its regression coverage.
+**Node.js · JavaScript · HTML/CSS · Windows/Linux · GitHub Actions**
 
-[Project guide](native-tv/README.md) · [Debugging case](native-tv/docs/ENGINEERING-NOTES.md#windows-pairing-state-write-failure) · [Source and tests](native-tv/tools/) · [Preview workflow](.github/workflows/native-tv.yml)
+The TV project starts with a 2000s Suddenlink-style interface and the tools to work out what my VIZIO actually supports. It includes network discovery, pairing, a read-only platform report, offline tests, and a preparation package with file hashes.
 
-**Status:** 39 offline tests pass, including five cable-guide navigation and timeline checks. PIN pairing succeeded and the TV accepted an authenticated app 17 launch. The local page did not load: the TV displayed “no network detected,” and the PC has an explicit inbound Node.js firewall block. The [live HTTPS cable guide](https://knewportdev.github.io/home-streaming-lab/) is deployed and [its 39-test build passed](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42144758476). Browser guide navigation, program details, and settings were verified. The TV’s authenticated current-app response reports app 17 with the public guide URL; its physical screen and remote behavior still need direct verification. Persistent installation remains unverified.
+The guide works in a browser, and paired TV control has been verified. The TV reports the guide URL as its current app, but its screen and physical remote still need direct verification. Native boot, root access, and replacement firmware are open work.
 
-**Current scope:** finish the TV interface and use the TV or onn for everyday streaming. GitHub Pages hosts the guide, so it needs no continuously running PC web server. The guide currently contains labeled sample listings; personal media channels, real program data, and a continuously running channel server are deferred.
+[Project guide](native-tv/README.md) · [Native-system evidence](native-tv/docs/NATIVE-SYSTEM.md) · [Windows debugging case](native-tv/docs/ENGINEERING-NOTES.md#windows-pairing-state-write-failure) · [Source and tests](native-tv/tools/)
 
 ### PC-to-TV streaming
 **Windows · PowerShell · Sunshine / Moonlight**
@@ -37,7 +42,7 @@ A streaming-host lab covering inventory, network planning, configuration trouble
 
 ## Working method
 
-Make a small change, retain a recovery path, check the result, and record what remains unknown. AI assists with code, troubleshooting, and documentation; this portfolio does not claim wholly independent authorship. Test results and hardware observations are treated separately.
+I work in small changes: a branch, a pull request, automated checks, then a test on the actual hardware when the change needs it. I keep the failed attempts and fixes in the engineering notes so I can explain what changed and why. A passing build and a working TV are separate milestones.
 
 The native-TV guide uses the TV’s reported V405-H9 identity. Older streaming notes retain the earlier V405-H19 identification and their original dates.
 
@@ -46,6 +51,6 @@ The native-TV guide uses the TV’s reported V405-H9 identity. Older streaming n
 - [Native TV local preview and offline tests](native-tv/README.md#start-with-the-local-preview)
 - [Streaming tools and full setup notes](docs/STREAMING-LAB.md#run-the-tools)
 - [Streaming installation review](docs/INSTALLATION-REVIEW.md)
-- [License](LICENSE) · [Native TV license and references](native-tv/README.md#license)
+- [License](LICENSE) · [Native TV license and references](native-tv/README.md#references-and-credits)
 
 Sunshine and Moonlight are separate upstream projects; their source is not bundled here.

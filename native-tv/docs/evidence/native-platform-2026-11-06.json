@@ -1,0 +1,42 @@
+{
+  "schemaVersion": 1,
+  "mode": "read_only_native_platform",
+  "inspectedAt": "2026-11-06T02:42:38.271Z",
+  "target": {
+    "model": "V405-H9",
+    "firmware": "1.720.9.1-1",
+    "platformIdentifier": "mtk5691",
+    "platformIsHardwareVerification": false
+  },
+  "componentVersions": {
+    "scpl": "3.9.1-2640.0002",
+    "cobalt": "25.lts.20.1034877",
+    "home": "26.09.01.21",
+    "viziOs": "mtk5691-1.6.1770.1",
+    "smartcastApi": "3.9.1-2640.0002",
+    "conjure": "128.1.9"
+  },
+  "currentApp": {
+    "id": "17",
+    "namespace": 4,
+    "publicGithubPagesUrl": true
+  },
+  "checks": {
+    "deviceInfo": "ok",
+    "currentApp": "ok",
+    "systemVersions": "ok",
+    "tvInformation": "ok",
+    "tvInformationSource": "primary",
+    "primaryTvInfoStatus": "ok"
+  },
+  "requestCount": 4,
+  "verification": {
+    "rootAccess": "unverified",
+    "bootloaderUnlock": "unverified",
+    "replacementFirmware": "unverified",
+    "recovery": "unverified",
+    "persistentInstallation": "unverified"
+  },
+  "note": "LAN metadata and current-app state do not establish screen rendering, shell access, firmware installation, or a recovery route."
+}
+

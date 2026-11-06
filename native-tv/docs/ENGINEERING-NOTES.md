@@ -1,5 +1,13 @@
 # Engineering notes
 
+## Windows CI temporary-directory paths
+
+Adding a Windows job exposed a difference between local and hosted test environments. In [run 42152466657](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42152466657), the new inspector and packaging tests passed, but 16 existing session tests stopped at the state-directory check. The error was `State directories must not use symbolic links.` Linux passed all 57 tests.
+
+Those fixtures used the temporary-directory path returned by the operating system without resolving it. The session code compares a private state directory with its canonical path; Windows temporary paths can have aliases. The fixtures now call `fs.realpath()` after creating each disposable directory, matching the canonical paths already used by the new inspector tests.
+
+The production path guard and the deliberate linked-path rejection test remain intact. The existing 24 session tests passed locally after this fixture change; the Windows job in [PR #2](https://github.com/KnewportDev/home-streaming-lab/pull/2) checks the hosted behavior. This is a test-environment correction, with no changes to pairing or the TV.
+
 These notes record observed behavior and the decisions it led to. The baseline below is from **5 November 2026**. Local network addresses, raw device responses, and pairing credentials are deliberately absent.
 
 ## Device observations

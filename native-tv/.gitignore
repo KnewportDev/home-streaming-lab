@@ -36,6 +36,7 @@ _scratch/
 tmp/
 temp/
 artifacts/
+native-home-package/
 usb-kit/
 new-usb-diagnostic/
 usb-diagnostic/

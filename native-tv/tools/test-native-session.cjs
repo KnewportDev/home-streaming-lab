@@ -2,6 +2,10 @@
 const test=require('node:test'),assert=require('node:assert/strict'),fs=require('node:fs/promises'),os=require('node:os'),path=require('node:path');
 const tool=require('./native-session.cjs');
 const metadata=(model='V405-H9',firmware='1.720.9.1-1')=>({STATUS:{RESULT:'SUCCESS'},ITEM:{MODEL_NAME:model,VERSION:firmware}});
+// Windows runners may expose os.tmpdir() through an 8.3 path alias. Resolve
+// fixture directories before testing the production no-linked-parent guard;
+// intentional symlinks/junctions are still created and exercised below.
+async function temporaryDirectory(prefix){return fs.realpath(await fs.mkdtemp(path.join(os.tmpdir(),prefix)));}
 
 test('CLI accepts explicit private targets and refuses public targets or arbitrary commands',()=>{
   assert.deepEqual(tool.parseArgs(['--help']),{command:'help'});
@@ -27,7 +31,7 @@ test('model and exact firmware gates prevent mismatched native app actions',asyn
 });
 
 test('pairing state is exclusive/private; token and PIN never enter status messages',async()=>{
-  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'native-session-test-')),filename=path.join(dir,'private.json'),events=[],calls=[];
+  const dir=await temporaryDirectory('native-session-test-'),filename=path.join(dir,'private.json'),events=[],calls=[];
   try{
     const transport=async(tv,op,body,token)=>{calls.push({op,body,token});if(op==='info')return metadata();if(op==='start')return {ITEM:{PAIRING_REQ_TOKEN:'private-challenge',CHALLENGE_TYPE:1}};if(op==='pair')return {ITEM:{AUTH_TOKEN:'private-auth-token'}};throw Error('Unexpected operation');};
     await tool.execute({command:'pair-start',tv:'192.168.1.50',state:filename},{transport,report:e=>events.push(e)});
@@ -42,7 +46,7 @@ test('pairing state is exclusive/private; token and PIN never enter status messa
 });
 
 test('linked state paths are refused before reading or overwriting',async(t)=>{
-  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'native-session-links-'));
+  const dir=await temporaryDirectory('native-session-links-');
   try{
     const realDir=path.join(dir,'real');await fs.mkdir(realDir);
     const realFile=path.join(realDir,'private.json');await fs.writeFile(realFile,'sensitive');
@@ -83,7 +87,7 @@ test('only the TV JavaScript callback confirms readiness; other peers and POST a
 });
 
 test('temporary launch uses app17 and closes its server on rejection without exposing credentials or nonce',async()=>{
-  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'native-session-launch-')),filename=path.join(dir,'private.json');
+  const dir=await temporaryDirectory('native-session-launch-'),filename=path.join(dir,'private.json');
   const {EventEmitter}=require('node:events');let server,launch;
   const createServer=handler=>{server=new EventEmitter();server.listen=(port,bind,cb)=>{server.binding={port,bind};queueMicrotask(cb);};server.close=cb=>{server.closed=true;cb();};server.closeAllConnections=()=>{};return server;};
   try{
@@ -184,7 +188,7 @@ test('safe API diagnostics preserve known status codes without exposing body, de
 });
 
 test('one own-state retry reuses device ID and preserves the file when the TV remains BLOCKED',async()=>{
-  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'native-session-retry-')),filename=path.join(dir,'private.json');
+  const dir=await temporaryDirectory('native-session-retry-'),filename=path.join(dir,'private.json');
   try{
     const meta=await tool.verify('192.168.1.50',null,async()=>metadata());
     await tool.writeState(filename,{schemaVersion:1,tv:'192.168.1.50',metadata:meta,deviceId:'same-owned-device',phase:'starting'},true);
@@ -199,7 +203,7 @@ test('one own-state retry reuses device ID and preserves the file when the TV re
 });
 
 test('retry refuses paired and awaiting-PIN states without network requests or state changes',async()=>{
-  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'native-session-keep-'));
+  const dir=await temporaryDirectory('native-session-keep-');
   try{
     const meta=await tool.verify('192.168.1.50',null,async()=>metadata());
     for(const phase of ['paired','awaiting_pin']){
@@ -213,7 +217,7 @@ test('retry refuses paired and awaiting-PIN states without network requests or s
 });
 
 test('an incomplete successful challenge is saved privately and blocks another retry',async()=>{
-  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'native-session-partial-')),filename=path.join(dir,'private.json');
+  const dir=await temporaryDirectory('native-session-partial-'),filename=path.join(dir,'private.json');
   try{
     const meta=await tool.verify('192.168.1.50',null,async()=>metadata());
     await tool.writeState(filename,{schemaVersion:1,tv:'192.168.1.50',metadata:meta,deviceId:'owned',phase:'starting'},true);
@@ -224,7 +228,7 @@ test('an incomplete successful challenge is saved privately and blocks another r
 });
 
 async function pendingFixture(){
-  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'native-session-restart-')),filename=path.join(dir,'private.json');
+  const dir=await temporaryDirectory('native-session-restart-'),filename=path.join(dir,'private.json');
   const meta=await tool.verify('192.168.1.50',null,async()=>metadata());
   const state={schemaVersion:1,tv:'192.168.1.50',metadata:meta,deviceId:'owned-client-id',phase:'awaiting_pin',challenge:{type:1,requestToken:654321}};
   await tool.writeState(filename,state,true);
@@ -357,7 +361,7 @@ test('an incomplete fresh challenge is saved with its guard and blocks further r
 });
 
 test('Windows-compatible writes use exclusive creation and r+ before handle truncation',async(t)=>{
-  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'native-session-windows-')),filename=path.join(dir,'private.json');
+  const dir=await temporaryDirectory('native-session-windows-'),filename=path.join(dir,'private.json');
   const originalOpen=fs.open,flags=[];
   t.mock.method(fs,'open',async(file,flag,...args)=>{
     flags.push(flag);

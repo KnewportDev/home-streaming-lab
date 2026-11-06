@@ -8,14 +8,14 @@ const path = require('node:path');
 
 const CGI = String.raw`#!/bin/sh
 # SPDX-License-Identifier: MIT
-# UNTESTED on V405-H19. USB CGI eligibility is not confirmed.
+# UNTESTED on V405-H9/H19. USB CGI eligibility is not confirmed.
 # Execution proves only script execution; uid=0 is required to establish root.
 # Fixed read-only commands. CGI parameters and request bodies are not read.
 PATH=/usr/sbin:/usr/bin:/sbin:/bin
 LC_ALL=C
 export PATH LC_ALL
 printf 'Content-Type: text/plain; charset=utf-8\r\nCache-Control: no-store\r\n\r\n'
-printf '%s\n' 'V405-H19: UNTESTED; USB CGI eligibility is not confirmed.' 'Output is evidence of script execution only. Root requires uid=0 in the identity below.'
+printf '%s\n' 'V405-H9/H19: UNTESTED; USB CGI eligibility is not confirmed.' 'Output is evidence of script execution only. Root requires uid=0 in the identity below.'
 printf '\n== Identity ==\n'
 id
 printf '\n== Kernel (hostname omitted) ==\n'
@@ -33,7 +33,7 @@ command -v python3 || printf '%s\n' 'python3: unavailable'
 
 const README = `# Native USB capability diagnostic — preparation only
 
-**Untested on VIZIO V405-H19. USB CGI eligibility has not been confirmed.**
+**Untested on VIZIO V405-H9/H19. USB CGI eligibility has not been confirmed.**
 This kit is not a firmware image, installer, root guarantee, or replacement OS.
 Successful output establishes that this fixed script executed in its current
 process context. Root is established only if its identity reports uid=0;
@@ -74,7 +74,7 @@ The published technique maps USB content into a SmartCast local webserver under
 /usbparts/<actual observed mount>/... . The mount and server must come from
 observations on the particular TV. Do not replace the placeholder by guessing
 from examples, probe other devices, or treat an older model's exploit as
-V405-H19 compatibility. No launch command, guessed address, or complete launch
+V405-H9/H19 compatibility. No launch command, guessed address, or complete launch
 URL is supplied here.
 
 The local syntax and generator tests are not TV compatibility tests. No real
@@ -86,7 +86,7 @@ This is an original implementation informed by these public sources, not a copy
 of their payloads:
 
 - ELTON, June 28, 2021: USB content reachable by a local webserver and CGI code
-  execution; demonstrated on 2017 E50x-E1 and 2018 P65-F1, not V405-H19.
+  execution; demonstrated on 2017 E50x-E1 and 2018 P65-F1, not V405-H9/H19.
   https://www.eltoncyber.com/advisories/vizio-tv-code-execution-from-a-usb-drive
 - Vizio Open Home: the project reports USB CGI root on M657-G0, SX7B,
   firmware 7.0.120.1-1, group 271. Other models/firmware are unvalidated.
@@ -99,7 +99,7 @@ of their payloads:
 
 MIT License
 
-Copyright (c) 2026 Vizio Native Kit contributors
+Copyright (c) 2026 Knewport and contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -178,7 +178,7 @@ if (require.main === module) {
       }
       const directory = generate(args[1]);
       console.log(`Prepared capability.cgi and README.md in ${directory}`);
-      console.log('Untested V405-H19; no TV connection or invocation was performed.');
+      console.log('Untested V405-H9/H19; no TV connection or invocation was performed.');
     } catch (error) {
       console.error(error.message);
       process.exitCode = 1;
