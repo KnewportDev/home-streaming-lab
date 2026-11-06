@@ -1,34 +1,47 @@
 {
-  "version": "0.2.1",
-  "stage": "https_launch_accepted_awaiting_tv_screen",
+  "version": "0.3.0",
+  "stage": "cable_guide_awaiting_deployment_and_screen_check",
   "live_device": {
     "reported_model": "V405-H9",
     "firmware": "1.720.9.1-1",
     "ViziOS": "mtk5691-1.6.1770.1"
   },
   "validation": {
-    "metadata_offline_tests": 9,
-    "native_session_offline_tests": 24,
-    "usb_diagnostic_tests": "passed",
+    "previous_baseline": {
+      "metadata_offline_tests": 9,
+      "native_session_offline_tests": 24,
+      "usb_diagnostic_tests": "passed",
+      "offline_suite_total": 34,
+      "offline_suite_failed": 0,
+      "offline_suite_skipped": 0,
+      "hosted_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207",
+      "windows_session_tests": {
+        "passed": 24,
+        "failed": 0,
+        "skipped": 0,
+        "node": "24.22.1"
+      }
+    },
     "home_javascript_syntax": "passed",
+    "home_guide_tests": {
+      "passed": 5,
+      "failed": 0,
+      "skipped": 0
+    },
+    "offline_suite_total": 39,
+    "offline_suite_failed": 0,
+    "offline_suite_skipped": 0,
     "visual_tv_test": "pending",
     "public_preview_browser": {
+      "applies_to": "previous_media_center_interface",
       "rendering": "passed",
       "settings_open": "passed",
       "cobalt_theme": "passed",
       "escape_and_focus_restore": "passed"
     },
+    "cable_guide_browser": "pending",
     "windows_state_write": "verified_on_target_pc",
-    "offline_suite_total": 34,
-    "offline_suite_failed": 0,
-    "offline_suite_skipped": 0,
-    "remote_partial_grid_checks": "passed",
-    "windows_session_tests": {
-      "passed": 24,
-      "failed": 0,
-      "skipped": 0,
-      "node": "24.22.1"
-    }
+    "remote_partial_grid_checks": "passed_for_previous_interface"
   },
   "native_execution_on_tv": "not_yet_verified",
   "root": "not_established",
@@ -54,12 +67,31 @@
     "firewall_modified": false
   },
   "interface": {
-    "style": "early_2000s_media_center",
+    "style": "2000s_suddenlink_style_cable_guide",
+    "design_revision_date": "2026-11-05",
+    "design_timezone": "America/New_York",
     "accents": [
-      "Aqua",
-      "Cobalt",
-      "Silver"
+      "Cable Blue",
+      "Night Guide",
+      "Classic Gray"
     ],
+    "accent_keys": [
+      "sage",
+      "glacier",
+      "amber"
+    ],
+    "accent_storage_key": "local-home.cable-accent",
+    "guide": {
+      "channels": 6,
+      "half_hour_columns": 3,
+      "listings": "clearly_labeled_samples",
+      "timeline": "device_local_time",
+      "preview_pane": "decorative_css_color_bars",
+      "program_activation": "information_dialog_only",
+      "tv_feed": "not_connected",
+      "real_epg": "not_connected",
+      "playback": "not_implemented"
+    },
     "app_catalog": "empty_until_verified"
   },
   "publication": {
@@ -67,10 +99,12 @@
     "visibility": "public",
     "pages_source": "github_actions",
     "pages_deployment": "verified_success",
+    "deployed_interface": "previous_media_center",
+    "cable_guide_deployment": "pending",
     "pages_url": "https://knewportdev.github.io/home-streaming-lab/",
     "hosted_34_test_revision": "passed",
-    "deployed_commit": "3dfa54ff948a9d4a8e867678b226c8c6ecef22ee",
-    "verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065",
+    "deployed_commit": "3344fc26faae28eee06c36cd209a1da2066055ac",
+    "verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207",
     "previous_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42120822505"
   }
 }

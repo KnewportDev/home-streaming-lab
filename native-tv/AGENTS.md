@@ -8,7 +8,7 @@ The observed target is V405-H9, system firmware `1.720.9.1-1`, ViziOS build `mtk
 
 ## Interface direction
 
-Use early-2000s Windows Media Center and Aero as the visual reference: spacious ten-foot layouts, deep blue or teal surfaces, restrained glass and glow, clear typography, and an unmistakable selected item. Keep the result usable from a couch with a directional remote. Focus movement, readable contrast, large targets, and a working Back path take priority over decorative effects.
+Use the user's latest direction: a 2000s Suddenlink-style cable guide, informed by classic i-Guide. Use contiguous blue program cells, a yellow selection, silver time headers, channel numbers, program details, and a bordered preview pane. Keep the project branding original. Sample listings must remain clearly labeled and never imply connected channels, live playback, or a real electronic program feed. Keep the result usable from a couch with a directional remote. Focus movement, readable contrast, large targets, and a working Back path take priority over decorative effects.
 
 Keep assets local and avoid external fonts, analytics, or advertising. Preserve compatibility with the TV browser when changing JavaScript or CSS; inspect the existing implementation before introducing newer syntax or APIs.
 

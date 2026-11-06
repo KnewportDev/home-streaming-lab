@@ -1,14 +1,22 @@
 # Vizio Native
 
-A personal IT and networking homelab for building a custom interface in a VIZIO television's own browser. The goal is a usable, locally controlled home screen with the look of early Windows Media Center and Aero.
+A personal IT and networking homelab for building a custom interface in a VIZIO television's own browser. The current design follows the user's 2000s Suddenlink-style cable-guide direction, informed by classic i-Guide.
 
 The engineering problem is compatibility: finding what this particular TV exposes, integrating its control API, and proving each step on the actual firmware. The project includes a remote-friendly interface, bounded network discovery, a PIN-pairing client, and an offline test and preview pipeline.
 
 Public source: [KnewportDev/home-streaming-lab](https://github.com/KnewportDev/home-streaming-lab), under `native-tv/`. Original project code is [MIT licensed](LICENSE).
 
-[Live interface preview](https://knewportdev.github.io/home-streaming-lab/) · [Verified build and deployment](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065)
+[Public preview](https://knewportdev.github.io/home-streaming-lab/) · [Previous verified build](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207)
 
-**Current status:** PIN pairing succeeded, an authenticated launch was accepted, and the current-app API confirmed Conjure app **17**, namespace **4**. The local preview produced no TV callback and the owner saw “no network detected.” The public HTTPS preview is now deployed and checked in a desktop browser; the TV accepted its launch request, with TV-screen verification still pending. The hosted build passes **34 tests**, and all **24 session tests** also pass on the Windows PC.
+**Current revision:** a cable-guide interface with explicitly labeled sample listings. The offline suite passes **39 tests**, including five guide-navigation and timeline checks. Browser and TV-screen verification of this revision are pending. The previous revision passed **34 tests** in CI, deployed to Pages, and had **24 session tests** verified on Windows. PIN pairing and authenticated Conjure launch requests are verified; the API reported app **17**, namespace **4**. An accepted request has not yet been followed by confirmed interface rendering on the TV.
+
+## Cable-guide design — 5 November 2026
+
+The user changed the visual direction from Media Center/Aero to a 2000s Suddenlink-style guide. The new screen has six sample channels across three half-hour columns, a yellow selection, blue regular-program cells, purple movie cells, green sports cells, and light-blue kids' cells. Selected-item details appear at the upper left; decorative CSS color bars occupy the upper-right preview pane. The clock and time headers use the device's local time.
+
+Guide, My Apps, and Settings are the main navigation. Enter opens sample-program information; it does not tune a channel or start playback. The sample guide is always labeled, has no connected television feed or electronic program-guide source, and is separate from the actual app catalog, which remains empty. Themes are **Cable Blue**, **Night Guide**, and **Classic Gray**.
+
+The layout reference is the provider-hosted [classic i-Guide manual](https://www.wadsworthcity.com/DocumentCenter/View/1540/I-Guide-Manual---Manual-for-the-Digital-Guide-Our-Digital-Settop-Boxes-Use-PDF), especially its Picture-in-Guide and Listings By Time examples. The project keeps its own branding and implementation. See [interface controls and configuration](home/README.md).
 
 ## What this project demonstrates
 
@@ -18,8 +26,8 @@ Public source: [KnewportDev/home-streaming-lab](https://github.com/KnewportDev/h
 | API integration | Model and firmware checks, ordinary VIZIO PIN pairing, explicit pairing states, and the documented Conjure app 17 launch request. |
 | Windows troubleshooting | Isolated a state-write failure after the TV displayed a PIN; replaced the failing numeric open flags with a checked file handle and added a regression. |
 | Local data handling | Pairing state stays in an explicit private file; reports and status messages omit credentials and device identifiers. |
-| Testing and CI | 34 passing offline tests; a scoped workflow checks source, packages an allowlisted preview, and publishes Pages only after a successful main-branch build. |
-| Interface development | Local HTML, CSS, and JavaScript with directional navigation, visible focus, and no external fonts or analytics. |
+| Testing and CI | 39 passing offline tests, including guide-navigation and timeline checks. CI packages an allowlisted preview and publishes Pages after a successful main-branch build. |
+| Interface development | A remote-oriented cable-guide sample with directional navigation, visible yellow focus, information dialogs, and no external fonts or analytics. |
 
 Read the [engineering notes](docs/ENGINEERING-NOTES.md) for the debugging evidence and [portfolio summary](docs/PORTFOLIO.md) for a short project explanation.
 
@@ -60,7 +68,7 @@ Use **Node.js 24**. No package installation is required. Run commands from `nati
 node tools/preview-home.cjs
 ```
 
-Open [http://127.0.0.1:8138](http://127.0.0.1:8138). Use arrow keys, Enter, and Back/Escape to explore the interface. The preview binds to the local computer.
+Open [http://127.0.0.1:8138](http://127.0.0.1:8138). Arrows move through the sample guide, Enter opens program information, and Back/Escape closes a dialog or opens Settings. Guide/My Apps switch views; the preview binds to the local computer.
 
 The preview automatically uses `home/config.example.json` when personal `home/config.json` is absent, so a fresh clone runs without configuration setup. Keep personal configuration in `home/config.json`, which is ignored by Git. See [the interface documentation](home/README.md) for configuration and native adapter details. Only add application launch values verified on the target television.
 
@@ -160,12 +168,12 @@ This creates only a fixed diagnostic CGI and instructions. Read the generated in
 
 ```sh
 node --check home/home.js
-node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs
+node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs
 ```
 
-The recorded baseline on 5 November 2026 is **34 tests passed, 0 failed, 0 skipped**. The 24-test session suite also passed on the target Windows PC with Node.js 24.22.1, with zero failures or skips. Tests use synthetic metadata, mocked TV transports, loopback servers, and temporary files; they do not contact the TV. Coverage includes request boundaries, metadata redaction, pairing recovery, Windows state writes, and local/public-page launch validation.
+The previous baseline on 5 November 2026 was **34 tests passed, 0 failed, 0 skipped**. Its 24-test session suite also passed on the target Windows PC with Node.js 24.22.1, with zero failures or skips. The cable-guide revision adds five checks in `test-home-guide.cjs`; its full offline result is **39 passed, 0 failed, 0 skipped**. Tests use synthetic inputs, mocked TV transports, loopback servers, and temporary files; they do not contact the TV.
 
-The repository-root workflow, `.github/workflows/native-tv.yml`, uses Node.js 24 and commit-pinned GitHub actions. It checks source and uploads a preview ZIP; successful pushes to `main` then deploy the same six allowlisted assets to GitHub Pages. Deployment permissions are isolated to the Pages job. It has no TV credentials or device access. [Run 42124719065](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42124719065), for commit `3dfa54ff948a9d4a8e867678b226c8c6ecef22ee`, passed both the 34-test offline job and the Pages deployment job. The live interface was checked in a desktop browser: Settings opened, Cobalt changed the theme, and Escape closed Settings and restored focus. These browser checks do not establish TV rendering.
+The repository-root workflow, `.github/workflows/native-tv.yml`, uses Node.js 24 and commit-pinned GitHub actions. It checks source and uploads a preview ZIP; successful pushes to `main` then deploy the same six allowlisted assets to GitHub Pages. Deployment permissions are isolated to the Pages job. It has no TV credentials or device access. The [previous build at commit 3344fc26](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207) passed its 34-test job and Pages deployment. Browser checks of the earlier Media Center interface covered Settings, the then-named Cobalt theme, and Escape/focus restoration. These results do not verify the new cable-guide skin or its behavior on the TV.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) and [AGENTS.md](AGENTS.md) for development conventions.
 
@@ -182,6 +190,7 @@ For local development, the Node preview command above is the quickest route. The
 
 ## Next milestones
 
+- Verify the cable-guide tests, browser layout, sample-program dialogs, and deployment.
 - Confirm that the accepted HTTPS launch displays the deployed interface on the TV.
 - Validate screen layout, remote keys, and return-to-Home behavior on the exact target firmware.
 - Populate a small catalog using application identifiers observed on that TV.

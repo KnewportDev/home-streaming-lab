@@ -1,22 +1,67 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' http://127.0.0.1:7346; base-uri 'none'; form-action 'none'">
-<title>Local Media Center</title><link rel="stylesheet" href="home.css"></head>
-<body data-accent="sage"><main>
-  <header class="topbar">
-    <div class="wordmark"><span class="brand-mark" aria-hidden="true"></span><span>Local Media Center</span><span id="preview-badge" class="preview-badge">Preview</span></div>
-    <div class="topbar-right"><div class="time-block"><time id="clock">--:--</time><span id="date"></span></div><button id="setup" class="profile" aria-label="Open TV settings">D</button></div>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; connect-src 'self' http://127.0.0.1:7346; base-uri 'none'; form-action 'none'">
+  <meta name="theme-color" content="#122357">
+  <title>Knewport Cable Guide</title>
+  <link rel="stylesheet" href="home.css">
+</head>
+<body data-accent="sage">
+<main class="receiver">
+  <header class="masthead">
+    <div class="brand"><span class="brand-name">knewport<span class="brand-sweep" aria-hidden="true"></span></span><span class="brand-caption">digital cable</span></div>
+    <div class="guide-name"><h1 id="title">TV Guide</h1><span id="preview-badge" class="preview-badge">PREVIEW</span></div>
+    <div class="time-block"><time id="clock">--:--</time><span id="date"></span></div>
   </header>
-  <section class="welcome" aria-labelledby="title"><p id="greeting" class="eyebrow">WELCOME HOME</p><h1 id="title">Dylan’s Media Center</h1><p class="welcome-note">Your screen. Your way.</p></section>
-  <section class="library" aria-label="Home">
-    <div class="section-heading"><h2>Your apps</h2><span id="app-count">Waiting for setup</span></div>
-    <div class="content-row"><div id="empty-state" class="empty-state"><div class="empty-symbol" aria-hidden="true"><span></span><span></span><span></span><span></span></div><h3>A home for your favorites.</h3><p>No apps have been added yet.</p></div><section id="apps" class="apps" aria-label="Apps and TV information"></section></div>
-  </section>
-  <footer><div class="remote-hints"><span><kbd>↑ ↓ ← →</kbd> Move</span><span><kbd>OK</kbd> Open</span><span><kbd>Back</kbd> Settings</span></div><p id="status" role="status" aria-live="polite">Loading your home…</p></footer>
-  <section id="help" class="overlay" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
-    <div class="panel"><div class="panel-heading"><div><p class="eyebrow">PERSONALIZE</p><h2 id="help-title">Settings</h2></div><button id="close" class="close-button" aria-label="Close settings">Close</button></div>
-      <section class="appearance" aria-labelledby="appearance-title"><h3 id="appearance-title">Color scheme</h3><div class="swatches"><button class="swatch" data-accent="sage" aria-pressed="true"><span class="swatch-dot sage" aria-hidden="true"></span>Aqua</button><button class="swatch" data-accent="glacier" aria-pressed="false"><span class="swatch-dot glacier" aria-hidden="true"></span>Cobalt</button><button class="swatch" data-accent="amber" aria-pressed="false"><span class="swatch-dot amber" aria-hidden="true"></span>Silver</button></div></section>
-      <section class="device-section" aria-labelledby="device-title"><h3 id="device-title">This TV</h3><p id="device-info">Device details are loading.</p><p id="bridge-state" class="muted">App controls are not connected yet.</p></section>
+
+  <section class="program-overview" aria-label="Selected program">
+    <div class="program-info">
+      <div class="info-kicker"><span id="program-channel">002 · LOCAL</span><span class="info-symbol" aria-hidden="true">i</span></div>
+      <h2 id="program-title">Welcome to your TV guide</h2>
+      <p id="program-meta" class="program-meta">Sample guide</p>
+      <p id="program-description" class="program-description">Browse with the arrow keys. Press OK for program information.</p>
+    </div>
+    <div class="preview-window" aria-label="Decorative preview window; no video is playing">
+      <div class="test-pattern" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="preview-ident"><span class="preview-ident-name">knewport</span><span>DIGITAL TELEVISION</span></div>
+      <div class="preview-caption"><span id="preview-channel">002 LOCAL</span><span id="preview-title">Preview channel</span></div>
     </div>
   </section>
-</main><script src="home.js"></script></body></html>
+
+  <nav class="cable-nav" aria-label="TV menu">
+    <div class="nav-buttons"><button id="guide-tab" class="nav-button" aria-pressed="true">TV Guide</button><button id="apps-tab" class="nav-button" aria-pressed="false">My Apps</button><button id="setup" class="nav-button" aria-label="Open TV settings">Settings</button></div>
+    <span class="listing-kind">ALL CHANNELS <span aria-hidden="true">▾</span></span>
+  </nav>
+
+  <section id="guide-view" class="guide-view" aria-label="Sample program guide">
+    <div class="time-axis"><div class="channel-heading">CHANNEL</div><div class="time-slots"><span id="time-0">NOW</span><span id="time-1">NEXT</span><span id="time-2">LATER</span></div></div>
+    <div id="guide-grid" class="guide-grid" role="grid" aria-label="Sample channels and programs" aria-rowcount="6" aria-colcount="4"></div>
+  </section>
+
+  <section id="apps-view" class="apps-view" aria-label="My apps" hidden>
+    <div class="apps-heading"><h2>My Apps</h2><span id="app-count">No apps connected</span></div>
+    <div id="empty-state" class="empty-state"><span class="empty-number">000</span><div><h3>Your lineup starts here.</h3><p>Connected TV apps will appear here. Open Settings for this TV's details.</p></div></div>
+    <div id="apps" class="apps" aria-label="Apps and TV information"></div>
+  </section>
+
+  <footer class="receiver-footer">
+    <div class="message-strip"><span class="channel-bug" aria-hidden="true">TV</span><p><strong>Back to the good stuff.</strong> Your own little corner of cable.</p><span class="guide-edition">2000s EDITION</span></div>
+    <div class="remote-strip"><div class="remote-hints"><span><kbd>◀ ▲ ▼ ▶</kbd> Browse</span><span><kbd class="key-ok">OK</kbd> Info</span><span><kbd>BACK</kbd> Menu</span></div><p id="status" role="status" aria-live="polite">Loading guide…</p></div>
+    <p class="sample-notice">SAMPLE LISTINGS <span aria-hidden="true">•</span> No live TV connected</p>
+  </footer>
+
+  <section id="help" class="overlay" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+    <div class="panel"><div class="panel-heading"><h2 id="help-title">Guide Setup</h2><button id="close" class="close-button" aria-label="Close settings">Close</button></div>
+      <div class="panel-content"><section class="appearance" aria-labelledby="appearance-title"><h3 id="appearance-title">Guide color</h3><div class="swatches"><button class="swatch" data-accent="sage" aria-pressed="true"><span class="swatch-dot sage" aria-hidden="true"></span>Cable Blue</button><button class="swatch" data-accent="glacier" aria-pressed="false"><span class="swatch-dot glacier" aria-hidden="true"></span>Night Guide</button><button class="swatch" data-accent="amber" aria-pressed="false"><span class="swatch-dot amber" aria-hidden="true"></span>Classic Gray</button></div></section>
+      <section class="device-section" aria-labelledby="device-title"><h3 id="device-title">Receiver information</h3><p id="device-info">Device details are loading.</p><p id="bridge-state" class="muted">App controls are not connected yet.</p></section></div>
+    </div>
+  </section>
+  <section id="program-dialog" class="overlay" role="dialog" aria-modal="true" aria-labelledby="program-dialog-title" hidden>
+    <div class="panel program-panel"><div class="panel-heading"><h2>Program Information</h2><button id="program-close" class="close-button">Back to guide</button></div><div class="panel-content"><p class="dialog-kicker">SAMPLE LISTING</p><h3 id="program-dialog-title"></h3><p id="program-dialog-meta" class="program-meta"></p><p id="program-dialog-description"></p><p class="dialog-notice">This is a sample guide entry. Live channels and playback are not connected.</p></div></div>
+  </section>
+</main>
+<script src="home.js"></script>
+</body>
+</html>

@@ -33,7 +33,7 @@ jobs:
       - name: Check interface JavaScript
         run: node --check home/home.js
       - name: Run offline tests
-        run: node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs
+        run: node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs
       - name: Package browser preview
         env:
           VIZIO_PREVIEW_ARCHIVE: ${{ runner.temp }}/native-tv-preview-${{ github.sha }}.zip
