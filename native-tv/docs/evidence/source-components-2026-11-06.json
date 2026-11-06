@@ -1,0 +1,436 @@
+{
+  "schemaVersion": 1,
+  "inspectedOn": "2026-11-06",
+  "sourceArchiveSha256": "974b76513f493e24494dcb2edce67add04795be4f6f60e07b95961131fe456bf",
+  "method": "bounded_static_text_inspection_of_selected_archive_members",
+  "archives": {
+    "vizios": {
+      "member": "5691_OSS_FUR7.2/ViziOS-GPL_5691_FUR7.2.tar.gz",
+      "bytes": 1618554037,
+      "sha256": "64039b0d6802798e7776508da912329271bc7c3e37aba6fb1f5198c87b38cd93",
+      "entries": 177009
+    },
+    "bsp": {
+      "member": "5691_OSS_FUR7.2/release-x.720.7.1-5583-5691-5695-5695s-20260312-54ff60.tar",
+      "bytes": 3902863360,
+      "sha256": "4b18417f18131986e33af313d6a2a795941e9da7a68138828d38ddf006a438db"
+    },
+    "bspRelease": {
+      "parent": "bsp",
+      "member": "release.tar.gz",
+      "bytes": 3902851426,
+      "sha256": "969e5c0300ce2aa34b89e4f245c41d4e6fa8c4b1f32785cb9cd930e11afc01ff",
+      "entries": 507731
+    },
+    "scpl": {
+      "member": "5691_OSS_FUR7.2/Scpl.zip",
+      "bytes": 54325594,
+      "sha256": "82e6a7f9f418283da18c3ceb67b698befb86e1a70412cfaebfc3fb7360f8166d",
+      "entries": 47
+    }
+  },
+  "selections": [
+    {
+      "area": "publisher_build_instructions",
+      "container": "source_zip",
+      "files": [
+        {
+          "path": "5691_OSS_FUR7.2/Readme",
+          "bytes": 2057,
+          "sha256": "68b69608593eeead0175872308e7342e18e5ee357b4472edf88df6590edf1935"
+        },
+        {
+          "path": "5691_OSS_FUR7.2/build_vizios.sh",
+          "bytes": 1828,
+          "sha256": "d371fc95163f0af45e0e106ec157507c25c9eb654882b3cfad383426b14d29d5"
+        }
+      ]
+    },
+    {
+      "area": "vizios_build",
+      "container": "vizios",
+      "files": [
+        {
+          "path": "Dockerfile.gpl",
+          "bytes": 4175,
+          "sha256": "40a9660d44a28769c0080a9eb1881bcedf52051ee8a46f48b68a0edaad0ea558"
+        },
+        {
+          "path": "build_gpl_fw.sh",
+          "bytes": 1493,
+          "sha256": "52d48634cc5439c93aebd03c73db92d129f9623ca52969327e23b2f32da20226"
+        },
+        {
+          "path": "rootfs/snap/snapcraft.yaml",
+          "bytes": 8214,
+          "sha256": "6c87196d7757f67dc17c5d6bd7125e6654fd7336c8763874af9b1322ef13b435"
+        }
+      ]
+    },
+    {
+      "area": "bsp_instructions",
+      "container": "bsp",
+      "files": [
+        {
+          "path": "readme.md",
+          "bytes": 1409,
+          "sha256": "2963cb5badede961e5e84b1d1fa403934f59cd5b1d43e08e0dfa2a83f789125c"
+        }
+      ]
+    },
+    {
+      "area": "bsp_build",
+      "container": "bspRelease",
+      "files": [
+        {
+          "path": "release/apollo/sys_build/Vizio_linux/mt5691_cast/mt5691_cast.cfg",
+          "bytes": 64881,
+          "sha256": "d048a0356817e05ced00940260fcdd973deb2d49d2e68bb6410d6857665ce874"
+        },
+        {
+          "path": "release/apollo/sys_build/Vizio_linux/mt5691_cast/Makefile",
+          "bytes": 9736,
+          "sha256": "82907cf1c5e723cea67179d52bd318f8d07047d93d1c95577fb0420b7199a419"
+        },
+        {
+          "path": "release/docker/Dockerfile",
+          "bytes": 4070,
+          "sha256": "9d90e2ca6d9b506bde3eaea25dd5323e6bd5e20f6337ffa1a884d5f68eda10a5"
+        },
+        {
+          "path": "release/apollo/linux_mts/build/mak/include.mak",
+          "bytes": 7400,
+          "sha256": "e2028182995961bbb80c248a5b104cb09050fb585b71bf52a99a18f17bc89f86"
+        },
+        {
+          "path": "release/apollo/linux_core/mboot_rel/sboot/configs/M7632/.config.m7632.linux.MT164B_10AT.rom_emmc.optee.32bit.Vizio",
+          "bytes": 42928,
+          "sha256": "21f8fad6368880517f164aa1fd6fc9e97fced0469edbcccfeb20361e5e337a08"
+        }
+      ]
+    },
+    {
+      "area": "home_request_path",
+      "container": "vizios",
+      "files": [
+        {
+          "path": "rootfs/ViziOS/platform_orchestrator/src/include/orchestrator.h",
+          "bytes": 6602,
+          "sha256": "59d8800259de04c4589dcc859d56aa3241225e269abe2f1fdd94d38e5269c840"
+        },
+        {
+          "path": "rootfs/ViziOS/platform_orchestrator/src/poapiserver.cpp",
+          "bytes": 1375,
+          "sha256": "395ff57f2de314a6097ee952181abc3bb1e2030ba6362cf681113da56f964e2e"
+        },
+        {
+          "path": "rootfs/ViziOS/platform_orchestrator/src/sysregadapter.cpp",
+          "bytes": 10657,
+          "sha256": "9ee865f1a22633a79d464f9664f6d651094b3e24248bf23c71628ced3d8e5df8"
+        },
+        {
+          "path": "rootfs/ViziOS/platform_orchestrator/src/sysregmultiplexer.cpp",
+          "bytes": 56545,
+          "sha256": "8196b86c46036efba7e798b2fb7765f6a33337ea3f1dcfccf823000ec9c9e01f"
+        },
+        {
+          "path": "rootfs/ViziOS/platform_orchestrator/src/systemapi.cpp",
+          "bytes": 1977,
+          "sha256": "cc7432abbeafe1fca1e783c45d8080d60267ff6afd6edf36ada0423ea20cc0a6"
+        },
+        {
+          "path": "rootfs/ViziOS/platform_orchestrator/src/platformadapter.cpp",
+          "bytes": 833,
+          "sha256": "62243ef09eae542288e661b3dd4a973d2868ea9adbd6a9f75b75dd86b4a34aba"
+        },
+        {
+          "path": "rootfs/ViziOS/utils/vizios-common/socInfoUtils.h",
+          "bytes": 4388,
+          "sha256": "68a294d9781ca9ddb7c6e0381b651be203dd1fb35805ace477090e311d71f1b3"
+        },
+        {
+          "path": "rootfs/ViziOS/platform_orchestrator/src/platform/mtk/platformadapter_mtk2019.cpp",
+          "bytes": 43923,
+          "sha256": "d16e0c4e6a25659d1fb3867decb1b7c2d09a474604a20420bf2f449df18f3a93"
+        },
+        {
+          "path": "rootfs/ViziOS/platform_orchestrator/src/platform/mtk/platformadapter_mtk202X.cpp",
+          "bytes": 46691,
+          "sha256": "5f4b4a48fc12ff32f26ad73b2037e32d99d776e9fd7e6e352ab5c866b348cdc6"
+        },
+        {
+          "path": "rootfs/ViziOS/platform_orchestrator/src/multiplexer.cpp",
+          "bytes": 11377,
+          "sha256": "3924021d4fe8dc928157886646a7a948fa40aef6e7ff378e0216ae71a99d2705"
+        }
+      ]
+    },
+    {
+      "area": "updater_helpers",
+      "container": "vizios",
+      "files": [
+        {
+          "path": "rootfs/OSUpdater/unpacker/src/data_flow/crypt_utils.cpp",
+          "bytes": 3190,
+          "sha256": "f1907cfad0e449b0c0ab8cc61ead098d2013ebead8e0fa484e977eb0d1d48d9b"
+        },
+        {
+          "path": "rootfs/OSUpdater/unpacker/src/data_flow/impl/data_stream_digest_calculator.cpp",
+          "bytes": 5102,
+          "sha256": "b3ae8d2ab141a9deb82b2ca698b0728ced49051017608d7f70d6987cbeb22f4c"
+        },
+        {
+          "path": "rootfs/OSUpdater/unpacker/src/data_flow/downloaded_data_bridge.cpp",
+          "bytes": 6420,
+          "sha256": "eba240288deb34042b6ee8b1a35e50ce2406357ee735bc3c2e1058f94e6720f2"
+        },
+        {
+          "path": "rootfs/OSUpdater/unpacker/src/curl_actions/impl/get_file_content_action.cpp",
+          "bytes": 3043,
+          "sha256": "11d569c4815a97611d0b0504eff3b5223c6d1f5ddd11d4583fd191d892fbb78d"
+        },
+        {
+          "path": "rootfs/OSUpdater/osu/src/osu_path_manager/impl/osu_path_manager.cpp",
+          "bytes": 5404,
+          "sha256": "968b6c5f986d4d7b7912072ff1e1f32d5755348242b8ea1ba3dd9388686d09c9"
+        },
+        {
+          "path": "rootfs/OSUpdater/unpacker/src/retry_actions/action_executor.cpp",
+          "bytes": 4701,
+          "sha256": "ca53451cb75538ed7c0cfbffcc3893316488406dd4567a03c44243548b65271d"
+        },
+        {
+          "path": "rootfs/OSUpdater/osu/src/asset_installers/impl/asset_installer_manager.cpp",
+          "bytes": 19401,
+          "sha256": "054b1b383a1ba6ede95f0d7ca0769c7b4d33bd6ff070283d9378fe4f5cca11e4"
+        },
+        {
+          "path": "rootfs/OSUpdater/osu/src/osu_manager/impl/osu_manager.cpp",
+          "bytes": 36784,
+          "sha256": "14fa60386f0ea6174c189b195dec788afc679926780f1cbb451a2abead4aeb00"
+        },
+        {
+          "path": "rootfs/OSUpdater/osu/src/manifest/impl/manifest_manager.cpp",
+          "bytes": 9402,
+          "sha256": "204adce44f440b55e9796b4f32fd89044e94aff579a5812c54b5ae2d1a2104f4"
+        },
+        {
+          "path": "rootfs/OSUpdater/osu/src/manifest/impl/http_post_manifest_provider.cpp",
+          "bytes": 10283,
+          "sha256": "7d6bd864533ca54c2a8254fb7af79e6286908c1cce0d519794f064f3d0292b8f"
+        }
+      ]
+    },
+    {
+      "area": "scpl_instructions",
+      "container": "scpl",
+      "files": [
+        {
+          "path": "Scpl/README.md",
+          "bytes": 2827,
+          "sha256": "b90eb40646eed85dc28fea67cf7641fdaf7da6c10b9d05eac360d33669330dc3"
+        },
+        {
+          "path": "Scpl/Readme",
+          "bytes": 48,
+          "sha256": "956f68874936326bc98d3cb47a9382256b5197946c09312fd611a6b85cd95e2d"
+        }
+      ]
+    }
+  ],
+  "scplPackageInventory": [
+    {
+      "path": "Scpl/",
+      "bytes": 0
+    },
+    {
+      "path": "Scpl/README.md",
+      "bytes": 2827
+    },
+    {
+      "path": "Scpl/docker_build.sh",
+      "bytes": 1259
+    },
+    {
+      "path": "Scpl/sources/",
+      "bytes": 0
+    },
+    {
+      "path": "Scpl/sources/attrs-24.3.0.tar.gz",
+      "bytes": 805984
+    },
+    {
+      "path": "Scpl/sources/cffi-1.14.6.tar.gz",
+      "bytes": 475744
+    },
+    {
+      "path": "Scpl/sources/checksums.md5",
+      "bytes": 2056
+    },
+    {
+      "path": "Scpl/sources/pyOpenSSL-19.1.0.tar.gz",
+      "bytes": 160510
+    },
+    {
+      "path": "Scpl/sources/botocore-1.10.66.tar.gz",
+      "bytes": 4535206
+    },
+    {
+      "path": "Scpl/sources/future-0.18.2.tar.gz",
+      "bytes": 829220
+    },
+    {
+      "path": "Scpl/sources/djangorestframework-3.9.4.tar.gz",
+      "bytes": 779306
+    },
+    {
+      "path": "Scpl/sources/idna-2.10.tar.gz",
+      "bytes": 175616
+    },
+    {
+      "path": "Scpl/sources/nose-1.3.7.tar.gz",
+      "bytes": 280488
+    },
+    {
+      "path": "Scpl/sources/awsiotsdk-1.21.5.tar.gz",
+      "bytes": 77780
+    },
+    {
+      "path": "Scpl/sources/jmespath-0.9.3.tar.gz",
+      "bytes": 22967
+    },
+    {
+      "path": "Scpl/sources/flup-1.0.3.tar.gz",
+      "bytes": 52277
+    },
+    {
+      "path": "Scpl/sources/urllib3-1.26.11.tar.gz",
+      "bytes": 299255
+    },
+    {
+      "path": "Scpl/sources/boto3-1.7.66.tar.gz",
+      "bytes": 93191
+    },
+    {
+      "path": "Scpl/sources/jsonschema-4.16.0.tar.gz",
+      "bytes": 292399
+    },
+    {
+      "path": "Scpl/sources/AWSIoTPythonSDK-1.4.9.tar.gz",
+      "bytes": 80331
+    },
+    {
+      "path": "Scpl/sources/retrying-1.3.3.tar.gz",
+      "bytes": 10890
+    },
+    {
+      "path": "Scpl/sources/docutils-0.14.tar.gz",
+      "bytes": 1727105
+    },
+    {
+      "path": "Scpl/sources/sentry-sdk-1.14.0.tar.gz",
+      "bytes": 139729
+    },
+    {
+      "path": "Scpl/sources/awscrt-0.20.10.tar.gz",
+      "bytes": 32688838
+    },
+    {
+      "path": "Scpl/sources/s3transfer-0.1.13.tar.gz",
+      "bytes": 103335
+    },
+    {
+      "path": "Scpl/sources/pyrsistent-0.20.0.tar.gz",
+      "bytes": 103642
+    },
+    {
+      "path": "Scpl/sources/django-cors-headers-3.0.2.tar.gz",
+      "bytes": 24497
+    },
+    {
+      "path": "Scpl/sources/enum-compat-0.0.2.tar.gz",
+      "bytes": 1254
+    },
+    {
+      "path": "Scpl/sources/pytz-2024.2.tar.gz",
+      "bytes": 319692
+    },
+    {
+      "path": "Scpl/sources/checksums.sha256",
+      "bytes": 3208
+    },
+    {
+      "path": "Scpl/sources/PyYAML-5.3.1.tar.gz",
+      "bytes": 269377
+    },
+    {
+      "path": "Scpl/sources/six-1.10.0.tar.gz",
+      "bytes": 29630
+    },
+    {
+      "path": "Scpl/sources/Django-1.11.29.tar.gz",
+      "bytes": 7977916
+    },
+    {
+      "path": "Scpl/sources/requests-2.12.3.tar.gz",
+      "bytes": 546994
+    },
+    {
+      "path": "Scpl/sources/django-filter-2.0.0.tar.gz",
+      "bytes": 142039
+    },
+    {
+      "path": "Scpl/sources/enum34-1.1.6.tar.gz",
+      "bytes": 40048
+    },
+    {
+      "path": "Scpl/sources/pycparser-2.20.tar.gz",
+      "bytes": 161330
+    },
+    {
+      "path": "Scpl/sources/certifi-2020.6.20.tar.gz",
+      "bytes": 157997
+    },
+    {
+      "path": "Scpl/sources/ipaddress-1.0.23.tar.gz",
+      "bytes": 32958
+    },
+    {
+      "path": "Scpl/sources/cryptography-3.0.tar.gz",
+      "bytes": 534725
+    },
+    {
+      "path": "Scpl/sources/protobuf-3.0.0b2.tar.gz",
+      "bytes": 200450
+    },
+    {
+      "path": "Scpl/sources/python-dateutil-2.8.2.tar.gz",
+      "bytes": 357324
+    },
+    {
+      "path": "Scpl/Dockerfile",
+      "bytes": 1082
+    },
+    {
+      "path": "Scpl/Readme",
+      "bytes": 48
+    },
+    {
+      "path": "Scpl/build_environment.sh",
+      "bytes": 1195
+    },
+    {
+      "path": "Scpl/build_all.sh",
+      "bytes": 4133
+    },
+    {
+      "path": "Scpl/BOM.xlsx",
+      "bytes": 10531
+    }
+  ],
+  "initialSelectionReceipt": "source-selection-2026-11-06.json",
+  "scope": "selected_text_only_not_full_source_audit",
+  "vendorCodeExecuted": false,
+  "buildExecuted": false,
+  "tvContacted": false
+}

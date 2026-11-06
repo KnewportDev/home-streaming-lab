@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "verifiedOn": "2026-11-06",
+  "acquisition": "owner_authorized_publisher_download",
+  "filename": "5691_OSS_FUR7.2.zip",
+  "byteCount": 7946973901,
+  "hashes": {
+    "md5": "5b62eb08af859ee6cd49e654c45c76b1",
+    "sha1": "38c0a3e5cefd2eafa9acdad074ed88cea90c7b63",
+    "sha256": "974b76513f493e24494dcb2edce67add04795be4f6f60e07b95961131fe456bf"
+  },
+  "publishedChecksumMatch": true,
+  "publisherCommit": "1d05e3cb76d453a8d6a76f38dd2b8409b428bb11",
+  "publisherReadme": "https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSoftware/blob/1d05e3cb76d453a8d6a76f38dd2b8409b428bb11/README.md",
+  "publisherChecksums": "https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSoftware/blob/1d05e3cb76d453a8d6a76f38dd2b8409b428bb11/checksums",
+  "downloadPage": "https://d2mi77xcznxniv.cloudfront.net/index.html?file=5691_OSS_FUR7.2.zip",
+  "outerZipEntries": 18,
+  "archiveAcquired": true,
+  "archiveInspected": true,
+  "vendorCodeExecuted": false,
+  "tvContacted": false,
+  "exactBuildCompatibility": "unverified",
+  "installationEligibility": "unverified",
+  "recovery": "unverified",
+  "privateDataExcluded": [
+    "contact_details",
+    "registration_identifiers",
+    "signed_download_urls",
+    "local_paths"
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "version": "0.5.0",
-  "stage": "matching_source_family_identified_archive_and_tv_observation_pending",
+  "stage": "publisher_source_verified_static_review_native_access_unverified",
   "live_device": {
     "reported_model": "V405-H9",
     "firmware": "1.720.9.1-1",
@@ -158,6 +158,15 @@
       "screen_evidence_obtained": false,
       "settings_changed": false,
       "evidence": "docs/evidence/development-entry-2026-11-06.json"
+    },
+    "source_intake_hosted_tests": {
+      "commit": "0d23a386092d2131c355e9f1919875a92f67f147",
+      "run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42159281900",
+      "conclusion": "success",
+      "linux_passed": 88,
+      "windows_passed": 87,
+      "failed": 0,
+      "skipped": 0
     }
   },
   "native_execution_on_tv": "not_yet_verified",
@@ -232,8 +241,8 @@
     "previous_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207",
     "hosted_39_test_revision": "passed",
     "tv_check_url": "https://knewportdev.github.io/home-streaming-lab/tv-check.html",
-    "last_recorded_deployed_commit": "ccfaac78cad3cc1bb3cf679338f04066d1102379",
-    "last_recorded_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42156709565",
+    "last_recorded_deployed_commit": "0d23a386092d2131c355e9f1919875a92f67f147",
+    "last_recorded_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42159281900",
     "revision_status_source": "GitHub pull-request checks and Actions; recorded runs are historical observations"
   },
   "scope": {
@@ -247,7 +256,7 @@
   },
   "native_development": {
     "goal": "TV_boots_into_owned_retro_interface_and_future_native_system",
-    "branch": "feat/source-intake",
+    "branch": "docs/verified-source",
     "tracking_issue": "https://github.com/KnewportDev/home-streaming-lab/issues/1",
     "preparation_package": "implemented_offline_only",
     "platform_inspection": "implemented_and_verified_on_target",
@@ -272,19 +281,44 @@
       "owner_result": "pending",
       "result_code_is_build_identifier": false
     },
-    "latest_implementation_pull_request": "https://github.com/KnewportDev/home-streaming-lab/pull/3",
+    "latest_implementation_pull_request": "https://github.com/KnewportDev/home-streaming-lab/pull/5",
     "source_intake": {
       "published_family": "5691 / FUR7.2 / 1.720.X.Y",
       "family_mapping": "matches_published_catalog",
       "source_pin": "1d05e3cb76d453a8d6a76f38dd2b8409b428bb11",
-      "archive_acquired": false,
-      "archive_inspected": false,
+      "archive_acquired": true,
+      "archive_inspected": true,
       "source_executed": false,
-      "download_form_submitted": false,
+      "download_form_submitted": true,
       "verifier": "tools/verify-source-bundle.cjs",
       "exact_build_compatibility": "unverified",
       "installation_eligibility": "unverified",
-      "evidence": "docs/evidence/source-family-5691-fur72.json"
+      "evidence": "docs/evidence/source-archive-2026-11-06.json",
+      "acquisition": "owner_authorized_publisher_download",
+      "verified_on": "2026-11-06",
+      "archive_bytes": 7946973901,
+      "published_checksum_match": true,
+      "archive_sha256": "974b76513f493e24494dcb2edce67add04795be4f6f60e07b95961131fe456bf",
+      "family_discovery_evidence": "docs/evidence/source-family-5691-fur72.json",
+      "inspection": "bounded_static_selected_text",
+      "inspection_document": "docs/SOURCE-INSPECTION.md",
+      "initial_selection_evidence": "docs/evidence/source-selection-2026-11-06.json",
+      "component_selection_evidence": "docs/evidence/source-components-2026-11-06.json",
+      "bsp_target": "mt5691_cast",
+      "bsp_chip_name": "m7632",
+      "vizios_script_target": "mtk5695",
+      "vizios_target_equivalence": "unverified",
+      "native_home_registry_lan_api": "unverified",
+      "build_executed": false,
+      "tv_contacted_during_source_review": false,
+      "recovery": "unverified",
+      "source_home_backend": "MTK5691_MTK2020_Multiplexer_QueueManager_DtvSvc",
+      "generic_sysreg_reader_selected_by_shown_5691_factory": false,
+      "source_runtime_identity_equivalence": "unverified",
+      "asset_signature_check": "present_in_selected_source_not_tested_on_tv",
+      "software_asset_rollback": "present_in_selected_source_not_full_firmware_recovery",
+      "asset_activation_callers": "traced_in_selected_source",
+      "manifest_cryptographic_validation": "not_established_by_bounded_review"
     }
   }
 }

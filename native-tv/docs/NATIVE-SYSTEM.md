@@ -23,7 +23,7 @@ for the actual mainboard revision or a boot log.
 
 ## Current conclusion
 
-**A matching-family source release is available; native installation remains unverified.**
+**The matching-family publisher archive is verified and selected source is inspected; native installation remains unverified.**
 The research found no reproducible root procedure, bootloader unlock, bootable
 replacement OS, or demonstrated USB/serial recovery procedure matching this exact
 model and firmware. This is a gap in available evidence, not proof that such work
@@ -89,10 +89,19 @@ and complete OS replacement remain unverified.
 The [published 5691 FUR7.2 source release](https://github.com/opensource-vizio/5691_FUR7.2_OpenSourceSoftware/blob/1d05e3cb76d453a8d6a76f38dd2b8409b428bb11/README.md)
 lists firmware family `1.720.X.Y`. Its chipset and release mapping match the
 observed target family. This supersedes the earlier search that did not find a
-matching-family source release. The archive has not been acquired or inspected;
-the download form requires contact details and has not been submitted.
-[Source intake](SOURCE-INTAKE.md) records the pinned publication, checksum
-verifier, acquisition step, and questions to investigate in the source.
+matching-family source release. The owner-authorized download completed on
+6 November 2026, and both pinned publisher digests matched the 7,946,973,901-byte
+ZIP. [Source intake](SOURCE-INTAKE.md) records the acquisition and verification;
+[direct inspection](SOURCE-INSPECTION.md) records selected source files and hashes.
+
+The source explains Home alias/controller selection and signed asset verification.
+It also supplies an explicit `mt5691_cast` BSP target using the `m7632` chip name,
+kernel configuration, and an eMMC/OP-TEE bootloader configuration. The ViziOS
+userspace build script independently selects `mtk5695`; its applicability to
+the target remains unresolved. These findings improve the compatibility record
+without identifying the owner's physical board, proving retail boot acceptance,
+or establishing an authenticated external Home-registry read/write interface.
+No vendor program or build script was executed.
 
 No exact-build image, execution/root route, signing authority, or recovery
 procedure follows from the family match. VIZIO's [firmware search](https://support.vizio.com/s/firmware-search?language=en_US)

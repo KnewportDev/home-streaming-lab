@@ -19,14 +19,14 @@ The cable guide is published on GitHub Pages and works in a desktop browser. PIN
 | Cable-guide interface | Browser-verified layout, directional navigation, program dialogs, Settings, and empty My Apps state. |
 | TV control | PIN pairing completed. An authenticated current-app read reported Conjure app 17, namespace 4, and the public guide URL. |
 | Native preparation | A bounded, read-only platform report and an interface bundle with a SHA-256 manifest. |
-| Source release | Published 5691 / FUR7.2 source matches the `1.720` firmware family. Archive acquisition and exact-build compatibility remain open; [intake and verifier](docs/SOURCE-INTAKE.md) are ready. |
+| Source release | Publisher archive acquired, both published checksums matched, and selected Home, updater, and MT5691 build source inspected. [Findings and evidence](docs/SOURCE-INSPECTION.md); exact installed-build compatibility remains unverified. |
 | Local network report | Seven passive reads completed on 6 November: the TV reported connected; connection type remains unknown. [Redacted evidence](docs/evidence/native-network-2026-11-06.json). |
 | TV Check page | Published and checked in a desktop browser. Paired TV launch and exact current-app URL verified; physical TV receipts remain pending. |
 | Physical TV behavior | Screen rendering and physical remote behavior still need observation on the TV. |
 | Native system | Root, backup/restore, bootloader control, internal installation, and permanent Home replacement remain unverified. |
 | Media and schedules | Sample listings only; no television feed, playback source, or real program-guide data is connected. |
 
-[PR #3](https://github.com/KnewportDev/home-streaming-lab/pull/3) merged with **69 Linux tests and 68 Windows tests** passing in both [PR validation](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42155733173) and [main run 42155846531](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42155846531). The main run also published Pages. The [workflow](https://github.com/KnewportDev/home-streaming-lab/actions/workflows/native-tv.yml) reports results for each revision.
+[PR #5](https://github.com/KnewportDev/home-streaming-lab/pull/5) merged with **88 Linux tests and 87 Windows tests** passing in both [PR validation](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42158990637) and [main run 42159281900](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42159281900). The main run also published Pages. The [workflow](https://github.com/KnewportDev/home-streaming-lab/actions/workflows/native-tv.yml) reports results for each revision.
 
 The full native system is the goal. The current interface and preparation bundle are not a replacement OS or firmware installer. [Native-system evidence](docs/NATIVE-SYSTEM.md) records the compatibility gaps and the steps needed to close them.
 
@@ -110,15 +110,17 @@ The TV accepted its launch using the existing paired state. At **2026-11-06 03:2
 
 ## Matching source release
 
-The published **5691 / FUR7.2** release lists `1.720.X.Y`, matching the observed firmware family. Its ZIP has not been acquired: the download form requires contact details. [Source intake](docs/SOURCE-INTAKE.md) links the pinned records, the download page, and the next source questions.
+The published **5691 / FUR7.2** release lists `1.720.X.Y`, matching the observed firmware family. On 6 November 2026, the publisher archive was downloaded to the development PC and both published checksums matched. The ZIP is 7,946,973,901 bytes; its [receipt](docs/evidence/source-archive-2026-11-06.json) records SHA-256 and the pinned publisher references without personal details.
 
-Once the ZIP is available locally, run the dependency-free verifier with an absolute path:
+[Direct source inspection](docs/SOURCE-INSPECTION.md) now covers Home selection, updater verification, and the `mt5691_cast` board-support target. The Home controller matters: a URL setting alone does not establish a working replacement. The ViziOS build script also selects `mtk5695`, while the separate MT5691 BSP selects `m7632`; that relationship needs to be resolved before using generated output on the TV. Vendor programs have not been run, and no vendor source is included in this repository.
+
+To verify another local copy, run the dependency-free verifier with an absolute path:
 
 ```sh
 node tools/verify-source-bundle.cjs --archive ABS_ZIP --out ABS_NEW_JSON
 ```
 
-It reads in bounded chunks, compares both published checksums, and records SHA-256 for future comparisons. The report omits personal paths, refuses overwrite, and leaves installation eligibility unverified. This step does not unpack or run vendor code. The new source-verifier and result-code regressions bring the local Linux suite to **88 passing tests**, with zero failures or skips; hosted results are recorded in the pull request and workflow.
+It reads in bounded chunks, compares both published checksums, and records SHA-256 for future comparisons. The report omits personal paths, refuses overwrite, and leaves installation eligibility unverified. This step does not unpack or run vendor code. [Source intake](docs/SOURCE-INTAKE.md) documents verification and private handling. The source-verifier and result-code regressions bring the suite to **88 Linux / 87 Windows tests**, with zero failures or skips in the recorded hosted run above.
 
 ## Develop and verify
 
