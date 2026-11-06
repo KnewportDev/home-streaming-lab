@@ -35,7 +35,7 @@ jobs:
       - name: Check interface JavaScript
         run: node --check home/home.js
       - name: Run offline tests
-        run: node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs
+        run: node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs tools/test-tv-check.cjs
       - name: Package native interface preparation
         env:
           VIZIO_NATIVE_DIR: ${{ runner.temp }}/native-tv-preparation
@@ -62,6 +62,7 @@ jobs:
               'home/index.html': 'index.html',
               'home/home.css': 'home.css',
               'home/home.js': 'home.js',
+              'home/tv-check.html': 'tv-check.html',
               'home/config.example.json': 'config.json',
               'home/README.md': 'README.md',
               'LICENSE': 'LICENSE',
@@ -112,7 +113,7 @@ jobs:
         run: node --check home/home.js
       - name: Run Windows Node tests
         # The fixed POSIX USB script is exercised by the Linux job.
-        run: node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs
+        run: node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs tools/test-tv-check.cjs
 
   pages:
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'

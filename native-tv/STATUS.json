@@ -1,6 +1,6 @@
 {
-  "version": "0.3.0",
-  "stage": "native_preparation_built_hardware_access_unverified",
+  "version": "0.4.0",
+  "stage": "tv_browser_diagnostics_prepared_native_access_unverified",
   "live_device": {
     "reported_model": "V405-H9",
     "firmware": "1.720.9.1-1",
@@ -29,7 +29,7 @@
       "skipped": 0,
       "windows": "passed_on_target_pc"
     },
-    "offline_suite_total": 39,
+    "offline_suite_total": 69,
     "offline_suite_failed": 0,
     "offline_suite_skipped": 0,
     "visual_tv_test": "pending",
@@ -83,6 +83,38 @@
       "public_github_pages_url": true,
       "root_proven": false,
       "device_settings_changed": false
+    },
+    "native_preparation_hosted_tests": {
+      "commit": "2a37ff2040dd5df09fe6e94f7c14e7b365f1478d",
+      "run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42152947388",
+      "conclusion": "success",
+      "linux_passed": 57,
+      "windows_passed": 56,
+      "failed": 0,
+      "skipped": 0
+    },
+    "tv_reported_network": {
+      "observed_at": "2026-11-06T03:11:13.520Z",
+      "reported_connected": true,
+      "connection_type": "unknown",
+      "requests": 7,
+      "device_settings_changed": false,
+      "internet_access_verified": false,
+      "evidence": "docs/evidence/native-network-2026-11-06.json"
+    },
+    "tv_check_local_tests": {
+      "passed": 10,
+      "failed": 0,
+      "skipped": 0,
+      "runtime": "Node.js 24.22.1",
+      "platform": "Linux"
+    },
+    "tv_check_full_local_suite": {
+      "passed": 69,
+      "failed": 0,
+      "skipped": 0,
+      "runtime": "Node.js 24.22.1",
+      "platform": "Linux"
     }
   },
   "native_execution_on_tv": "not_yet_verified",
@@ -153,8 +185,8 @@
     "cable_guide_deployment": "verified_success",
     "pages_url": "https://knewportdev.github.io/home-streaming-lab/",
     "hosted_34_test_revision": "passed",
-    "deployed_commit": "9fa95629a8bcb1dec450a43ea2d96388089b72a5",
-    "verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42150339918",
+    "deployed_commit": "2a37ff2040dd5df09fe6e94f7c14e7b365f1478d",
+    "verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42152947388",
     "previous_verified_run": "https://github.com/KnewportDev/home-streaming-lab/actions/runs/42125250207",
     "hosted_39_test_revision": "passed"
   },
@@ -169,7 +201,7 @@
   },
   "native_development": {
     "goal": "TV_boots_into_owned_retro_interface_and_future_native_system",
-    "branch": "feat/native-tv-baseline",
+    "branch": "feat/tv-browser-check",
     "tracking_issue": "https://github.com/KnewportDev/home-streaming-lab/issues/1",
     "preparation_package": "implemented_offline_only",
     "platform_inspection": "implemented_and_verified_on_target",
@@ -178,6 +210,15 @@
       "Windows"
     ],
     "hardware_installation": "blocked_until_execution_backup_and_recovery_are_verified",
-    "full_firmware_image": "not_available_verified_for_target"
+    "full_firmware_image": "not_available_verified_for_target",
+    "previous_merged_pull_request": "https://github.com/KnewportDev/home-streaming-lab/pull/2",
+    "tv_check": {
+      "page": "tv-check.html",
+      "api_request": "explicit_button_only_fixed_unauthenticated_local_deviceinfo_get",
+      "telemetry": false,
+      "default_api_requests": 0,
+      "on_tv_result": "pending_physical_observation",
+      "native_guard_changed": false
+    }
   }
 }

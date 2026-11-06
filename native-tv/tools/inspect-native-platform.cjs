@@ -4,6 +4,10 @@
 // Informational routes only. Some SmartCast GET routes trigger actions; never
 // discover or recursively follow menu paths here.
 // Primary client source: https://github.com/raman325/vizaio/blob/main/src/vizaio/endpoints.py
+// Passive network reads: extracted vendor SDK getIsNetworkConnected/getNetworkConnectionType,
+// https://github.com/vindeckyy/smartcast-backdoor/blob/aea6dec77bf3c6613c46b2ef45de5444e5f3dccc/extracted/companion-lib.js
+// Lg reads static ITEMS[0].ELEMENTS[0] and dynamic ITEMS[0].VALUE; Vg compares
+// them strictly. Um/qm read connection_type. These do not test Internet access.
 const https=require('node:https'),path=require('node:path');
 const {readState,verify,validateTvResponse}=require('./native-session.cjs');
 const {isPrivateIPv4}=require('./inspect-tv.cjs');
@@ -13,10 +17,13 @@ const ROUTES=Object.freeze({
   currentApp:'/app/current',
   versions:'/system/versions',
   tvInfo:'/menu_native/dynamic/tv_settings/admin_and_privacy/system_information/tv_information',
-  tvInfoLegacy:'/menu_native/dynamic/tv_settings/system/system_information/tv_information'
+  tvInfoLegacy:'/menu_native/dynamic/tv_settings/system/system_information/tv_information',
+  networkStatusStatic:'/menu_native/static/tv_settings/network/connection_status',
+  networkStatusDynamic:'/menu_native/dynamic/tv_settings/network/connection_status',
+  networkType:'/menu_native/dynamic/tv_settings/network/connection_type'
 });
 const ERRORS=Object.freeze({
-  arguments:'Use --state with one absolute path to an existing private paired-state file.',
+  arguments:'Use --state with one absolute path to an existing private paired-state file, optionally with --network once.',
   state:'A valid private paired state for V405-H9 firmware 1.720.9.1-1 is required.',
   target:'The TV could not be verified against the paired model and firmware. No authenticated inspection was performed.',
   route:'Only the fixed informational TV routes are supported.',
@@ -35,8 +42,14 @@ const tokenValid=value=>typeof value==='string'&&value.length>0&&value.length<=4
 function safeErrorMessage(value){return ERRORS[value?.inspectionCode]||'Native platform inspection failed. Check the existing private state and TV connection.';}
 function parseArgs(argv){
   if(argv.length===1&&(argv[0]==='--help'||argv[0]==='-h'))return {help:true};
-  if(argv.length!==2||argv[0]!=='--state'||!path.isAbsolute(argv[1]))throw error('arguments');
-  return {state:argv[1]};
+  const options={};
+  for(let i=0;i<argv.length;i++){
+    if(argv[i]==='--state'&&!Object.hasOwn(options,'state')&&typeof argv[i+1]==='string'&&path.isAbsolute(argv[i+1]))options.state=argv[++i];
+    else if(argv[i]==='--network'&&!Object.hasOwn(options,'network'))options.network=true;
+    else throw error('arguments');
+  }
+  if(!options.state)throw error('arguments');
+  return options;
 }
 function checkedResponse(data){
   try{return validateTvResponse(data,'inspect');}
@@ -155,8 +168,34 @@ function currentApp(data,secrets){
     namespace:Number.isSafeInteger(value?.NAME_SPACE)&&value.NAME_SPACE>=0&&value.NAME_SPACE<=65535?value.NAME_SPACE:null,
     publicGithubPagesUrl:publicGithubPagesUrl(value?.MESSAGE)};
 }
+function networkPrimitive(value){
+  return typeof value==='boolean'||Number.isSafeInteger(value)&&value>=0&&value<=65535||
+    typeof value==='string'&&value.length>0&&value.length<=64&&value.trim().length>0&&!/[\x00-\x1f\x7f]/.test(value);
+}
+function networkReport(staticResult,dynamicResult,typeResult){
+  const first=result=>Array.isArray(result.data?.ITEMS)?result.data.ITEMS[0]:undefined;
+  const elements=first(staticResult)?.ELEMENTS,value=first(dynamicResult)?.VALUE;
+  const validElements=Array.isArray(elements)&&elements.length>0&&elements.length<=16&&elements.every(item=>networkPrimitive(item)&&typeof item===typeof elements[0]);
+  const validValue=networkPrimitive(value);
+  // A different value only proves a reported disconnected state when it is
+  // another advertised enum value. Unknown or malformed values stay unknown.
+  const recognized=staticResult.status==='ok'&&dynamicResult.status==='ok'&&validElements&&validValue&&elements.includes(value);
+  const rawType=first(typeResult)?.VALUE;
+  const typeNames={wifi:'Wi-Fi','wi-fi':'Wi-Fi',ethernet:'Ethernet',wired:'wired',wireless:'wireless'};
+  const typeKey=typeof rawType==='string'&&rawType.length<=32?rawType.trim().toLowerCase():'';
+  const connectionType=typeResult.status==='ok'&&Object.hasOwn(typeNames,typeKey)?typeNames[typeKey]:'unknown';
+  return {
+    scope:'tv_reported_local_network',reportedConnected:recognized?value===elements[0]:null,connectionType,
+    checks:{
+      connectionStatusStatic:staticResult.status==='ok'&&!validElements?'invalid_response':staticResult.status,
+      connectionStatusDynamic:dynamicResult.status==='ok'&&(!validValue||validElements&&!elements.includes(value))?'invalid_response':dynamicResult.status,
+      connectionType:typeResult.status==='ok'&&connectionType==='unknown'?'invalid_response':typeResult.status
+    },
+    note:'This is the TV-reported local network status. Unknown fields are not disconnected states. It does not verify DNS, TLS, Internet access, or page rendering.'
+  };
+}
 async function inspect(options,{transport=createTransport(),now=()=>new Date()}={}){
-  if(!options||typeof options.state!=='string'||!path.isAbsolute(options.state))throw error('arguments');
+  if(!options||typeof options.state!=='string'||!path.isAbsolute(options.state)||options.network!==undefined&&typeof options.network!=='boolean')throw error('arguments');
   let state;try{state=await readState(options.state);}catch{throw error('state');}
   if(state.phase!=='paired'||!tokenValid(state.token)||state.metadata.model!=='V405-H9')throw error('state');
   let info,metadata,requestCount=0;
@@ -171,6 +210,11 @@ async function inspect(options,{transport=createTransport(),now=()=>new Date()}=
   let tvInfo=await optional('tvInfo'),tvInformationSource='primary';
   const primaryTvInfoStatus=tvInfo.status;
   if(tvInfo.status==='unavailable'){tvInfo=await optional('tvInfoLegacy');tvInformationSource='legacy';}
+  let network;
+  if(options.network){
+    const networkStatic=await optional('networkStatusStatic'),networkDynamic=await optional('networkStatusDynamic'),networkType=await optional('networkType');
+    network=networkReport(networkStatic,networkDynamic,networkType);
+  }
   const responses=[versions.data,info,tvInfo.data],secrets=reportSecrets(state,[...responses,app.data]);
   const components=componentVersions(responses,secrets);
   const reportedPlatform=safeValue(metadata.platform,secrets),buildPlatform=/^(mtk\d{3,6})-/i.exec(components.viziOs||'')?.[1]||null;
@@ -180,6 +224,7 @@ async function inspect(options,{transport=createTransport(),now=()=>new Date()}=
     target:{model:metadata.model,firmware:metadata.firmware.system,platformIdentifier:platform,platformIsHardwareVerification:false},
     componentVersions:components,currentApp:currentApp(app.data,secrets),
     checks:{deviceInfo:'ok',currentApp:app.status,systemVersions:versions.status,tvInformation:tvInfo.status,tvInformationSource,primaryTvInfoStatus},
+    ...(network?{network}:{}),
     requestCount,
     verification:{rootAccess:'unverified',bootloaderUnlock:'unverified',replacementFirmware:'unverified',recovery:'unverified',persistentInstallation:'unverified'},
     note:'LAN metadata and current-app state do not establish screen rendering, shell access, firmware installation, or a recovery route.'
@@ -187,7 +232,7 @@ async function inspect(options,{transport=createTransport(),now=()=>new Date()}=
 }
 async function main(argv=process.argv.slice(2)){
   const options=parseArgs(argv);
-  if(options.help){process.stdout.write('Read-only native platform inspection (Node.js 24; no dependencies).\n\n  node tools/inspect-native-platform.cjs --state ABSOLUTE_PRIVATE_PAIRED_FILE\n\nReads one verified V405-H9 using four informational GETs, or five if TV information needs its legacy path.\nEach request is limited to 3 seconds and 128 KiB. No pairing, scans, state writes, or TV changes.\nReports omit credentials, device identifiers, target addresses, and raw responses.\n');return;}
+  if(options.help){process.stdout.write('Read-only native platform inspection (Node.js 24; no dependencies).\n\n  node tools/inspect-native-platform.cjs --state ABSOLUTE_PRIVATE_PAIRED_FILE [--network]\n\nReads one verified V405-H9 using four informational GETs, or five if TV information needs its legacy path.\n--network adds exactly three passive GETs for TV-reported local connection status and type.\nThose readings do not verify DNS, TLS, Internet access, or page rendering.\nEach request is limited to 3 seconds and 128 KiB. No pairing, scans, state writes, or TV changes.\nReports omit credentials, device identifiers, target addresses, and raw responses.\n');return;}
   const report=await inspect(options);process.stdout.write(JSON.stringify(report,null,2)+'\n');return report;
 }
 module.exports={parseArgs,createTransport,inspect,safeErrorMessage,TIMEOUT_MS,MAX_BODY_BYTES};

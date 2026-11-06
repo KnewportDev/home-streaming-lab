@@ -19,11 +19,13 @@ The cable guide is published on GitHub Pages and works in a desktop browser. PIN
 | Cable-guide interface | Browser-verified layout, directional navigation, program dialogs, Settings, and empty My Apps state. |
 | TV control | PIN pairing completed. An authenticated current-app read reported Conjure app 17, namespace 4, and the public guide URL. |
 | Native preparation | A bounded, read-only platform report and an interface bundle with a SHA-256 manifest. |
+| Local network report | Seven passive reads completed on 6 November: the TV reported connected; connection type remains unknown. [Redacted evidence](docs/evidence/native-network-2026-11-06.json). |
+| TV Check page | A standalone page for visible HTML, JavaScript, and remote-key receipts. Publication, TV launch, and screen observation are pending. |
 | Physical TV behavior | Screen rendering and physical remote behavior still need observation on the TV. |
 | Native system | Root, backup/restore, bootloader control, internal installation, and permanent Home replacement remain unverified. |
 | Media and schedules | Sample listings only; no television feed, playback source, or real program-guide data is connected. |
 
-The published guide baseline passed **39 offline tests** and deployed in [Actions run 42150339918](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42150339918). The expanded preparation suite passes **57 tests locally** on Node.js 24.22.1. The [workflow](https://github.com/KnewportDev/home-streaming-lab/actions/workflows/native-tv.yml) reports current Linux and Windows results.
+The current changes passed **69 local Linux tests, with 0 failures and 0 skips**. Hosted validation for this revision is pending. Before the TV Check changes, the merged preparation baseline passed **57 Linux tests and 56 Windows tests** in [Actions run 42152947388](https://github.com/KnewportDev/home-streaming-lab/actions/runs/42152947388). The [workflow](https://github.com/KnewportDev/home-streaming-lab/actions/workflows/native-tv.yml) reports results for each revision.
 
 The full native system is the goal. The current interface and preparation bundle are not a replacement OS or firmware installer. [Native-system evidence](docs/NATIVE-SYSTEM.md) records the compatibility gaps and the steps needed to close them.
 
@@ -61,10 +63,10 @@ The public HTTPS guide needs no PC serving its assets. A personal media server a
 
 | Path | Purpose |
 | --- | --- |
-| `home/` | HTML, CSS, and JavaScript for the guide, My Apps, and Settings. Assets stay local; no external fonts or analytics. |
+| `home/` | The cable guide, My Apps, Settings, and standalone `tv-check.html`. Assets stay local; no external fonts or analytics. |
 | `tools/inspect-tv.cjs` | Bounded SSDP discovery and fixed GET-only metadata requests. |
 | `tools/native-session.cjs` | PIN pairing, private session state, and authenticated Conjure launch requests. |
-| `tools/inspect-native-platform.cjs` | Read-only capability inspection using an already paired session. |
+| `tools/inspect-native-platform.cjs` | Read-only capability inspection using an already paired session; optional passive network-status reads. |
 | `tools/package-native-home.cjs` | Packages the interface, shared configuration, instructions, license, and content manifest. |
 | `tools/make-usb-diagnostic.cjs` | Prepares a fixed read-only CGI diagnostic; does not contact or execute anything on a TV. |
 | `tools/preview-home.cjs` | Local development preview. |
@@ -80,19 +82,35 @@ node tools/inspect-native-platform.cjs --state ABSOLUTE_PRIVATE_FILE
 
 The inspector reads a fixed set of informational endpoints and produces a redacted report. All four requests completed successfully on the target TV; the [redacted device report](docs/evidence/native-platform-2026-11-06.json) records the observed result. It does not install software or infer root from control-API access.
 
+Add `--network` for exactly three more passive reads:
+
+```sh
+node tools/inspect-native-platform.cjs --state ABSOLUTE_PRIVATE_FILE --network
+```
+
+The [seven-read report](docs/evidence/native-network-2026-11-06.json) records `reportedConnected: true` and an unrecognized connection type, retained as `unknown`. No TV writes were sent. Local connection status does not verify DNS, TLS, Internet access, or page rendering. Missing or malformed values stay unknown rather than becoming a disconnected result.
+
 Build an interface bundle into a new or empty output directory:
 
 ```sh
 node tools/package-native-home.cjs --out native-home-package
 ```
 
-The bundle preserves the cable-guide design and includes shared configuration plus a SHA-256 manifest. Native app controls stay disabled until the origin and integration are verified on the TV. It contains no firmware image or installation routine.
+The eight-file bundle preserves the cable-guide design and includes TV Check, shared configuration, and a SHA-256 manifest. Native app controls stay disabled. The guide's origin guard is a project policy, not a measured restriction of this H9 firmware. The bundle contains no firmware image or installation routine.
+
+## TV Check: observe execution on the screen
+
+[TV Check](home/tv-check.html) is a standalone page prepared for the next Pages deployment at [the TV Check URL](https://knewportdev.github.io/home-streaming-lab/tv-check.html). **Page: Open**, **JavaScript: Running**, and the **Remote** key receipt separate page rendering, script execution, and delivered key events. The page makes no background requests or automatic TV probes and uses no credentials.
+
+Its optional **Check TV connection** button makes one fixed, unauthenticated GET to `http://127.0.0.1:7346/state/device/deviceinfo`, bounded to 3 seconds and 128 KiB. Browser status `0` is ambiguous; it does not mean “no Internet.” This check neither enables the guide's native controls nor establishes root or persistence.
+
+After publication, reuse the paired state to launch the page and photograph the receipts on the TV; [setup instructions](docs/TV-SETUP.md#tv-check-visible-execution-receipts) include the command. A matching `/app/current` result remains launch metadata, not a screenshot or execution receipt. TV Check has not yet been launched or visually verified on this set.
 
 ## Develop and verify
 
 ```sh
 node --check home/home.js
-node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs
+node --test tools/test-inspect-tv.cjs tools/test-native-session.cjs tools/test-usb-diagnostic.cjs tools/test-home-guide.cjs tools/test-inspect-native-platform.cjs tools/test-package-native-home.cjs tools/test-tv-check.cjs
 ```
 
 Tests use synthetic responses, mocked transports, loopback servers, and temporary files. They do not contact the TV. The POSIX USB script is checked on Linux; the other Node suites also run in the Windows workflow job.
@@ -105,13 +123,13 @@ The repository-root workflow is `.github/workflows/native-tv.yml`:
 4. Publish the browser preview to Pages only after the required jobs pass on `main`. PRs and manual builds provide artifacts without publishing.
 5. Record physical TV checks against the matching revision before describing any behavior as installed or working on the set.
 
-The preview contains six shared files: `index.html`, `home.css`, `home.js`, example-derived `config.json`, the interface README, and the MIT license. Pairing state and personal configuration stay out of artifacts and Pages. CI has no TV credentials or device access.
+The preview contains seven shared files: `index.html`, `home.css`, `home.js`, `tv-check.html`, example-derived `config.json`, the interface README, and the MIT license. The native preparation bundle adds its content manifest for eight files. Pairing state and personal configuration stay out of artifacts and Pages. CI has no TV credentials or device access.
 
 [Contributing](CONTRIBUTING.md) · [Project conventions](AGENTS.md) · [Engineering notes](docs/ENGINEERING-NOTES.md) · [Portfolio summary](docs/PORTFOLIO.md)
 
 ## Next stages
 
-- Observe the deployed guide on the TV and verify remote navigation, Settings, and return behavior.
+- Publish and launch TV Check, record the visible receipts, then verify the guide's remote navigation, Settings, and return behavior on the TV.
 - Establish a native execution path for this exact firmware, then obtain a backup and a tested recovery route.
 - Run the interface locally on the TV before attempting a reversible persistent Home change.
 - Pursue a complete system replacement only with a verified boot path and working support for the panel, inputs, sound, storage, networking, and power control.

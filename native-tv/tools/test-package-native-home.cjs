@@ -13,7 +13,7 @@ const { generate } = require('./package-native-home.cjs');
 
 const PROJECT_ROOT = path.resolve(__dirname, '..');
 const TOOL = path.join(__dirname, 'package-native-home.cjs');
-const OUTPUTS = ['LICENSE', 'README.md', 'config.json', 'home.css', 'home.js', 'index.html', 'manifest.json'];
+const OUTPUTS = ['LICENSE', 'README.md', 'config.json', 'home.css', 'home.js', 'index.html', 'manifest.json', 'tv-check.html'];
 const EXAMPLE = {
   title: 'TV Guide',
   nativeBridge: { enabled: false },
@@ -27,7 +27,7 @@ function fixture(t) {
   t.after(() => fs.rmSync(temporary, { recursive: true, force: true }));
   const source = path.join(temporary, 'source');
   fs.mkdirSync(path.join(source, 'home'), { recursive: true });
-  for (const name of ['index.html', 'home.css', 'home.js']) {
+  for (const name of ['index.html', 'home.css', 'home.js', 'tv-check.html']) {
     fs.copyFileSync(path.join(PROJECT_ROOT, 'home', name), path.join(source, 'home', name));
   }
   fs.copyFileSync(path.join(PROJECT_ROOT, 'LICENSE'), path.join(source, 'LICENSE'));
@@ -68,7 +68,7 @@ test('package has exact allowlist, byte hashes and explicitly unverified target 
     assert.equal(file.sha256, hash(bytes), file.path + ' SHA-256');
   }
   assert.equal(manifest.version, 'sha256:' + hash(Buffer.from(JSON.stringify(manifest.files) + '\n')));
-  for (const name of ['index.html', 'home.css', 'home.js']) {
+  for (const name of ['index.html', 'home.css', 'home.js', 'tv-check.html']) {
     assert.deepEqual(fs.readFileSync(path.join(f.output, name)), fs.readFileSync(path.join(f.source, 'home', name)));
   }
   assert.deepEqual(fs.readFileSync(path.join(f.output, 'LICENSE')), fs.readFileSync(path.join(f.source, 'LICENSE')));
@@ -109,7 +109,7 @@ test('personal config, tokens, hidden state and extra assets are never read or i
 test('identical input bytes produce identical packages independent of path and timestamps', t => {
   const f = fixture(t), second = path.join(f.temporary, 'another-output');
   generate(f.output, { sourceRoot: f.source });
-  for (const name of ['index.html', 'home.css', 'home.js', 'config.example.json']) {
+  for (const name of ['index.html', 'home.css', 'home.js', 'tv-check.html', 'config.example.json']) {
     fs.utimesSync(path.join(f.source, 'home', name), new Date(0), new Date(0));
   }
   generate(second, { sourceRoot: f.source });
@@ -257,7 +257,7 @@ test('CLI requires explicit output and resolves source beside the tool, not from
   }
   const result = run(['--out', f.output]);
   assert.equal(result.status, 0, result.stderr);
-  assert.match(result.stdout, /Prepared 7 files/);
+  assert.match(result.stdout, /Prepared 8 files/);
   assert.match(result.stdout, /No TV was contacted/);
   assert.deepEqual(fs.readdirSync(f.output).sort(), OUTPUTS);
   assert.notEqual(run(['--out', f.output]).status, 0);

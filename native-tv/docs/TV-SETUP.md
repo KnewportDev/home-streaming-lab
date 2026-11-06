@@ -39,6 +39,14 @@ node tools/inspect-native-platform.cjs --state "$tvState"
 
 Use the existing file's absolute path if it is stored elsewhere. The platform inspector reads a fixed set of informational endpoints from the paired target and produces a redacted report. It neither pairs again nor interprets API access as root.
 
+For an optional local-network status report:
+
+```powershell
+node tools/inspect-native-platform.cjs --state "$tvState" --network
+```
+
+The default uses four informational GETs, with one legacy TV-information fallback only when needed. `--network` adds exactly three fixed GETs: static and dynamic `network/connection_status`, then `network/connection_type`. Every request is limited to 3 seconds and 128 KiB. The [6 November report](evidence/native-network-2026-11-06.json) completed seven reads, reported connected, and retained the unrecognized connection type as unknown. It sent no TV writes. These are TV-reported local settings, not a DNS, TLS, Internet, or page-loading test.
+
 ### First pairing only
 
 For a TV that has not been paired with this client, replace the address below with its actual private LAN address:
@@ -72,6 +80,20 @@ Check the physical TV screen, then test directional navigation, program dialogs,
 
 Pages has no execution-receipt endpoint. Record the revision and the screen/remote behavior actually observed. Physical TV rendering is still unverified in the current project record.
 
+### TV Check: visible execution receipts
+
+The standalone [TV Check source](../home/tv-check.html) is prepared for publication at [tv-check.html](https://knewportdev.github.io/home-streaming-lab/tv-check.html). After the workflow publishes it, reuse the same paired state; no new PIN is needed:
+
+```powershell
+node tools/native-session.cjs launch-page --state "$tvState" --url https://knewportdev.github.io/home-streaming-lab/tv-check.html
+```
+
+Inspect the television itself. Look for **Page: Open** and **JavaScript: Running**, then press an arrow and check whether **Remote** shows the key received and event count. Photograph the visible receipts and record the revision being tested. OK selects the focused button; Back returns to the guide. Each observation has a separate meaning: HTML appeared, script ran, or a key event reached that page. None proves guide functionality, native installation, or normal boot/Home behavior. TV Check publication, launch, and visual verification are not yet recorded.
+
+Loading this page makes no background requests or automatic TV probes and uses no credentials. The optional **Check TV connection** button sends one fixed, unauthenticated GET to `http://127.0.0.1:7346/state/device/deviceinfo`, with a 3-second timeout and 128-KiB response limit. It does not scan, request a token, launch an app, or change settings. A browser status `0` can reflect browser restrictions or a failed/unreadable request; it is not evidence of “no Internet.” A successful response establishes only that this browser context could read that endpoint. The VIZIO interface-symbol indicator checks existence only; it does not call an SDK method or establish that one works.
+
+The guide's separate origin guard is our project policy, not a measured H9 firmware restriction. Native app controls remain disabled. The standalone check gathers evidence without changing that policy. A matching `/app/current` response only reports launch metadata, so the physical photo is still needed.
+
 ## Optional local delivery test
 
 Both devices must be reachable on the same LAN. Replace `192.168.1.20` with the development PC's LAN address. Local serving needs `home/index.html`, `home/home.css`, `home/home.js`, and personal `home/config.json`.
@@ -87,7 +109,7 @@ The helper serves those four assets under a random path and requests Conjure to 
 
 The PC must keep serving throughout this local test and allow the TV to reach the chosen port. The helper makes no firewall changes. Ctrl+C stops only the PC server. During the earlier test, the PC answered locally but no TV callback arrived; an explicit inbound Node block was observed on Windows. The HTTPS route avoids that inbound serving requirement.
 
-The native API adapter has a separate origin guard and remains disabled in public and PC-hosted previews. Running a browser page does not establish internal API compatibility or persistent installation.
+The native API adapter has a separate project-defined origin guard and remains disabled in public and PC-hosted previews. This guard is not a measured limit of the H9 firmware. Running a browser page does not establish internal API compatibility or persistent installation.
 
 ## Pairing recovery
 
@@ -119,7 +141,7 @@ If the TV returns `BLOCKED`, dismiss its current pairing screen with Back on the
 node tools/package-native-home.cjs --out native-home-package
 ```
 
-Use a new or empty directory. The output contains the current interface, shared configuration, instructions, license, and a SHA-256 content manifest. It is a preparation bundle, not firmware or an installer. App controls stay disabled until the origin and integration are verified on the TV.
+Use a new or empty directory. The eight-file output contains the current interface, standalone TV Check, shared configuration, instructions, license, and a SHA-256 content manifest. It is a preparation bundle, not firmware or an installer. App controls stay disabled.
 
 ## Optional USB diagnostic preparation
 
@@ -136,7 +158,9 @@ This creates only a fixed read-only capability CGI and its instructions in a new
 | Metadata response | Identity and version fields returned by the device. |
 | Pairing completed | This private client state can authenticate to the TV control API. |
 | Launch accepted / matching current-app result | The TV accepted or reports the requested Conjure application. |
+| `--network` reports connected | The TV reports a local connection; DNS, TLS, Internet access, and page loading are unverified. |
 | Local `tv_javascript_ready` callback | The expected TV executed the injected readiness callback. |
+| TV Check JavaScript/key receipts seen on the TV | Its script ran or the displayed key event reached that page. A browser error/status `0` leaves connectivity unresolved. |
 | Physical screen and remote check | The particular observed layout and controls worked on the TV. |
 | Capability CGI output, if ever obtained | The fixed script executed in that context; root requires an identity reporting `uid=0`. |
 | Passing CI or a generated bundle | Repository behavior and packaging passed the recorded checks. |

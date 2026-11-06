@@ -8,6 +8,7 @@ const types = Object.freeze({
   'index.html': 'text/html; charset=utf-8',
   'home.css': 'text/css; charset=utf-8',
   'home.js': 'text/javascript; charset=utf-8',
+  'tv-check.html': 'text/html; charset=utf-8',
   'config.json': 'application/json; charset=utf-8'
 });
 async function main(argv = process.argv.slice(2)) {

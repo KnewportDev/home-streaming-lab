@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'sha256-ZVYKOnI0xF4gx0QBH/mYHkp3qeCHk/cvUMTT3hP4PYY='; style-src 'sha256-rl3HuOfTBD6j82SfK91DbXZcRUD96/DKzaZ2ppjbRuQ='; connect-src http://127.0.0.1:7346; base-uri 'none'; form-action 'none'">
+<title>Knewport — Check this TV</title>
+<style id="tv-check-style">
+/* Original MIT-licensed cable-guide check screen. No external assets. */
+*{box-sizing:border-box}html,body{margin:0;width:100%;min-height:100%;background:#111a40;color:#f5f7ff;font-family:Arial,Helvetica,Tahoma,sans-serif}
+body{overflow:hidden}.receiver{height:100vh;min-height:560px;padding:3vh 4vw 2.2vh;display:flex;flex-direction:column;background:linear-gradient(180deg,#07102a,#17285c 50%,#111a40);text-shadow:1px 2px rgba(0,0,0,.45)}
+.masthead{display:flex;align-items:center;justify-content:space-between;min-height:6.5vh;border-bottom:2px solid #8693b1;padding:0 .3vw 1vh}.brand{font-size:4.1vh;font-weight:800;font-style:italic;letter-spacing:-.065em;color:#ffa12e;text-shadow:1px 2px #4c1e09}.edition{font-size:1.5vh;color:#d6deee;font-weight:700;letter-spacing:.14em}
+.intro{margin:2.4vh 0 2.2vh}h1{margin:0;font-size:5vh;line-height:1.1;color:#ffe680} .intro p{margin:1vh 0 0;font-size:2.05vh;line-height:1.4;color:#d3ddef}
+.checks{display:flex;flex-direction:column;flex:1;min-height:0;border:2px solid #07112f;box-shadow:0 1px #9baac6}.check-row{display:flex;align-items:stretch;flex:1;min-height:8vh;border-bottom:2px solid #0a1535;background:linear-gradient(180deg,#25448a,#203873)}.check-row:last-child{border-bottom:0}
+.check-label{display:flex;align-items:center;width:27%;flex:none;padding:1.5vh 1.8vw;border-right:2px solid #0a1535;background:linear-gradient(180deg,#c3cce0,#7386ac);color:#111e3a;font-size:2.6vh;font-weight:700;text-shadow:0 1px #e2e8f1}
+.check-result{display:flex;flex:1;min-width:0;flex-direction:column;justify-content:center;padding:1.4vh 2vw}.value{font-size:3.05vh;font-weight:700;line-height:1.2}.detail{margin-top:.7vh;font-size:1.75vh;line-height:1.35;color:#c8d6ee}.check-row[data-state="pass"] .value{color:#f7e29a}.check-row[data-state="working"] .value{color:#ffe680}.check-row[data-state="attention"] .value{color:#ffe680}
+.actions{display:flex;margin-top:2.4vh}.actions button{font:700 2.2vh Arial,Helvetica,sans-serif;min-height:6.5vh;padding:1.2vh 2vw;border:2px solid #93a5c8;border-bottom-color:#07112d;background:#25448a;color:#fff;text-shadow:1px 2px #0d1d44;cursor:pointer}.actions button+button{margin-left:1.4vw}.actions button:focus{outline:3px solid #fff0a6;outline-offset:2px;color:#111d3b;background:linear-gradient(180deg,#ffe27f,#efb936);text-shadow:0 1px rgba(255,255,255,.4)}
+.actions button[aria-disabled="true"]{border-style:dashed}.footer{display:flex;justify-content:space-between;align-items:flex-start;margin-top:2vh;padding-top:1.2vh;border-top:1px solid #5f739a;font-size:1.55vh;line-height:1.5;color:#bfcee6}.footer p{margin:0}.footer .receipt{text-align:right;max-width:52%}.bridge{color:#dce5f5}.keys{display:block;margin-top:.35vh;color:#c9d4e8}
+@media(max-width:800px){body{overflow:auto}.receiver{height:auto;min-height:700px;padding:22px 22px 18px}.masthead{min-height:48px;padding-bottom:10px}.brand{font-size:29px}.edition{font-size:10px}.intro{margin:23px 0 20px}h1{font-size:36px}.intro p{font-size:14px;margin-top:9px}.checks{min-height:332px}.check-row{min-height:83px}.check-label{font-size:18px;padding:14px;width:26%}.check-result{padding:14px 18px}.value{font-size:21px}.detail{font-size:12px;margin-top:6px}.actions{margin-top:22px}.actions button{min-height:49px;font-size:16px;padding:12px 19px}.actions button+button{margin-left:13px}.footer{font-size:11px;margin-top:20px;padding-top:12px}.keys{margin-top:4px}}
+@media(max-width:480px){.receiver{padding:18px 14px}.brand{font-size:27px}.edition{font-size:8px}h1{font-size:31px}.intro p{font-size:13px}.check-label{font-size:15px;width:28%;padding:12px 10px}.check-result{padding:12px}.value{font-size:18px}.detail{font-size:11px}.actions button{font-size:13px;padding:11px 13px}.actions button+button{margin-left:10px}.footer{display:block}.footer .receipt{max-width:none;text-align:left;margin-top:10px}}
+</style>
+</head>
+<body>
+<main class="receiver">
+  <header class="masthead"><span class="brand">Knewport</span><span class="edition">TV CHECK</span></header>
+  <section class="intro"><h1>Check this TV</h1><p>Use the TV remote. Select the connection check when you’re ready.</p></section>
+  <section class="checks" aria-label="TV check results" aria-live="polite">
+    <div class="check-row" data-state="pass"><div class="check-label">Page</div><div class="check-result"><span class="value" id="page-value">Open</span><span class="detail">This check screen is displayed.</span></div></div>
+    <div class="check-row" id="js-row" data-state="waiting"><div class="check-label">JavaScript</div><div class="check-result"><span class="value" id="js-value">Waiting…</span><span class="detail">“Running” confirms this page’s code started.</span></div></div>
+    <div class="check-row" id="remote-row" data-state="waiting"><div class="check-label">Remote</div><div class="check-result"><span class="value" id="remote-value">Waiting for a key</span><span class="detail" id="remote-detail">Press an arrow or OK to record it here.</span></div></div>
+    <div class="check-row" id="api-row" data-state="waiting"><div class="check-label">Local API</div><div class="check-result"><span class="value" id="api-value">Not checked</span><span class="detail" id="api-detail">One read of device identity. No TV settings change.</span></div></div>
+  </section>
+  <nav class="actions" aria-label="Check controls"><button id="check-button" type="button" aria-disabled="false">Check TV connection</button><button id="back-button" type="button">Back to guide</button></nav>
+  <footer class="footer"><p><span class="bridge">VIZIO interface symbol: <span id="bridge-value">Not checked</span></span><span class="keys">Arrows move · OK selects · Back returns to guide</span></p><p class="receipt">Take a photo to share these results.<br>Read-only check. Results stay on this screen.</p></footer>
+</main>
+<script id="tv-check-script">
+/* SPDX-License-Identifier: MIT. Original fixed, read-only diagnostic.
+ * Primary protocol: https://github.com/raman325/vizaio/blob/main/src/vizaio/endpoints.py
+ * Device-info GET is informational and unauthenticated. No SDK is loaded.
+ */
+(function (root) {
+  "use strict";
+  var ENDPOINT = "http://127.0.0.1:7346/state/device/deviceinfo";
+  var TIMEOUT = 3000, MAX_BYTES = 131072;
+
+  function fitsUtf8(text) {
+    if (typeof text !== "string" || text.length > MAX_BYTES) return false;
+    var bytes = 0, i, code, next;
+    for (i = 0; i < text.length; i++) {
+      code = text.charCodeAt(i);
+      if (code < 128) bytes += 1;
+      else if (code < 2048) bytes += 2;
+      else if (code >= 55296 && code <= 56319 && i + 1 < text.length) {
+        next = text.charCodeAt(i + 1);
+        if (next >= 56320 && next <= 57343) { bytes += 4; i += 1; }
+        else bytes += 3;
+      } else bytes += 3;
+      if (bytes > MAX_BYTES) return false;
+    }
+    return true;
+  }
+
+  function identity(data) {
+    if (!data || !data.STATUS || data.STATUS.RESULT !== "SUCCESS") return "invalid";
+    var item = data.ITEM;
+    if (!item && Array.isArray(data.ITEMS)) item = data.ITEMS[0];
+    var value = item && item.VALUE && typeof item.VALUE === "object" ? item.VALUE : item;
+    if (!value || typeof value.MODEL_NAME !== "string") return "invalid";
+    var version = value.VERSION;
+    if (typeof version !== "string" && value.SYSTEM_INFO && typeof value.SYSTEM_INFO === "object") version = value.SYSTEM_INFO.VERSION;
+    if (typeof version !== "string") return "invalid";
+    return value.MODEL_NAME === "V405-H9" && version === "1.720.9.1-1" ? "match" : "mismatch";
+  }
+
+  function mount(host) {
+    var doc = host.document, active = null, attempted = false, lastResult = "waiting", blockedEndpoint = null, count = 0;
+    var checkButton = doc.getElementById("check-button"), backButton = doc.getElementById("back-button");
+    var apiRow = doc.getElementById("api-row");
+    var messages = {
+      match: ["Target matched", "V405-H9 · Firmware 1.720.9.1-1"],
+      mismatch: ["Different TV or firmware", "Expected V405-H9 with firmware 1.720.9.1-1."],
+      invalid: ["Response not recognized", "No device identity was confirmed."],
+      unable: ["Unable to read; browser policy or connection", "The cause could not be determined from this page."],
+      policy: ["Browser policy blocked the check", "The local API could not be tested from this page."],
+      large: ["Response exceeded the limit", "The check stopped at 128 KiB."],
+      unsupported: ["Connection check unavailable", "This browser cannot perform the local read."]
+    };
+    function show(result) {
+      lastResult = result;
+      doc.getElementById("api-value").textContent = messages[result][0];
+      doc.getElementById("api-detail").textContent = messages[result][1];
+      apiRow.setAttribute("data-state", result === "match" ? "pass" : "attention");
+      apiRow.setAttribute("aria-busy", "false");
+      checkButton.setAttribute("aria-disabled", "false");
+    }
+    function finish(request, result, abort) {
+      if (!request || request.done) return;
+      request.done = true;
+      if (request.timer !== null) host.clearTimeout(request.timer);
+      if (active === request) active = null;
+      if (abort) { try { request.xhr.abort(); } catch (ignored) {} }
+      show(result);
+    }
+    function check() {
+      if (active) return;
+      attempted = true; blockedEndpoint = null;
+      if (typeof host.XMLHttpRequest !== "function") { show("unsupported"); return; }
+      var request = { xhr: null, timer: null, done: false };
+      try { request.xhr = new host.XMLHttpRequest(); }
+      catch (ignored) { show("unsupported"); return; }
+      active = request; lastResult = "checking";
+      doc.getElementById("api-value").textContent = "Checking…";
+      doc.getElementById("api-detail").textContent = "Reading device identity.";
+      apiRow.setAttribute("data-state", "working");
+      apiRow.setAttribute("aria-busy", "true");
+      checkButton.setAttribute("aria-disabled", "true");
+      var xhr = request.xhr;
+      function unable() { finish(request, blockedEndpoint === ENDPOINT ? "policy" : "unable", true); }
+      xhr.onerror = unable; xhr.ontimeout = unable;
+      xhr.onabort = function () { finish(request, "unable", false); };
+      xhr.onreadystatechange = function () {
+        if (request.done || xhr.readyState !== 2) return;
+        var length;
+        try { length = xhr.getResponseHeader("Content-Length"); } catch (ignored) { return; }
+        if (length !== null && Number(length) > MAX_BYTES) finish(request, "large", true);
+      };
+      xhr.onprogress = function (event) {
+        if (event.loaded > MAX_BYTES || (event.lengthComputable && event.total > MAX_BYTES)) {
+          finish(request, "large", true);
+        }
+      };
+      xhr.onload = function () {
+        if (request.done) return;
+        if (xhr.status !== 200) { unable(); return; }
+        var text, data;
+        try { text = xhr.responseText; } catch (ignored) { unable(); return; }
+        if (!fitsUtf8(text)) { finish(request, "large", true); return; }
+        try { data = JSON.parse(text); } catch (ignored) { finish(request, "invalid", false); return; }
+        finish(request, identity(data), false);
+      };
+      try {
+        xhr.open("GET", ENDPOINT, true);
+        xhr.withCredentials = false;
+        xhr.timeout = TIMEOUT;
+        xhr.responseType = "text";
+        request.timer = host.setTimeout(unable, TIMEOUT);
+        xhr.send(null);
+      } catch (ignored) { unable(); }
+    }
+    function leave() {
+      if (active) {
+        active.done = true;
+        if (active.timer !== null) host.clearTimeout(active.timer);
+        try { active.xhr.abort(); } catch (ignored) {}
+        active = null;
+      }
+      host.location.href = "index.html";
+    }
+    function record(name) {
+      count += 1;
+      doc.getElementById("remote-value").textContent = name + " received";
+      doc.getElementById("remote-detail").textContent = count + (count === 1 ? " key event on this page." : " key events on this page.");
+      doc.getElementById("remote-row").setAttribute("data-state", "pass");
+    }
+    checkButton.onclick = check;
+    backButton.onclick = leave;
+    doc.addEventListener("securitypolicyviolation", function (event) {
+      // Never retain or display arbitrary blocked URLs, query strings or tokens.
+      if (!attempted || event.blockedURI !== ENDPOINT || (lastResult !== "checking" && lastResult !== "unable")) return;
+      blockedEndpoint = ENDPOINT;
+      if (active) finish(active, "policy", true); else show("policy");
+    });
+    doc.addEventListener("keydown", function (event) {
+      var key = event.keyCode || event.which;
+      var names = { 37: "Left", 38: "Up", 39: "Right", 40: "Down", 13: "OK", 8: "Back", 27: "Back", 461: "Back", 10009: "Back" };
+      if (!Object.prototype.hasOwnProperty.call(names, key)) return;
+      event.preventDefault(); record(names[key]);
+      if (key === 8 || key === 27 || key === 461 || key === 10009) { leave(); return; }
+      if (key === 13) {
+        if (event.repeat === true) return;
+        if (doc.activeElement === backButton) leave(); else check();
+      } else if (key === 37 || key === 38) checkButton.focus();
+      else backButton.focus();
+    });
+    // Existence only: do not invoke an SDK getter, initializer or privileged API.
+    var present = false;
+    try { present = "VIZIO" in host; } catch (ignored) {}
+    doc.getElementById("bridge-value").textContent = present ? "Present" : "Not detected";
+    doc.getElementById("js-value").textContent = "Running";
+    doc.getElementById("js-row").setAttribute("data-state", "pass");
+    checkButton.focus();
+  }
+  if (typeof module !== "undefined" && module.exports) module.exports = { mount: mount };
+  if (root && root.document) mount(root);
+}(typeof window !== "undefined" ? window : null));
+</script>
+</body>
+</html>
